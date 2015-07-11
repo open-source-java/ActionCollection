@@ -17,224 +17,233 @@ import elsu.database.*;
  */
 public class ActionUnitTest {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        ActionFactory af = null;
+    public ActionFactory af = null;
 
+    public ActionUnitTest() {
         try {
             af = new ActionFactory();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
+    }
 
-        // class object test for one key
+    // test system identification object
+    public void TestSystemIdentification() {
+        SystemIdentification si = null;
+
         if (af != null) {
-            SystemIdentification si = null;
-
             try {
                 si = (SystemIdentification) af.getClassByName("ac.factory.objects.SystemIdentification");
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
-
-            try {
-                if (si != null) {
-                    si.Refresh(1);
-
-                    WebRowSet wrs = si.getRowSet();
-                    System.out.println(si.toXML());
-                }
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
         }
 
-        // class object test for multiple keys via cursor
-        if (af != null) {
-            Site si = null;
+        if (si != null) {
+            TestRefresh(si, 1);
+        }
+    }
 
+    // test site object
+    public void TestSite() {
+        Site si = null;
+
+        if (af != null) {
             try {
                 si = (Site) af.getClassByName("ac.factory.objects.Site");
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
+        }
 
+        // get two records for the site object
+        try {
+            if (si != null) {
+                TestRefresh(si, new long[]{838, 830});
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        // get five records for the site object
+        try {
+            if (si != null) {
+                TestRefresh(si, new long[]{838, 830, 111, 843, 792});
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        // retrieve all records for site with no params
+        try {
+            if (si != null) {
+                si.Refresh(null, null);
+
+                WebRowSet wrs = si.getRowSet();
+                System.out.println(si.toXML());
+                System.out.println(".. records selected: " + wrs.size());
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        // filter site records for site_id with mask
+        try {
+            if (si != null) {
+                si.Refresh("SITE_ID LIKE ?", new Object[]{"9%"});
+
+                WebRowSet wrs = si.getRowSet();
+                System.out.println(si.toXML());
+                System.out.println(".. records selected: " + wrs.size());
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        // filter site records for site_id with match
+        try {
+            if (si != null) {
+                si.Refresh("SITE_ID = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtint}, new Object[]{909});
+
+                WebRowSet wrs = si.getRowSet();
+                System.out.println(si.toXML());
+                System.out.println(".. records selected: " + wrs.size());
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        // multiple tests for update, delete and insert
+        if (si != null) {
             try {
-                if (si != null) {
-                    si.Refresh(new long[]{838, 830});
+                // update record for site id
+                TestRefresh(si, new long[]{838});
 
-                    WebRowSet wrs = si.getRowSet();
-                    System.out.println(si.toXML());
-                }
+                WebRowSet wrs = si.getRowSet();
+                System.out.println(si.toXML());
+
+                wrs.beforeFirst();
+                wrs.next();
+
+                String siteName = wrs.getString("SITE") + "_RST";
+                wrs.updateString("SITE", siteName);
+
+                long count = si.Update(838);
+                System.out.println(".. records updated: " + count);
+
+                count = si.Update(838, new String[]{"SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{4L, 2L});
+                System.out.println(si.toXML());
+                System.out.println(".. records updated: " + count);
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+
+            // delete record for site id
+            try {
+                TestRefresh(si, 830);
+                long count = si.Delete(830);
+                System.out.println(si.toXML());
+                System.out.println(".. records deleted: " + count);
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+
+            // delete records for multiple site ids
+            try {
+                TestRefresh(si, new long[]{830, 838});
+                long count = si.Delete(new long[]{830, 838});
+                System.out.println(si.toXML());
+                System.out.println(".. records deleted: " + count);
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+
+            // delete record with filter
+            try {
+                long count = si.Delete("SITE LIKE ?", new Object[]{"DHALIWAL%"});
+                System.out.println(si.toXML());
+                System.out.println(".. records deleted: " + count);
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
 
             try {
-                if (si != null) {
-                    si.Refresh(new long[]{800, 801, 802, 803, 804});
+                si.getRowSet().release();
 
-                    WebRowSet wrs = si.getRowSet();
-                    System.out.println(si.toXML());
-                }
+                // insert new record from scratch
+                //ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP
+                long recordNumber = si.Insert(new Object[]{505.0D, null, null, "SSD", "DHALIWAL", null, "ROHN", null, "V4", 0L, null, "PRIMARY", null, "ESD MORICHES", null, null, null, null, null, null});
+                System.out.println(si.toXML());
+                System.out.println(".. record# inserted: " + recordNumber);
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+
+            try {
+                // try to insert multiple records with minor changes
+                TestRefresh(si, new long[]{830, 838});
+                long recordNumber = si.Insert(new String[]{"SITE_ID", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, 4L, 2L});
+                System.out.println(si.toXML());
+                System.out.println(".. record# inserted: " + recordNumber);
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+
+            try {
+                // try to insert record with change
+                TestRefresh(si, new long[]{838});
+                long recordNumber = si.Insert(new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
+                System.out.println(si.toXML());
+                System.out.println(".. record# inserted: " + recordNumber);
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
         }
+    }
 
-        // class object test for multiple keys via cursor and custom filter
-        if (af != null) {
-            Site si = null;
+    // test refresh for action object using id
+    public void TestRefresh(ActionObject ao, long id) {
+        try {
+            if (ao != null) {
+                ao.Refresh(id);
 
-            try {
-                si = (Site) af.getClassByName("ac.factory.objects.Site");
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                WebRowSet wrs = ao.getRowSet();
+                System.out.println(ao.toXML());
+                System.out.println(".. records selected: " + wrs.size());
             }
-
-            try {
-                if (si != null) {
-                    si.Refresh(new long[]{838, 830});
-
-                    WebRowSet wrs = si.getRowSet();
-                    System.out.println(si.toXML());
-                }
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
-
-            try {
-                if (si != null) {
-                    si.Refresh(null, null);
-
-                    WebRowSet wrs = si.getRowSet();
-                    System.out.println(si.toXML());
-                }
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
-
-            try {
-                if (si != null) {
-                    si.Refresh("SITE_ID LIKE ?", new Object[]{"9%"});
-
-                    WebRowSet wrs = si.getRowSet();
-                    System.out.println(si.toXML());
-                }
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
-
-            try {
-                if (si != null) {
-                    si.Refresh("SITE_ID = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtint}, new Object[]{909});
-
-                    WebRowSet wrs = si.getRowSet();
-                    System.out.println(si.toXML());
-                }
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
+    }
 
-        // class object test for update
-        if (af != null) {
-            Site si = null;
+    // test refresh for action object using id array
+    public void TestRefresh(ActionObject ao, long[] id) {
+        try {
+            if (ao != null) {
+                ao.Refresh(id);
 
-            try {
-                si = (Site) af.getClassByName("ac.factory.objects.Site");
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                WebRowSet wrs = ao.getRowSet();
+                System.out.println(ao.toXML());
+                System.out.println(".. records selected: " + wrs.size());
             }
-
-            try {
-                if (si != null) {
-                    si.Refresh(new long[]{838});
-
-                    WebRowSet wrs = si.getRowSet();
-                    System.out.println(si.toXML());
-
-                    try {
-                        wrs.setReadOnly(false);
-                        wrs.beforeFirst();
-                        wrs.next();
-
-                        String siteName = wrs.getString("SITE") + "_RST";
-                        wrs.updateString("SITE", siteName);
-
-                        wrs.setReadOnly(true);
-                        long count = si.Update(838);
-                        System.out.println(".. records updated: " + count);
-
-                        count = si.Update(838, new String[]{"SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{4L, 2L});
-                        System.out.println(".. records updated: " + count);
-                        //System.out.println(si.toXML());
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                    }
-
-                    try {
-                        si.Refresh(830);
-                        long count = si.Delete(830);
-                        System.out.println(".. records deleted: " + count);
-                        //System.out.println(si.toXML());
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                    }
-
-                    try {
-                        si.Refresh(new long[]{830, 838});
-                        long count = si.Delete(new long[]{830, 838});
-                        System.out.println(".. records deleted: " + count);
-                        //System.out.println(si.toXML());
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                    }
-
-                    try {
-                        long count = si.Delete("SITE LIKE ?", new Object[]{"DHALIWAL%"});
-                        System.out.println(".. records deleted: " + count);
-                        //System.out.println(si.toXML());
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                    }
-
-                    try {
-                        si.getRowSet().release();
-
-                        //ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP
-                        long recordNumber = si.Insert(new Object[]{505.0D, null, null, "SSD", "DHALIWAL", null, "ROHN", null, "V4", 0L, null, "PRIMARY", null, "ESD MORICHES", null, null, null, null, null, null});
-                        System.out.println(si.toXML());
-                        System.out.println(".. record# inserted: " + recordNumber);
-
-                        si.Refresh(new long[]{830, 838});
-                        recordNumber = si.Insert(new String[]{"SITE_ID", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, 4L, 2L});
-                        System.out.println(si.toXML());
-                        System.out.println(".. record# inserted: " + recordNumber);
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                    }
-
-                    try {
-                        si.Refresh(new long[]{838});
-                        long recordNumber = si.Insert(new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
-                        System.out.println(si.toXML());
-                        System.out.println(".. record# inserted: " + recordNumber);
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                    }
-                }
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        ActionUnitTest aut = new ActionUnitTest();
+
+        aut.TestSystemIdentification();
+        aut.TestSite();
 
         // class object direct access test
-        if (af != null) {
+        if (aut.af != null) {
             try {
-                WebRowSet wrs = ActionObjectDirect.View(af.getDbManager(),
+                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE_STATUS",
                         null, null, null);
                 System.out.println(ActionObjectDirect.toXML(wrs));
@@ -244,7 +253,7 @@ public class ActionUnitTest {
             }
 
             try {
-                WebRowSet wrs = ActionObjectDirect.View(af.getDbManager(),
+                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE_ID LIKE ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"8%"});
                 //System.out.println(ActionObject.toXML(wrs));
@@ -254,7 +263,7 @@ public class ActionUnitTest {
             }
 
             try {
-                WebRowSet wrs = ActionObjectDirect.View(af.getDbManager(),
+                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE_ID LIKE ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"9%"});
                 //System.out.println(ActionObject.toXML(wrs));
@@ -264,7 +273,7 @@ public class ActionUnitTest {
             }
 
             try {
-                WebRowSet wrs = ActionObjectDirect.Cursor(af.getDbManager(),
+                WebRowSet wrs = ActionObjectDirect.Cursor(aut.af.getDbManager(),
                         "NCS3.SPS_SITE",
                         new DatabaseDataTypes[]{DatabaseDataTypes.dtarray}, new Object[]{new Long[]{830L, 838L}});
                 //System.out.println(ActionObject.toXML(wrs));
@@ -275,7 +284,7 @@ public class ActionUnitTest {
 
             WebRowSet wrs = null;
             try {
-                wrs = ActionObjectDirect.View(af.getDbManager(),
+                wrs = ActionObjectDirect.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"DHALIWAL2"});
                 //System.out.println(ActionObject.toXML(wrs));
@@ -295,7 +304,7 @@ public class ActionUnitTest {
                     }
                 }
 
-                long count = ActionObjectDirect.Execute(af.getDbManager(),
+                long count = ActionObjectDirect.Execute(aut.af.getDbManager(),
                         "NCS3.SPD_SITE",
                         new DatabaseDataTypes[]{DatabaseDataTypes.dtlong}, new Object[]{siteId});
                 //System.out.println(ActionObject.toXML(wrs));

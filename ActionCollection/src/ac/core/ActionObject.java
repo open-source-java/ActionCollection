@@ -160,6 +160,23 @@ public abstract class ActionObject implements IAction {
         return this._selectProcedure;
     }
 
+    protected String getSQLSelect(String[] columns) {
+        String result = "";
+
+        try {
+            result = "SELECT ";
+            result += CollectionStack.ArrayToString(columns).toUpperCase();
+            result += " FROM " + getActionConfig().getSQLSelect().toUpperCase();
+        } catch (Exception ex) {
+            Log4JManager.error(getClass().toString() + ", getSQLSelect(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+
+            result = "";
+        }
+
+        return result;
+    }
+
     protected void setSQLSelect(String procedure) {
         try {
             this._selectProcedure = "SELECT ";
@@ -169,6 +186,11 @@ public abstract class ActionObject implements IAction {
             Log4JManager.error(getClass().toString() + ", setSQLSelect(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
         }
+    }
+
+    @Override
+    public WebRowSet Refresh() throws Exception {
+        return Refresh(null, null);
     }
 
     @Override
@@ -309,6 +331,53 @@ public abstract class ActionObject implements IAction {
                     paramId++;
 
                     dbParams.add(new DatabaseParameter("param" + paramId, valueDataTypes[paramId - 1],
+                            o));
+                }
+            }
+
+            result = getDbManager().getDataXML(sql, dbParams);
+        } catch (Exception ex) {
+            Log4JManager.error(getClass().toString() + ", Refresh(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+
+            result = null;
+            throw new Exception(ex);
+        }
+
+        setRowSet(result);
+        return result;
+    }
+
+    @Override
+    public WebRowSet Refresh(String[] columns) throws Exception {
+        return Refresh(columns, null, null);
+    }
+    
+    @Override
+    public WebRowSet Refresh(String[] columns, String whereClause, Object[] values) throws Exception {
+        WebRowSet result = null;
+
+        try {
+            String sql = getSQLSelect(columns);
+            if (whereClause != null) {
+                sql += " WHERE " + whereClause;
+            }
+
+            // if select procedure is not defined, exit
+            if ((sql == null) || (sql.isEmpty())) {
+                throw new Exception("No select procedure defined.");
+            }
+
+            ArrayList<DatabaseParameter> dbParams;
+            dbParams = new ArrayList<>();
+
+            // store the siteId parameter value
+            int paramId = 0;
+            if (values != null) {
+                for (Object o : values) {
+                    paramId++;
+
+                    dbParams.add(new DatabaseParameter("param" + paramId, DatabaseStack.getDataType(o),
                             o));
                 }
             }
@@ -683,7 +752,7 @@ public abstract class ActionObject implements IAction {
             // update the rowset
             getRowSet().insertRow();
             getRowSet().moveToCurrentRow();
-            
+
             // add the output parameters for status reporting
             dbParams.add(new DatabaseParameter("recid", DatabaseDataTypes.dtlong, true));
             dbParams.add(new DatabaseParameter("errorId", DatabaseDataTypes.dtlong, true));

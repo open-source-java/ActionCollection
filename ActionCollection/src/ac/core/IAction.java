@@ -14,21 +14,19 @@ import javax.sql.rowset.*;
  * @author dhaliwal-admin
  */
 public interface IAction {
+    WebRowSet Refresh() throws Exception;
     WebRowSet Refresh(long id) throws Exception;
     WebRowSet Refresh(long[] id) throws Exception;
     WebRowSet Refresh(String whereClause, Object[] values) throws Exception;
     WebRowSet Refresh(String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception;
-    //WebRowSet Refresh(String columns, String whereClause, Object[] values) throws Exception;
+    WebRowSet Refresh(String[] columns) throws Exception;
+    WebRowSet Refresh(String[] columns, String whereClause, Object[] values) throws Exception;
 
-    //long Update();
-    //long Update(String[] columns, Object[] values) throws Exception;
-    //long Update(HashMap<String, Object> row) throws Exception;
     long Update(long id) throws Exception;
     long Update(long[] id) throws Exception;
     long Update(long id, String[] columns, Object[] values) throws Exception;
     long Update(long id, HashMap<String, Object> row) throws Exception;
 
-    //long Delete();
     long Delete(long id) throws Exception;
     long Delete(long[] id) throws Exception;
     long Delete(String whereClause, Object[] values) throws Exception;
