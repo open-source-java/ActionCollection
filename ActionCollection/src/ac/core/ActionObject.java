@@ -8,7 +8,6 @@ package ac.core;
 import elsu.common.*;
 import elsu.database.*;
 import elsu.support.*;
-import java.io.*;
 import java.util.*;
 import javax.sql.rowset.*;
 import ac.config.*;
@@ -334,6 +333,11 @@ public abstract class ActionObject implements IAction {
         Map<String, Object> spResult = null;
 
         try {
+            // if rowset is null, exit
+            if (getRowSet() == null) {
+                throw new Exception("RowSet is null.");
+            }
+
             // if update procedure is not defined, exit
             if ((getActionConfig().getSQLUpdate() == null) || (getActionConfig().getSQLUpdate().isEmpty())) {
                 throw new Exception("No update procedure defined.");
@@ -429,6 +433,11 @@ public abstract class ActionObject implements IAction {
         long result = 0;
 
         try {
+            // if rowset is null, exit
+            if (getRowSet() == null) {
+                throw new Exception("RowSet is null.");
+            }
+
             // if update procedure is not defined, exit
             if ((getActionConfig().getSQLUpdate() == null) || (getActionConfig().getSQLUpdate().isEmpty())) {
                 throw new Exception("No update procedure defined.");
@@ -481,6 +490,11 @@ public abstract class ActionObject implements IAction {
         Map<String, Object> spResult = null;
 
         try {
+            // if rowset is null, exit
+            if (getRowSet() == null) {
+                throw new Exception("RowSet is null.");
+            }
+
             // if delete procedure is not defined, exit
             if ((getActionConfig().getSQLDelete() == null) || (getActionConfig().getSQLDelete().isEmpty())) {
                 throw new Exception("No delete procedure defined.");
@@ -492,6 +506,8 @@ public abstract class ActionObject implements IAction {
             dbParams = new ArrayList<>();
 
             // make sure the id is part of the select, otherwise reject the call
+            getRowSet().setReadOnly(false);
+
             getRowSet().beforeFirst();
             while (getRowSet().next()) {
                 if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
@@ -509,6 +525,8 @@ public abstract class ActionObject implements IAction {
                     break;
                 }
             }
+            
+            getRowSet().setReadOnly(true);
 
             // check if record is valid
             if (!isRecordValid) {
@@ -544,6 +562,11 @@ public abstract class ActionObject implements IAction {
     @Override
     public long Delete(long[] id) throws Exception {
         long result = 0;
+
+        // if rowset is null, exit
+        if (getRowSet() == null) {
+            throw new Exception("RowSet is null.");
+        }
 
         // if delete procedure is not defined, exit
         if ((getActionConfig().getSQLDelete() == null) || (getActionConfig().getSQLDelete().isEmpty())) {
@@ -591,6 +614,7 @@ public abstract class ActionObject implements IAction {
             setRowSet(wrs);
 
             // collect the primary keys and delete the data
+            getRowSet().setReadOnly(false);
             long[] idList = new long[getRowSet().size()];
 
             int index = 0;
@@ -598,7 +622,14 @@ public abstract class ActionObject implements IAction {
             while (getRowSet().next()) {
                 idList[index] = getRowSet().getLong(getActionConfig().getPrimaryId());
                 index++;
+
+                // delete the row from the record set
+                getRowSet().deleteRow();
             }
+
+            // put the updates in the original row
+            getRowSet().setOriginalRow();
+            getRowSet().setReadOnly(true);
 
             result = Delete(idList);
         } catch (Exception ex) {

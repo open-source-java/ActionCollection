@@ -10,6 +10,8 @@ import elsu.database.DatabaseDataTypes;
 import elsu.database.DatabaseManager;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sql.rowset.WebRowSet;
 import junit.framework.TestCase;
 
@@ -18,16 +20,16 @@ import junit.framework.TestCase;
  * @author dhaliwal-admin
  */
 public class ActionObjectTest extends TestCase {
-    
+
     public ActionObjectTest(String testName) {
         super(testName);
     }
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
@@ -39,8 +41,14 @@ public class ActionObjectTest extends TestCase {
     public void testFinalize() throws Exception {
         System.out.println("finalize");
         ActionObject instance = null;
-        instance.finalize();
-        
+
+        try {
+            instance.finalize();
+        } catch (Throwable ex) {
+            //Logger.getLogger(ActionObjectTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        }
+
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -434,5 +442,5 @@ public class ActionObjectTest extends TestCase {
             super(null, null);
         }
     }
-    
+
 }

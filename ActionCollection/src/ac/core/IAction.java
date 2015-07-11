@@ -21,11 +21,11 @@ public interface IAction {
     //WebRowSet Refresh(String columns, String whereClause, Object[] values) throws Exception;
 
     //long Update();
+    //long Update(String[] columns, Object[] values) throws Exception;
+    //long Update(HashMap<String, Object> row) throws Exception;
     long Update(long id) throws Exception;
     long Update(long[] id) throws Exception;
-    //long Update(String[] columns, Object[] values) throws Exception;
     long Update(long id, String[] columns, Object[] values) throws Exception;
-    //long Update(HashMap<String, Object> row) throws Exception;
     long Update(long id, HashMap<String, Object> row) throws Exception;
 
     //long Delete();
