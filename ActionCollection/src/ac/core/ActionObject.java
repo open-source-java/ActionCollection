@@ -357,9 +357,6 @@ public abstract class ActionObject implements IAction {
             getRowSet().beforeFirst();
             while (getRowSet().next()) {
                 if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
-                    // put the updates in the original row
-                    getRowSet().setOriginalRow();
-
                     for (int i = 1; i <= maxColumns; i++) {
                         o = getRowSet().getObject(i);
 
@@ -450,25 +447,25 @@ public abstract class ActionObject implements IAction {
 
             // update the memory record set with new values
             Object o = null;
-            getRowSet().setReadOnly(false);
 
             getRowSet().beforeFirst();
             while (getRowSet().next()) {
                 if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
                     for (int i = 0; i < columns.length; i++) {
-                        getRowSet().updateObject(columns[i], values[i]);
+                        // store the data into the rowset
+                        if (values[i] == null) {
+                            getRowSet().updateNull(i + 1);
+                        } else {
+                            getRowSet().updateObject(columns[i], values[i]);
+                        }
+
+                        break;
                     }
-
-                    // put the updates in the original row
-                    getRowSet().setOriginalRow();
-
-                    break;
                 }
-            }
-            getRowSet().setReadOnly(true);
 
-            // call the overloaded update
-            result = Update(id);
+                // call the overloaded update
+                result = Update(id);
+            }
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Update(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
@@ -506,8 +503,6 @@ public abstract class ActionObject implements IAction {
             dbParams = new ArrayList<>();
 
             // make sure the id is part of the select, otherwise reject the call
-            getRowSet().setReadOnly(false);
-
             getRowSet().beforeFirst();
             while (getRowSet().next()) {
                 if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
@@ -518,15 +513,10 @@ public abstract class ActionObject implements IAction {
                     // delete the row from the record set
                     getRowSet().deleteRow();
 
-                    // put the updates in the original row
-                    getRowSet().setOriginalRow();
-
                     isRecordValid = true;
                     break;
                 }
             }
-            
-            getRowSet().setReadOnly(true);
 
             // check if record is valid
             if (!isRecordValid) {
@@ -613,25 +603,22 @@ public abstract class ActionObject implements IAction {
             WebRowSet wrs = getDbManager().getDataXML(sql, dbParams);
             setRowSet(wrs);
 
-            // collect the primary keys and delete the data
-            getRowSet().setReadOnly(false);
-            long[] idList = new long[getRowSet().size()];
+            // if there is no records then skip the process
+            if (getRowSet().size() > 0) {
+                // collect the primary keys and delete the data
+                long[] idList = new long[getRowSet().size()];
 
-            int index = 0;
-            getRowSet().beforeFirst();
-            while (getRowSet().next()) {
-                idList[index] = getRowSet().getLong(getActionConfig().getPrimaryId());
-                index++;
+                int index = 0;
+                getRowSet().beforeFirst();
+                while (getRowSet().next()) {
+                    idList[index] = getRowSet().getLong(getActionConfig().getPrimaryId());
+                    index++;
+                }
 
-                // delete the row from the record set
-                getRowSet().deleteRow();
+                result = Delete(idList);
+            } else {
+                result = 0;
             }
-
-            // put the updates in the original row
-            getRowSet().setOriginalRow();
-            getRowSet().setReadOnly(true);
-
-            result = Delete(idList);
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Refresh(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
@@ -649,6 +636,11 @@ public abstract class ActionObject implements IAction {
         Map<String, Object> spResult = null;
 
         try {
+            // if rowset is null, exit
+            if (getRowSet() == null) {
+                throw new Exception("RowSet is null.");
+            }
+
             // if insert procedure is not defined, exit
             if ((getActionConfig().getSQLInsert() == null) || (getActionConfig().getSQLInsert().isEmpty())) {
                 throw new Exception("No insert procedure defined.");
@@ -665,9 +657,18 @@ public abstract class ActionObject implements IAction {
             dbParams = new ArrayList<>();
 
             // store the parameter value
+            getRowSet().moveToInsertRow();
+
             Object o = null;
             for (int i = 0; i < getColumnCount(); i++) {
                 o = values[i];
+
+                // store the data into the rowset
+                if (o == null) {
+                    getRowSet().updateNull(i + 1);
+                } else {
+                    getRowSet().updateObject(i + 1, values[i]);
+                }
 
                 // if custom datatypes are defined, use them
                 if (!getColumnDataTypes().isEmpty()) {
@@ -679,6 +680,10 @@ public abstract class ActionObject implements IAction {
                 }
             }
 
+            // update the rowset
+            getRowSet().insertRow();
+            getRowSet().moveToCurrentRow();
+            
             // add the output parameters for status reporting
             dbParams.add(new DatabaseParameter("recid", DatabaseDataTypes.dtlong, true));
             dbParams.add(new DatabaseParameter("errorId", DatabaseDataTypes.dtlong, true));

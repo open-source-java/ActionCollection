@@ -170,34 +170,57 @@ public class ActionUnitTest {
 
                         count = si.Update(838, new String[]{"SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{4L, 2L});
                         System.out.println(".. records updated: " + count);
-                        System.out.println(si.toXML());
+                        //System.out.println(si.toXML());
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
 
+                    try {
                         si.Refresh(830);
-                        count = si.Delete(830);
+                        long count = si.Delete(830);
                         System.out.println(".. records deleted: " + count);
                         //System.out.println(si.toXML());
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
 
+                    try {
                         si.Refresh(new long[]{830, 838});
-                        count = si.Delete(new long[]{830, 838});
+                        long count = si.Delete(new long[]{830, 838});
                         System.out.println(".. records deleted: " + count);
                         //System.out.println(si.toXML());
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
 
-                        count = si.Delete("SITE LIKE ?", new Object[]{"DHALIWAL%"});
+                    try {
+                        long count = si.Delete("SITE LIKE ?", new Object[]{"DHALIWAL%"});
                         System.out.println(".. records deleted: " + count);
                         //System.out.println(si.toXML());
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
 
+                    try {
                         si.getRowSet().release();
 
                         //ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP
                         long recordNumber = si.Insert(new Object[]{505.0D, null, null, "SSD", "DHALIWAL", null, "ROHN", null, "V4", 0L, null, "PRIMARY", null, "ESD MORICHES", null, null, null, null, null, null});
+                        System.out.println(si.toXML());
                         System.out.println(".. record# inserted: " + recordNumber);
 
                         si.Refresh(new long[]{830, 838});
                         recordNumber = si.Insert(new String[]{"SITE_ID", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, 4L, 2L});
+                        System.out.println(si.toXML());
                         System.out.println(".. record# inserted: " + recordNumber);
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
 
+                    try {
                         si.Refresh(new long[]{838});
-                        recordNumber = si.Insert(new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
+                        long recordNumber = si.Insert(new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
+                        System.out.println(si.toXML());
                         System.out.println(".. record# inserted: " + recordNumber);
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());

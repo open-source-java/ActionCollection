@@ -152,14 +152,14 @@ BEGIN
    -- update the event to close it
    oCOUNT := 0;
 
+   /*
     DELETE ncs3.site
     WHERE site_id = isite_id;
-    
-    /*
+   */
+   
    UPDATE ncs3.site
       SET site = site || '_DEL'
     WHERE site_id = isite_id;
-   */
 
    oCOUNT := SQL%ROWCOUNT;
 
@@ -540,7 +540,7 @@ SELECT *
 
 SELECT *
   FROM ncs3.vwsite
- WHERE site IN ('MORICHES', 'DHALIWAL', 'DHALIWAL2');
+ WHERE site IN ('MORICHES', 'DHALIWAL', 'DHALIWAL2') OR (site like 'DHALIWAL%');
 
 UPDATE ncs3.site
    SET site = 'DETROIT', SITE_ANTENNA_ID = 9, SITE_CONFIG_ID = 4
