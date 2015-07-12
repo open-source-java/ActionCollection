@@ -27,6 +27,14 @@ public class ActionUnitTest {
         }
     }
 
+    public ActionUnitTest(String config) {
+        try {
+            af = new ActionFactory(config);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
     // test system identification object
     public void TestSystemIdentification() {
         SystemIdentification si = null;
@@ -353,5 +361,9 @@ public class ActionUnitTest {
                 System.out.println(ex.getMessage());
             }
         }
+
+        aut = new ActionUnitTest("config/app.config");
+
+        aut.TestSystemIdentification();
     }
 }

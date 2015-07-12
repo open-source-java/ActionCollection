@@ -10,7 +10,6 @@ import elsu.support.*;
 import java.util.*;
 import java.io.*;
 import org.apache.commons.lang3.*;
-import ac.config.*;
 
 /**
  * ConfigLoader is the base class for factory. The core purpose is to load the
@@ -59,35 +58,7 @@ public class ConfigLoader {
      * @throws Exception
      */
     public ConfigLoader() throws Exception {
-        try {
-            String configFile;
-
-            // if the config is already loaded, then exit
-            if (!getApplicationProperties().isEmpty()) {
-                return;
-            }
-            
-            // check is app.config and log4j.properties file is stored in the
-            // application; note, if variable already contains a path then 
-            // external config is used view package extraction
-            configFile = ConfigLoader.APPCONFIG;
-
-            // extract file to local file system
-            extractConfigFile(configFile);
-
-            // try to create the XML reader instance for XML document parsing
-            // using the app.config file location
-            _xmlr = new XMLReader(configFile);
-
-            // display the config to the user
-            showConfig();
-
-            // load the config into application or service properties hashMaps
-            initializeConfig(false);
-        } catch (Exception ex){
-            // display exception to the user and exit
-            System.out.println(getClass().toString() + "//" + ex.getMessage());
-        }
+        this(ConfigLoader.APPCONFIG);
     }
 
     /**
@@ -95,21 +66,43 @@ public class ConfigLoader {
      * through the string variable. Normally used by control service to pass
      * custom XML sent from the client.
      *
+     * updated to parse the config variable to determine if it is not a properly
+     * formatted xml (starts with "<?xml ")
+     *
      * @param configData is the XML data passed from the calling function.
      * @throws Exception
      */
-    public ConfigLoader(String configData) throws Exception {
+    public ConfigLoader(String config) throws Exception {
         try {
-            // try to create the XML reader instance for XML document parsing
-            // using the app.config file location
-            _xmlr = new XMLReader(configData);
+            // check the format, if raw xml?
+            if (config.startsWith("<?xml ")) {
+                // try to create the XML reader instance for XML document parsing
+                // using the app.config file location
+                _xmlr = new XMLReader(config);
+            } else {
+                // load the resource or file path
+                ConfigLoader.APPCONFIG = config;
+                String configFile;
+
+                // check is app.config and log4j.properties file is stored in the
+                // application; note, if variable already contains a path then 
+                // external config is used view package extraction
+                configFile = ConfigLoader.APPCONFIG;
+
+                // extract file to local file system
+                extractConfigFile(configFile);
+
+                // try to create the XML reader instance for XML document parsing
+                // using the app.config file location
+                _xmlr = new XMLReader(configFile);
+            }
 
             // display the config to the user
             showConfig();
 
             // load the config into application or service properties hashMaps
-            initializeConfig(true);
-        } catch (Exception ex){
+            initializeConfig();
+        } catch (Exception ex) {
             // display exception to the user and exit
             System.out.println(getClass().toString() + "//" + ex.getMessage());
         }
@@ -119,16 +112,14 @@ public class ConfigLoader {
      * initializeConfig() clears the storage application and service hashMaps
      * and then loads the app.config using XPath to reference each property.
      *
-     * @param initialization is true if this is the first time properties are
-     * being loaded
      * @throws Exception
      */
-    private void initializeConfig(boolean initialization) throws Exception {
-        // clear the properties only for initalization
-        if (initialization) {
-            // clear the storage hashMaps
-            getApplicationProperties().clear();
-        }
+    private void initializeConfig() throws Exception {
+        // clear the storage hashMaps
+        getApplicationProperties().clear();
+
+        // clear the storage hashMaps
+        getActionProperties().clear();
 
         // load the app.config into memory
         loadNodes(_xmlr.getDocument());
@@ -146,21 +137,24 @@ public class ConfigLoader {
     public Map<String, String> getApplicationProperties() {
         return this._applicationProperties;
     }
+
     public String getApplicationProperty(String key) {
         return getApplicationProperties().get(key);
     }
+
     /**
-     * getActionProperties() method returns the hashMap containing the
-     * action properties key/value pair extracted from the app.config
-     * action attributes section
+     * getActionProperties() method returns the hashMap containing the action
+     * properties key/value pair extracted from the app.config action attributes
+     * section
      *
      * @return <code>hashMap</code> key/value set of all action properties
      */
     public Map<String, Object> getActionProperties() {
         return this._actionProperties;
     }
+
     public ActionConfig getActionProperty(String key) {
-        return (ActionConfig)getActionProperties().get(key);
+        return (ActionConfig) getActionProperties().get(key);
     }
     // </editor-fold>
 
@@ -209,14 +203,14 @@ public class ConfigLoader {
                         // write the data to the output file and insert the new
                         // line terminator after each line
                         configOFile.write(line + GlobalStack.LINESEPARATOR);
-                        
+
                         // yield processing to other threads
                         Thread.yield();
                     }
 
                     // notify user the status of the config file
                     System.out.println("config file extracted successfully");
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     // if exception during processing, return it to the user
                     throw new Exception(getClass().toString() + "//"
                             + ex.getMessage());
@@ -224,18 +218,18 @@ public class ConfigLoader {
                     // close the input file to prevent resource leaks
                     try {
                         configIFile.close();
-                    } catch (Exception exi){
+                    } catch (Exception exi) {
                     }
 
                     // close the output file to prevent resource leaks
                     if (configOFile != null) {
                         try {
                             configOFile.flush();
-                        } catch (Exception exi){
+                        } catch (Exception exi) {
                         }
                         try {
                             configOFile.close();
-                        } catch (Exception exi){
+                        } catch (Exception exi) {
                         }
                     }
                 }
@@ -313,7 +307,7 @@ public class ConfigLoader {
             // yield processing to other threads
             Thread.yield();
         }
-        
+
         // load any actions defined into the config properties
         org.w3c.dom.NodeList actionNodes = _xmlr.getNodeListByXPath(
                 "/application/actions/action/@class");
@@ -341,7 +335,7 @@ public class ConfigLoader {
             // store the config in collection
             getActionProperties().remove(actionName);
             getActionProperties().put(actionName, action);
-            
+
             // yield processing to other threads
             Thread.yield();
         }
@@ -358,14 +352,14 @@ public class ConfigLoader {
      */
     private ActionConfig loadBaseConfig(String name) {
         ActionConfig config = null;
-        
+
         // store the service name in the config object
         String classId = name;
 
         // store the core action properties
         String columns = _xmlr.getNodeValueByXPath(
                 "/application/actions/action[@class='" + name + "']/SQL/columns");
-        
+
         String columnDataTypes = "";
         try {
             columnDataTypes = _xmlr.getNodeValueByXPath(
@@ -373,17 +367,17 @@ public class ConfigLoader {
         } catch (Exception exi) {
             columnDataTypes = "";
         }
-        
+
         // there can be two items for select (view and cursor)
         String[] select = _xmlr.getNodeValueByXPath(
                 "/application/actions/action[@class='" + name + "']/SQL/select").split(";");
-        
+
         String SQLSelect = select[0];
         String SQLCursor = "";
         if (select.length > 1) {
             SQLCursor = select[1];
         }
-        
+
         String SQLUpdate = _xmlr.getNodeValueByXPath(
                 "/application/actions/action[@class='" + name + "']/SQL/update");
         String SQLDelete = _xmlr.getNodeValueByXPath(
@@ -393,12 +387,12 @@ public class ConfigLoader {
 
         // store the action primary select property
         String primaryId = _xmlr.getNodeValueByXPath(
-                    "/application/actions/action[@class='" + name
-                    + "']/SQL/primary/params[@name='primary']");
-        
+                "/application/actions/action[@class='" + name
+                + "']/SQL/primary/params[@name='primary']");
+
         config = new ActionConfig(classId, columns, columnDataTypes, SQLSelect,
-            SQLCursor, SQLUpdate, SQLDelete, SQLInsert, primaryId);
-        
+                SQLCursor, SQLUpdate, SQLDelete, SQLInsert, primaryId);
+
         return config;
     }
 

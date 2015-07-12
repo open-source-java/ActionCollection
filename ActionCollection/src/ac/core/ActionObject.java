@@ -10,7 +10,6 @@ import elsu.database.*;
 import elsu.support.*;
 import java.util.*;
 import javax.sql.rowset.*;
-import ac.config.*;
 import java.sql.*;
 
 /**

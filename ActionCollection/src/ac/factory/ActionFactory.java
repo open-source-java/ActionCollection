@@ -23,6 +23,11 @@ public class ActionFactory {
         setDbManager();
     }
 
+    public ActionFactory(String config) throws Exception {
+        setConfig(config);
+        setDbManager();
+    }
+
     public ConfigLoader getConfig() {
         return this._config;
     }
@@ -30,6 +35,14 @@ public class ActionFactory {
     private void setConfig() {
         try {
             this._config = new ConfigLoader();
+        } catch (Exception ex) {
+
+        }
+    }
+
+    private void setConfig(String config) {
+        try {
+            this._config = new ConfigLoader(config);
         } catch (Exception ex) {
 
         }
