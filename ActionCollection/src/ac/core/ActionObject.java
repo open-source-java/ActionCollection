@@ -352,7 +352,7 @@ public abstract class ActionObject implements IAction {
     public WebRowSet Refresh(String[] columns) throws Exception {
         return Refresh(columns, null, null);
     }
-    
+
     @Override
     public WebRowSet Refresh(String[] columns, String whereClause, Object[] values) throws Exception {
         WebRowSet result = null;
@@ -794,30 +794,28 @@ public abstract class ActionObject implements IAction {
             if ((columns == null) || (values == null) || (columns.length != values.length)) {
                 throw new Exception("Columns or values is null (or) array lengths do not match.");
             }
-            if ((getRowSet() == null) || (getRowSet().size() == 0) || (getRowSet().size()) > 1) {
-                throw new Exception("Rowset is empty (or) contains more than one row.");
+            if ((getRowSet() == null) || (getRowSet().size() == 0)) {
+                throw new Exception("Rowset is empty.");
             }
 
             // update the memory record set with new values
             Object o = null;
-            getRowSet().setReadOnly(false);
 
             getRowSet().beforeFirst();
-            getRowSet().next();
-            for (int i = 0; i < columns.length; i++) {
-                getRowSet().updateObject(columns[i], values[i]);
+            while (getRowSet().next()) {
+                for (int i = 0; i < columns.length; i++) {
+                    getRowSet().updateObject(columns[i], values[i]);
+                }
+
+                // populate the row values to insert into data
+                rowValues = new Object[getColumnCount()];
+                for (int i = 1; i <= getColumnCount(); i++) {
+                    rowValues[i - 1] = getRowSet().getObject(i);
+                }
+
+                // call the overloaded function
+                result = Insert(rowValues);
             }
-
-            getRowSet().setReadOnly(true);
-
-            // populate the row values to insert into data
-            rowValues = new Object[getColumnCount()];
-            for (int i = 1; i <= getColumnCount(); i++) {
-                rowValues[i - 1] = getRowSet().getObject(i);
-            }
-
-            // call the overloaded function
-            result = Insert(rowValues);
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Insert(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());

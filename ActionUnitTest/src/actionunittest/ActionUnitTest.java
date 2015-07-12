@@ -56,148 +56,61 @@ public class ActionUnitTest {
             }
         }
 
-        // get two records for the site object
-        try {
-            if (si != null) {
-                TestRefresh(si, new long[]{838, 830});
-            }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        // get five records for the site object
-        try {
-            if (si != null) {
-                TestRefresh(si, new long[]{838, 830, 111, 843, 792});
-            }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        // retrieve all records for site with no params
-        try {
-            if (si != null) {
-                si.Refresh(null, null);
-
-                WebRowSet wrs = si.getRowSet();
-                System.out.println(si.toXML());
-                System.out.println(".. records selected: " + wrs.size());
-            }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        // filter site records for site_id with mask
-        try {
-            if (si != null) {
-                si.Refresh("SITE_ID LIKE ?", new Object[]{"9%"});
-
-                WebRowSet wrs = si.getRowSet();
-                System.out.println(si.toXML());
-                System.out.println(".. records selected: " + wrs.size());
-            }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        // filter site records for site_id with match
-        try {
-            if (si != null) {
-                si.Refresh("SITE_ID = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtint}, new Object[]{909});
-
-                WebRowSet wrs = si.getRowSet();
-                System.out.println(si.toXML());
-                System.out.println(".. records selected: " + wrs.size());
-            }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        // multiple tests for update, delete and insert
         if (si != null) {
-            try {
-                // update record for site id
-                TestRefresh(si, new long[]{838});
+            // get two records for the site object
+            TestRefresh(si, new long[]{838, 830});
 
-                WebRowSet wrs = si.getRowSet();
-                System.out.println(si.toXML());
+            // get five records for the site object
+            TestRefresh(si, new long[]{838, 830, 111, 843, 792});
 
-                wrs.beforeFirst();
-                wrs.next();
+            // retrieve all records for site with no params
+            TestRefresh(si);
 
-                String siteName = wrs.getString("SITE") + "_RST";
-                wrs.updateString("SITE", siteName);
+            // filter site records for site_id with mask
+            TestRefresh(si, "SITE_ID LIKE ?", new Object[]{"9%"});
 
-                long count = si.Update(838);
-                System.out.println(".. records updated: " + count);
+            // filter site records for site_id with match
+            TestRefresh(si, "SITE_ID = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtint}, new Object[]{909});
 
-                count = si.Update(838, new String[]{"SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{4L, 2L});
-                System.out.println(si.toXML());
-                System.out.println(".. records updated: " + count);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+            // test action object update for one site
+            TestUpdate(si, new long[]{838L}, "SITE", "_RST");
 
-            // delete record for site id
-            try {
-                TestRefresh(si, 830);
-                long count = si.Delete(830);
-                System.out.println(si.toXML());
-                System.out.println(".. records deleted: " + count);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+            // test action object update for multiple site
+            TestUpdate(si, new long[]{838L, 830L}, "SITE", "_RST");
 
-            // delete records for multiple site ids
-            try {
-                TestRefresh(si, new long[]{830, 838});
-                long count = si.Delete(new long[]{830, 838});
-                System.out.println(si.toXML());
-                System.out.println(".. records deleted: " + count);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+            // test action object update for multiple columns
+            TestUpdate(si, 838, new String[]{"SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{4L, 2L});
+            
+            // test action object delete for site
+            TestDelete(si, 838);
+            
+            // test action object delete for site
+            TestDelete(si, new long[]{830, 838});
+            
+            // test action object delete with where clause
+            TestDelete(si, "SITE LIKE ?", new Object[]{"DHALIWAL%"});
+            
+            // test action object for insert
+            TestInsert(si, new Object[]{505.0D, null, null, "SSD", "DHALIWAL", null, "ROHN", null, "V4", 0L, null, "PRIMARY", null, "ESD MORICHES", null, null, null, null, null, null});
+            
+            // test action object for insert with multiple sites
+            TestInsert(si, new long[]{830, 838}, new String[]{"SITE_ID", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, 4L, 2L});
+            
+            // test action object for insert with single site column change
+            TestInsert(si, new long[]{111, 830}, new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
+        }
+    }
 
-            // delete record with filter
-            try {
-                long count = si.Delete("SITE LIKE ?", new Object[]{"DHALIWAL%"});
-                System.out.println(si.toXML());
-                System.out.println(".. records deleted: " + count);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+    // test refresh for action object (no params)
+    public void TestRefresh(ActionObject ao) {
+        try {
+            ao.Refresh(null, null);
 
-            try {
-                si.getRowSet().release();
-
-                // insert new record from scratch
-                //ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP
-                long recordNumber = si.Insert(new Object[]{505.0D, null, null, "SSD", "DHALIWAL", null, "ROHN", null, "V4", 0L, null, "PRIMARY", null, "ESD MORICHES", null, null, null, null, null, null});
-                System.out.println(si.toXML());
-                System.out.println(".. record# inserted: " + recordNumber);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
-
-            try {
-                // try to insert multiple records with minor changes
-                TestRefresh(si, new long[]{830, 838});
-                long recordNumber = si.Insert(new String[]{"SITE_ID", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, 4L, 2L});
-                System.out.println(si.toXML());
-                System.out.println(".. record# inserted: " + recordNumber);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
-
-            try {
-                // try to insert record with change
-                TestRefresh(si, new long[]{838});
-                long recordNumber = si.Insert(new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
-                System.out.println(si.toXML());
-                System.out.println(".. record# inserted: " + recordNumber);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+            WebRowSet wrs = ao.getRowSet();
+            System.out.println(ao.toXML());
+            System.out.println(".. records selected: " + wrs.size());
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -226,6 +139,133 @@ public class ActionUnitTest {
                 System.out.println(ao.toXML());
                 System.out.println(".. records selected: " + wrs.size());
             }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    // test refresh for action object with whereclause/params
+    public void TestRefresh(ActionObject ao, String whereClause, Object[] values) {
+        try {
+            ao.Refresh(whereClause, values);
+
+            WebRowSet wrs = ao.getRowSet();
+            System.out.println(ao.toXML());
+            System.out.println(".. records selected: " + wrs.size());
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+    }
+
+    // test refresh action object with whereclause overriding value types
+    public void TestRefresh(ActionObject ao, String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) {
+        try {
+            ao.Refresh(whereClause, valueDataTypes, values);
+
+            WebRowSet wrs = ao.getRowSet();
+            System.out.println(ao.toXML());
+            System.out.println(".. records selected: " + wrs.size());
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    // test update action object
+    public void TestUpdate(ActionObject ao, long[] id, String column, String value) {
+        try {
+            // update record for site id
+            TestRefresh(ao, id);
+
+            WebRowSet wrs = ao.getRowSet();
+            System.out.println(ao.toXML());
+
+            wrs.beforeFirst();
+            wrs.next();
+
+            String siteName = wrs.getString(column) + "_" + value;
+            wrs.updateString(column, siteName);
+
+            long count = ao.Update(id[0]);
+            System.out.println(".. records updated: " + count);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    // test update action object
+    public void TestUpdate(ActionObject ao, long id, String[] columns, Object[] values) {
+        try {
+            // update record for site id
+            TestRefresh(ao, id);
+
+            long count = ao.Update(id, columns, values);
+            System.out.println(ao.toXML());
+            System.out.println(".. records updated: " + count);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    // test delete action object for site
+    public void TestDelete(ActionObject ao, long id) {
+        try {
+            TestRefresh(ao, id);
+            long count = ao.Delete(id);
+            System.out.println(ao.toXML());
+            System.out.println(".. records deleted: " + count);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    // test delete action object for multiple sites
+    public void TestDelete(ActionObject ao, long[] id) {
+        try {
+            TestRefresh(ao, id);
+            long count = ao.Delete(id);
+            System.out.println(ao.toXML());
+            System.out.println(".. records deleted: " + count);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    // test delete action object with where clause
+    public void TestDelete(ActionObject ao, String whereClause, Object[] values) {
+        try {
+            long count = ao.Delete(whereClause, values);
+            System.out.println(ao.toXML());
+            System.out.println(".. records deleted: " + count);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    // test insert action object
+    public void TestInsert(ActionObject ao, Object[] values) {
+        try {
+            ao.getRowSet().release();
+
+                // insert new record from scratch
+            //ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP
+            long recordNumber = ao.Insert(values);
+            System.out.println(ao.toXML());
+            System.out.println(".. record# inserted: " + recordNumber);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    // test insert action object with multiple sites
+    public void TestInsert(ActionObject ao, long[] id, String[] columns, Object[] values) {
+        try {
+            // try to insert multiple records with minor changes
+            TestRefresh(ao, new long[]{830, 838});
+            long recordNumber = ao.Insert(columns, values);
+            System.out.println(ao.toXML());
+            System.out.println(".. record# inserted: " + recordNumber);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
