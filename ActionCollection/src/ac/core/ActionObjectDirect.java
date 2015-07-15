@@ -48,11 +48,11 @@ public abstract class ActionObjectDirect {
 
             // store the siteId parameter value
             if (values != null) {
-                int paramId = 0;
-                for (Object o : values) {
-                    paramId++;
+                Object o = null;
+                for (int i = 0; i < values.length; i++) {
+                    o = values[i];
 
-                    dbParams.add(new DatabaseParameter("param" + paramId, valueDataTypes[paramId - 1],
+                    dbParams.add(new DatabaseParameter("param" + (i + 1), valueDataTypes[i],
                             o));
                 }
             }
@@ -91,11 +91,11 @@ public abstract class ActionObjectDirect {
             dbParams = new ArrayList<>();
 
             // store the siteId parameter value
-            int paramId = 0;
-            for (Object o : values) {
-                paramId++;
+            Object o = null;
+            for (int i = 0; i < values.length; i++) {
+                o = values[i];
 
-                dbParams.add(new DatabaseParameter("param" + paramId, valueDataTypes[paramId - 1],
+                dbParams.add(new DatabaseParameter("param" + (i + 1), valueDataTypes[i],
                         o));
             }
 
@@ -133,11 +133,11 @@ public abstract class ActionObjectDirect {
             dbParams = new ArrayList<>();
 
             // store the siteId parameter value
-            int paramId = 0;
-            for (Object o : values) {
-                paramId++;
+            Object o = null;
+            for (int i = 0; i < values.length; i++) {
+                o = values[i];
 
-                dbParams.add(new DatabaseParameter("param" + paramId, valueDataTypes[paramId - 1],
+                dbParams.add(new DatabaseParameter("param" + (i + 1), valueDataTypes[i],
                         o));
             }
 
@@ -187,9 +187,9 @@ public abstract class ActionObjectDirect {
             List<String> cList = Arrays.asList(columns);
 
             int maxColumns = rsmd.getColumnCount();
-            for (int i = 1; i <= maxColumns; i++) {
-                if (cList.indexOf(rsmd.getColumnName(i)) > -1) {
-                    map.put(rsmd.getColumnName(i), rowSet.getObject(i));
+            for (int i = 0; i < maxColumns; i++) {
+                if (cList.indexOf(rsmd.getColumnName(i + 1)) > -1) {
+                    map.put(rsmd.getColumnName(i + 1), rowSet.getObject(i + 1));
                 }
             }
         }

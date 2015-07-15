@@ -276,13 +276,17 @@ public abstract class ActionObject implements IAction {
             dbParams = new ArrayList<>();
 
             // store the siteId parameter value
-            int paramId = 0;
+            Object o = null;
             if (values != null) {
-                for (Object o : values) {
-                    paramId++;
+                for (int i = 0; i < values.length; i++) {
+                    o = values[i];
 
-                    dbParams.add(new DatabaseParameter("param" + paramId, DatabaseStack.getDataType(o),
-                            o));
+                    if (o == null) {
+                        getRowSet().updateNull(i + 1);
+                    } else {
+                        dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
+                                o));
+                    }
                 }
             }
 
@@ -324,13 +328,17 @@ public abstract class ActionObject implements IAction {
             dbParams = new ArrayList<>();
 
             // store the siteId parameter value
+            Object o = null;
             if (values != null) {
-                int paramId = 0;
-                for (Object o : values) {
-                    paramId++;
+                for (int i = 0; i < values.length; i++) {
+                    o = values[i];
 
-                    dbParams.add(new DatabaseParameter("param" + paramId, valueDataTypes[paramId - 1],
-                            o));
+                    if (o == null) {
+                        getRowSet().updateNull(i + 1);
+                    } else {
+                        dbParams.add(new DatabaseParameter("param" + (i + 1), valueDataTypes[i],
+                                o));
+                    }
                 }
             }
 
@@ -371,13 +379,17 @@ public abstract class ActionObject implements IAction {
             dbParams = new ArrayList<>();
 
             // store the siteId parameter value
-            int paramId = 0;
+            Object o = null;
             if (values != null) {
-                for (Object o : values) {
-                    paramId++;
+                for (int i = 0; i < values.length; i++) {
+                    o = values[i];
 
-                    dbParams.add(new DatabaseParameter("param" + paramId, DatabaseStack.getDataType(o),
-                            o));
+                    if (o == null) {
+                        getRowSet().updateNull(i + 1);
+                    } else {
+                        dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
+                                o));
+                    }
                 }
             }
 
@@ -425,15 +437,15 @@ public abstract class ActionObject implements IAction {
             getRowSet().beforeFirst();
             while (getRowSet().next()) {
                 if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
-                    for (int i = 1; i <= maxColumns; i++) {
-                        o = getRowSet().getObject(i);
+                    for (int i = 0; i < maxColumns; i++) {
+                        o = getRowSet().getObject(i + 1);
 
                         // if custom datatypes are defined, use them
                         if (!getColumnDataTypes().isEmpty()) {
-                            dbParams.add(new DatabaseParameter("param" + i, getColumnDataTypes().get(i - 1),
+                            dbParams.add(new DatabaseParameter("param" + (i + 1), getColumnDataTypes().get(i),
                                     o));
                         } else {
-                            dbParams.add(new DatabaseParameter("param" + i, DatabaseStack.getDataType(o),
+                            dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
                                     o));
                         }
                     }
@@ -514,8 +526,6 @@ public abstract class ActionObject implements IAction {
             }
 
             // update the memory record set with new values
-            Object o = null;
-
             getRowSet().beforeFirst();
             while (getRowSet().next()) {
                 if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
@@ -526,13 +536,12 @@ public abstract class ActionObject implements IAction {
                         } else {
                             getRowSet().updateObject(columns[i], values[i]);
                         }
-
-                        break;
                     }
-                }
 
-                // call the overloaded update
-                result = Update(id);
+                    // call the overloaded update
+                    result = Update(id);
+                    break;
+                }
             }
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Update(), "
@@ -546,6 +555,88 @@ public abstract class ActionObject implements IAction {
     @Override
     public long Update(long id, HashMap<String, Object> row) throws Exception {
         return Update(id, row.keySet().toArray(new String[0]), row.values().toArray());
+    }
+
+    @Override
+    public long Update(long id, String procedure, String[] columns, Object[] values) throws Exception {
+        long result = 0;
+        Map<String, Object> spResult = null;
+
+        try {
+            // if rowset is null, exit
+            if (getRowSet() == null) {
+                throw new Exception("RowSet is null.");
+            }
+
+            // if update procedure is not defined, exit
+            if ((procedure == null) || (procedure.isEmpty())) {
+                throw new Exception("No update procedure defined.");
+            }
+
+            // check if the number of columsn = number of values
+            if ((columns == null) || (values == null) || (columns.length != values.length)) {
+                throw new Exception("Update, columns or values is null (or) array lengths do not match.");
+            }
+
+            String sql = "{call " + getActionConfig().getSQLUpdate() + "("
+                    + StringStack.padString("", getColumns().size() + 3, "?", ",") + ")}";
+
+            ArrayList<DatabaseParameter> dbParams;
+            dbParams = new ArrayList<>();
+
+            // update the memory record set with new values
+            List<String> cList = Arrays.asList(columns);
+
+            getRowSet().beforeFirst();
+            while (getRowSet().next()) {
+                if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
+                    for (int i = 0; i < columns.length; i++) {
+                        // store the data into the rowset
+                        if (values[i] == null) {
+                            getRowSet().updateNull(columns[i]);
+                        } else {
+                            getRowSet().updateObject(columns[i], values[i]);
+                        }
+
+                        // update the dbparams with column values
+                        if (!getColumnDataTypes().isEmpty()) {
+                            dbParams.add(new DatabaseParameter("param" + (i + 1), getColumnDataTypes().get(cList.indexOf(columns[i])),
+                                    values[i]));
+                        } else {
+                            dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(values[i]),
+                                    values[i]));
+                        }
+                    }
+
+                    // add the output parameters for status reporting
+                    dbParams.add(new DatabaseParameter("count", DatabaseDataTypes.dtlong, true));
+                    dbParams.add(new DatabaseParameter("errorId", DatabaseDataTypes.dtlong, true));
+                    dbParams.add(new DatabaseParameter("status", DatabaseDataTypes.dtstring, true));
+
+                    spResult = getDbManager().executeProcedure(sql, dbParams);
+
+                    // check if error occured, report it
+                    Long errorCode = Long.parseLong(spResult.get("errorId").toString());
+                    if ((errorCode > 0) || (errorCode < 0)) {
+                        throw new Exception("SQL Exception, " + spResult.get("errorId").toString() + ", " + spResult.get("status").toString());
+                    }
+
+                    result = Integer.parseInt(spResult.get("count").toString());
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            Log4JManager.error(getClass().toString() + ", Update(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            throw new Exception(ex);
+        }
+
+        return result;
+    }
+
+    @Override
+    public long Update(long id, String procedure, HashMap<String, Object> row) throws Exception {
+        return Update(id, procedure, row.keySet().toArray(new String[0]), row.values().toArray());
     }
 
     @Override
@@ -653,22 +744,8 @@ public abstract class ActionObject implements IAction {
                         + GlobalStack.LINESEPARATOR + "No delete procedure defined.");
             }
 
-            String sql = getSQLSelect() + " WHERE " + whereClause;
-
-            ArrayList<DatabaseParameter> dbParams;
-            dbParams = new ArrayList<>();
-
-            // store the siteId parameter value
-            int paramId = 0;
-            for (Object o : values) {
-                paramId++;
-
-                dbParams.add(new DatabaseParameter("param" + paramId, DatabaseStack.getDataType(o),
-                        o));
-            }
-
             // get the records to delete
-            WebRowSet wrs = getDbManager().getDataXML(sql, dbParams);
+            WebRowSet wrs = Refresh(whereClause, values);
             setRowSet(wrs);
 
             // if there is no records then skip the process
@@ -808,8 +885,8 @@ public abstract class ActionObject implements IAction {
 
                 // populate the row values to insert into data
                 rowValues = new Object[getColumnCount()];
-                for (int i = 1; i <= getColumnCount(); i++) {
-                    rowValues[i - 1] = getRowSet().getObject(i);
+                for (int i = 0; i < getColumnCount(); i++) {
+                    rowValues[i] = getRowSet().getObject(i + 1);
                 }
 
                 // call the overloaded function
