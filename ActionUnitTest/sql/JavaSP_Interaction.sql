@@ -540,7 +540,7 @@ SELECT *
 
 SELECT *
   FROM ncs3.vwsite
- WHERE site IN ('MORICHES', 'DHALIWAL', 'DHALIWAL2') OR (site like 'DHALIWAL%');
+ WHERE site_id IN (830, 838) OR site IN ('MORICHES', 'DHALIWAL', 'DHALIWAL2') OR (site like 'DHALIWAL%');
 
 UPDATE ncs3.site
    SET site = 'DETROIT', SITE_ANTENNA_ID = 9, SITE_CONFIG_ID = 4

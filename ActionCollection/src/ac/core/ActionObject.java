@@ -132,6 +132,7 @@ public abstract class ActionObject implements IAction {
                 throw new Exception("No select procedure defined.");
             }
 
+            // this will always return zero records, just metadata is required
             String sql = getSQLSelect()
                     + " WHERE 1 = 2";
 
@@ -143,9 +144,9 @@ public abstract class ActionObject implements IAction {
 
             this._dataTypes.clear();
             this._dataTypesClass.clear();
-            for (int i = 1; i <= maxColumns; i++) {
-                this._dataTypes.add(rsmd.getColumnTypeName(i));
-                this._dataTypesClass.add(rsmd.getColumnClassName(i));
+            for (int i = 0; i < maxColumns; i++) {
+                this._dataTypes.add(rsmd.getColumnTypeName(i + 1));
+                this._dataTypesClass.add(rsmd.getColumnClassName(i + 1));
             }
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", discoverColumnsDataTypes(), "
@@ -235,6 +236,11 @@ public abstract class ActionObject implements IAction {
                 throw new Exception("No select procedure defined.");
             }
 
+            // if array is null or empty
+            if ((id == null) || (id.length == 0)) {
+                throw new Exception("id array is null (or) array length is zero.");
+            }
+
             String sql = "{call " + getActionConfig().getSQLCursor() + "(?, ?)}";
 
             ArrayList<DatabaseParameter> dbParams;
@@ -270,6 +276,10 @@ public abstract class ActionObject implements IAction {
             String sql = getSQLSelect();
             if (whereClause != null) {
                 sql += " WHERE " + whereClause;
+
+                if ((values == null) || (values.length == 0)) {
+                    throw new Exception("values is null (or) array length is zero.");
+                }
             }
 
             ArrayList<DatabaseParameter> dbParams;
@@ -281,12 +291,8 @@ public abstract class ActionObject implements IAction {
                 for (int i = 0; i < values.length; i++) {
                     o = values[i];
 
-                    if (o == null) {
-                        getRowSet().updateNull(i + 1);
-                    } else {
-                        dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
-                                o));
-                    }
+                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
+                            o));
                 }
             }
 
@@ -316,11 +322,9 @@ public abstract class ActionObject implements IAction {
             String sql = getSQLSelect();
             if (whereClause != null) {
                 sql += " WHERE " + whereClause;
-            }
 
-            if (whereClause != null) {
-                if ((valueDataTypes == null) || (values == null) || (valueDataTypes.length != values.length)) {
-                    throw new Exception("dataTypes or values is null (or) array lengths do not match.");
+                if ((valueDataTypes == null) || (values == null) || (valueDataTypes.length != values.length) || (values.length == 0)) {
+                    throw new Exception("dataTypes or values is null (or) array lengths do not match (or) array length is zero.");
                 }
             }
 
@@ -333,12 +337,8 @@ public abstract class ActionObject implements IAction {
                 for (int i = 0; i < values.length; i++) {
                     o = values[i];
 
-                    if (o == null) {
-                        getRowSet().updateNull(i + 1);
-                    } else {
-                        dbParams.add(new DatabaseParameter("param" + (i + 1), valueDataTypes[i],
-                                o));
-                    }
+                    dbParams.add(new DatabaseParameter("param" + (i + 1), valueDataTypes[i],
+                            o));
                 }
             }
 
@@ -366,13 +366,19 @@ public abstract class ActionObject implements IAction {
 
         try {
             String sql = getSQLSelect(columns);
-            if (whereClause != null) {
-                sql += " WHERE " + whereClause;
-            }
 
             // if select procedure is not defined, exit
             if ((sql == null) || (sql.isEmpty())) {
                 throw new Exception("No select procedure defined.");
+            }
+
+            if (whereClause != null) {
+                sql += " WHERE " + whereClause;
+
+                // if where clause is specified, then values cannot be null
+                if ((values == null) || (values.length == 0)) {
+                    throw new Exception("values is null (or) array length is zero.");
+                }
             }
 
             ArrayList<DatabaseParameter> dbParams;
@@ -492,7 +498,7 @@ public abstract class ActionObject implements IAction {
 
         // if update procedure is not defined, exit
         if ((getActionConfig().getSQLUpdate() == null) || (getActionConfig().getSQLUpdate().isEmpty())) {
-            return 0;
+            throw new Exception("No update procedure defined.");
         }
 
         // call the overloaded method to complete the update; this is assuming
@@ -508,6 +514,7 @@ public abstract class ActionObject implements IAction {
     @Override
     public long Update(long id, String[] columns, Object[] values) throws Exception {
         long result = 0;
+        boolean isRecordValid = false;
 
         try {
             // if rowset is null, exit
@@ -521,8 +528,8 @@ public abstract class ActionObject implements IAction {
             }
 
             // check if the number of columsn = number of values
-            if ((columns == null) || (values == null) || (columns.length != values.length)) {
-                throw new Exception("Update, columns or values is null (or) array lengths do not match.");
+            if ((columns == null) || (values == null) || (columns.length != values.length) || (values.length == 0)) {
+                throw new Exception("Update, columns or values is null (or) array lengths do not match (or) array length is zero.");
             }
 
             // update the memory record set with new values
@@ -538,10 +545,51 @@ public abstract class ActionObject implements IAction {
                         }
                     }
 
-                    // call the overloaded update
-                    result = Update(id);
+                    isRecordValid = true;
                     break;
                 }
+            }
+
+            // check if record is valid
+            if (!isRecordValid) {
+                throw new Exception("record not is present in the selected rowset.");
+            }
+
+            // call the overloaded update
+            result = Update(id);
+        } catch (Exception ex) {
+            Log4JManager.error(getClass().toString() + ", Update(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            throw new Exception(ex);
+        }
+
+        return result;
+    }
+
+    @Override
+    public long Update(long id[], String[] columns, Object[] values) throws Exception {
+        long result = 0;
+        boolean isRecordValid = false;
+
+        try {
+            // if rowset is null, exit
+            if (getRowSet() == null) {
+                throw new Exception("RowSet is null.");
+            }
+
+            // if update procedure is not defined, exit
+            if ((getActionConfig().getSQLUpdate() == null) || (getActionConfig().getSQLUpdate().isEmpty())) {
+                throw new Exception("No update procedure defined.");
+            }
+
+            // check if the number of columsn = number of values
+            if ((columns == null) || (values == null) || (columns.length != values.length) || (values.length == 0)) {
+                throw new Exception("Update, columns or values is null (or) array lengths do not match (or) array length is zero.");
+            }
+
+            // loop and update each record
+            for(long recId : id) {
+                result += Update(recId, columns, values);
             }
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Update(), "
@@ -560,6 +608,7 @@ public abstract class ActionObject implements IAction {
     @Override
     public long Update(long id, String procedure, String[] columns, Object[] values) throws Exception {
         long result = 0;
+        boolean isRecordValid = false;
         Map<String, Object> spResult = null;
 
         try {

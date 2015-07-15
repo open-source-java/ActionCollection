@@ -65,10 +65,6 @@ ac.core.ConfigLoader
 java.lang.Object
 java.lang.ClassLoader
 java.lang.String
-||:ac.factory.objects.SystemIdentification
-ac.core.ActionObject
-ac.factory.objects.SystemIdentification
-java.lang.Exception
 ||:ac.factory.ActionFactory
 java.lang.StringBuilder
 ac.core.ConfigLoader
@@ -83,6 +79,10 @@ java.util.Map
 java.lang.Object
 java.lang.String
 java.lang.Integer
+java.lang.Exception
+||:ac.factory.objects.SystemIdentification
+ac.core.ActionObject
+ac.factory.objects.SystemIdentification
 java.lang.Exception
 ||:ac.core.ActionConfig
 java.lang.Object

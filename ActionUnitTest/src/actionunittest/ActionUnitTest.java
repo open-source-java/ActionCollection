@@ -88,22 +88,22 @@ public class ActionUnitTest {
 
             // test action object update for multiple columns
             TestUpdate(si, 838, new String[]{"SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{4L, 2L});
-            
+
             // test action object delete for site
             TestDelete(si, 838);
-            
+
             // test action object delete for site
             TestDelete(si, new long[]{830, 838});
-            
+
             // test action object delete with where clause
             TestDelete(si, "SITE LIKE ?", new Object[]{"DHALIWAL%"});
-            
+
             // test action object for insert
             TestInsert(si, new Object[]{505.0D, null, null, "SSD", "DHALIWAL", null, "ROHN", null, "V4", 0L, null, "PRIMARY", null, "ESD MORICHES", null, null, null, null, null, null});
-            
+
             // test action object for insert with multiple sites
             TestInsert(si, new long[]{830, 838}, new String[]{"SITE_ID", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, 4L, 2L});
-            
+
             // test action object for insert with single site column change
             TestInsert(si, new long[]{111, 830}, new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
         }
@@ -183,20 +183,11 @@ public class ActionUnitTest {
     // test update action object
     public void TestUpdate(ActionObject ao, long[] id, String column, String value) {
         try {
-            // update record for site id
-            TestRefresh(ao, id);
+            ao.Refresh(id);
 
             WebRowSet wrs = ao.getRowSet();
             System.out.println(ao.toXML());
-
-            wrs.beforeFirst();
-            wrs.next();
-
-            String siteName = wrs.getString(column) + "_" + value;
-            wrs.updateString(column, siteName);
-
-            long count = ao.Update(id[0]);
-            System.out.println(".. records updated: " + count);
+            System.out.println(".. records selected: " + wrs.size());
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -256,7 +247,7 @@ public class ActionUnitTest {
         try {
             ao.getRowSet().release();
 
-                // insert new record from scratch
+            // insert new record from scratch
             //ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP
             long recordNumber = ao.Insert(values);
             System.out.println(ao.toXML());
@@ -283,7 +274,13 @@ public class ActionUnitTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ActionUnitTest aut = new ActionUnitTest();
+        ActionUnitTest aut = null;
+
+        if (args.length > 0) {
+            aut = new ActionUnitTest(args[0]);
+        } else {
+            aut = new ActionUnitTest();
+        }
 
         aut.TestSystemIdentification();
         aut.TestSite();
