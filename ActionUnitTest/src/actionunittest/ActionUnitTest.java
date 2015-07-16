@@ -10,6 +10,7 @@ import ac.factory.objects.*;
 import javax.sql.rowset.*;
 import ac.factory.*;
 import elsu.database.*;
+import javax.sql.rowset.spi.*;
 
 /**
  *
@@ -81,7 +82,13 @@ public class ActionUnitTest {
             TestRefresh(si, "SITE_ID = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtint}, new Object[]{909});
 
             // test action object update for one site
+            try {
+            SyncFactory.registerProvider("ac.support.syncprovider.DummyRowSetSyncProvider");
+            si.getRowSet().setSyncProvider("ac.support.syncprovider.DummyRowSetSyncProvider");
             TestUpdate(si, new long[]{838L}, "SITE", "_RST");
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
 
             // test action object update for multiple site
             TestUpdate(si, new long[]{838L, 830L}, "SITE", "_RST");
@@ -105,7 +112,7 @@ public class ActionUnitTest {
             TestInsert(si, new long[]{830, 838}, new String[]{"SITE_ID", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, 4L, 2L});
 
             // test action object for insert with single site column change
-            TestInsert(si, new long[]{111, 830}, new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
+            TestInsert(si, new long[]{111}, new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
         }
     }
 
@@ -333,9 +340,8 @@ public class ActionUnitTest {
                 System.out.println(ex.getMessage());
             }
 
-            WebRowSet wrs = null;
             try {
-                wrs = ActionObjectDirect.View(aut.af.getDbManager(),
+                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"DHALIWAL2"});
                 //System.out.println(ActionObject.toXML(wrs));

@@ -20,6 +20,7 @@ public abstract class ActionObject implements IAction {
 
     private ConfigLoader _config = null;
     private DatabaseManager _dbManager = null;
+    private String _syncProvider = "";
     private ActionConfig _actionConfig = null;
     private WebRowSet _rowSet = null;
     private List<String> _columns = new ArrayList<>();
@@ -53,6 +54,8 @@ public abstract class ActionObject implements IAction {
 
         this._dbManager = dbManager;
         discoverColumnsDataTypes();
+
+        this._syncProvider = getConfig().getApplicationProperty("rowset.sync.provider");
     }
 
     @Override
@@ -75,7 +78,7 @@ public abstract class ActionObject implements IAction {
         return this._rowSet;
     }
 
-    protected void setRowSet(WebRowSet rowSet) {
+    protected void setRowSet(WebRowSet rowSet) throws Exception {
         // clear old to allow GC to select on first run
         if (getRowSet() != null) {
             try {
@@ -86,6 +89,11 @@ public abstract class ActionObject implements IAction {
                 wrs.close();
             } catch (Exception exi) {
             }
+        }
+
+        // set the sync provider to custom provider if defined
+        if (rowSet != null) {
+            rowSet.setSyncProvider(getSyncProvider());
         }
 
         this._rowSet = rowSet;
@@ -118,6 +126,10 @@ public abstract class ActionObject implements IAction {
 
     public List<DatabaseDataTypes> getColumnDataTypes() {
         return this._columnDataTypes;
+    }
+
+    public String getSyncProvider() {
+        return this._syncProvider;
     }
 
     private void discoverColumnsDataTypes() throws Exception {
@@ -443,6 +455,9 @@ public abstract class ActionObject implements IAction {
             getRowSet().beforeFirst();
             while (getRowSet().next()) {
                 if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
+                    // accept any pending changes for the row
+                    getRowSet().acceptChanges();
+
                     for (int i = 0; i < maxColumns; i++) {
                         o = getRowSet().getObject(i + 1);
 
@@ -545,6 +560,10 @@ public abstract class ActionObject implements IAction {
                         }
                     }
 
+                    // update the memory dataset and accept changes
+                    getRowSet().updateRow();
+                    getRowSet().acceptChanges();
+
                     isRecordValid = true;
                     break;
                 }
@@ -588,7 +607,7 @@ public abstract class ActionObject implements IAction {
             }
 
             // loop and update each record
-            for(long recId : id) {
+            for (long recId : id) {
                 result += Update(recId, columns, values);
             }
         } catch (Exception ex) {
@@ -657,6 +676,10 @@ public abstract class ActionObject implements IAction {
                         }
                     }
 
+                    // update the memory dataset and accept changes
+                    getRowSet().updateRow();
+                    getRowSet().acceptChanges();
+
                     // add the output parameters for status reporting
                     dbParams.add(new DatabaseParameter("count", DatabaseDataTypes.dtlong, true));
                     dbParams.add(new DatabaseParameter("errorId", DatabaseDataTypes.dtlong, true));
@@ -720,6 +743,7 @@ public abstract class ActionObject implements IAction {
 
                     // delete the row from the record set
                     getRowSet().deleteRow();
+                    getRowSet().acceptChanges();
 
                     isRecordValid = true;
                     break;
@@ -877,6 +901,7 @@ public abstract class ActionObject implements IAction {
             // update the rowset
             getRowSet().insertRow();
             getRowSet().moveToCurrentRow();
+            getRowSet().acceptChanges();
 
             // add the output parameters for status reporting
             dbParams.add(new DatabaseParameter("recid", DatabaseDataTypes.dtlong, true));

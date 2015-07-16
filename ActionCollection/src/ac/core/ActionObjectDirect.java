@@ -11,6 +11,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 import javax.sql.rowset.*;
+import javax.sql.rowset.spi.*;
 
 /**
  *
@@ -18,6 +19,32 @@ import javax.sql.rowset.*;
  */
 public abstract class ActionObjectDirect {
 
+    private static String _SYNCPROVIDER = "";
+    
+    public static String getSyncProvider() {
+        return ActionObjectDirect._SYNCPROVIDER;
+    }
+    
+    public static void setSyncProvider(String syncProvider) throws Exception {
+        boolean installed = false;
+
+        if ((syncProvider != null) && (!syncProvider.isEmpty())) {
+            java.util.Enumeration e = SyncFactory.getRegisteredProviders();
+            while (e.hasMoreElements()) {
+                e.nextElement();
+
+                if (e.getClass().toString().replaceAll("class ", "").equals(syncProvider)) {
+                    installed = true;
+                    break;
+                }
+            }
+
+            if (!installed) {
+                SyncFactory.registerProvider(syncProvider);
+            }
+        }
+    }
+    
     public static WebRowSet View(DatabaseManager dbManager, String SQLStmt, String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception {
         WebRowSet result = null;
 
@@ -58,6 +85,11 @@ public abstract class ActionObjectDirect {
             }
 
             result = dbManager.getDataXML(sql, dbParams);
+            
+            // update syncprovide if defined
+            if ((ActionObjectDirect.getSyncProvider() != null) && (!ActionObjectDirect.getSyncProvider().isEmpty())) {
+                result.setSyncProvider(ActionObjectDirect.getSyncProvider());
+            }
         } catch (Exception ex) {
             throw new Exception("class ActionObjectDirect, View(), " + ex.getMessage());
         }
@@ -100,6 +132,11 @@ public abstract class ActionObjectDirect {
             }
 
             result = dbManager.getDataXMLViaCursor(sql, dbParams);
+            
+            // update syncprovide if defined
+            if ((ActionObjectDirect.getSyncProvider() != null) && (!ActionObjectDirect.getSyncProvider().isEmpty())) {
+                result.setSyncProvider(ActionObjectDirect.getSyncProvider());
+            }
         } catch (Exception ex) {
             throw new Exception("class ActionObjectDirect, Cursor(), " + ex.getMessage());
         }

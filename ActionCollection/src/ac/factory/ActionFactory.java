@@ -8,6 +8,7 @@ package ac.factory;
 import ac.core.*;
 import elsu.database.*;
 import java.lang.reflect.*;
+import javax.sql.rowset.spi.*;
 
 /**
  *
@@ -21,11 +22,44 @@ public class ActionFactory {
     public ActionFactory() throws Exception {
         setConfig();
         setDbManager();
+
+        initialize();
     }
 
     public ActionFactory(String config) throws Exception {
         setConfig(config);
         setDbManager();
+
+        initialize();
+    }
+
+    private void initialize() throws Exception {
+        String syncProvider = getConfig().getApplicationProperty("rowset.sync.provider");
+        boolean installed = false;
+
+        if ((syncProvider != null) && (!syncProvider.isEmpty())) {
+            java.util.Enumeration e = SyncFactory.getRegisteredProviders();
+            while (e.hasMoreElements()) {
+                e.nextElement();
+
+                if (e.getClass().toString().replaceAll("class ", "").equals(syncProvider)) {
+                    installed = true;
+                    break;
+                }
+            }
+
+            if (!installed) {
+                SyncFactory.registerProvider(syncProvider);
+
+                // log error for tracking
+                getConfig().logInfo(getClass().toString() + ", initialize(), "
+                        + "sync provider installed.");
+            } else {
+                // log error for tracking
+                getConfig().logError(getClass().toString() + ", initialize(), "
+                        + "sync provider already installed.");
+            }
+        }
     }
 
     public ConfigLoader getConfig() {
@@ -91,35 +125,35 @@ public class ActionFactory {
             }
         }
     }
-    
+
     public IAction getClassByName(String className) throws Exception {
         IAction result = null;
-        
-        for(String key : getConfig().getActionProperties().keySet()) {
+
+        for (String key : getConfig().getActionProperties().keySet()) {
             if (key.equals(className)) {
-                    // using reflection, load the class for the service
-                    Class<?> actionClass = Class.forName(className);
-                
-                    // create service constructor discovery type parameter array
-                    // populate it with the required class types
-                    Class<?>[] argTypes = {ConfigLoader.class, DatabaseManager.class};
+                // using reflection, load the class for the service
+                Class<?> actionClass = Class.forName(className);
 
-                    // retrieve the matching constructor for the service using
-                    // reflection
-                    Constructor<?> cons = actionClass.getDeclaredConstructor(
-                            argTypes);
+                // create service constructor discovery type parameter array
+                // populate it with the required class types
+                Class<?>[] argTypes = {ConfigLoader.class, DatabaseManager.class};
 
-                    // create parameter array and populate it with values to 
-                    // pass to the service constructor
-                    Object[] arguments
-                            = {getConfig(), getDbManager()};
+                // retrieve the matching constructor for the service using
+                // reflection
+                Constructor<?> cons = actionClass.getDeclaredConstructor(
+                        argTypes);
 
-                    // create new instance of the service using the discovered
-                    // constructor and parameters
-                    result = (IAction) cons.newInstance(arguments);
+                // create parameter array and populate it with values to 
+                // pass to the service constructor
+                Object[] arguments
+                        = {getConfig(), getDbManager()};
+
+                // create new instance of the service using the discovered
+                // constructor and parameters
+                result = (IAction) cons.newInstance(arguments);
             }
         }
-        
+
         // return new class
         return result;
     }
