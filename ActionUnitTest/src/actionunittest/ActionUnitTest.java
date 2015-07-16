@@ -183,11 +183,7 @@ public class ActionUnitTest {
     // test update action object
     public void TestUpdate(ActionObject ao, long[] id, String column, String value) {
         try {
-            ao.Refresh(id);
-
-            WebRowSet wrs = ao.getRowSet();
-            System.out.println(ao.toXML());
-            System.out.println(".. records selected: " + wrs.size());
+            TestUpdate(ao, id, new String[]{column}, new Object[]{value});
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -195,6 +191,20 @@ public class ActionUnitTest {
 
     // test update action object
     public void TestUpdate(ActionObject ao, long id, String[] columns, Object[] values) {
+        try {
+            // update record for site id
+            TestRefresh(ao, id);
+
+            long count = ao.Update(id, columns, values);
+            System.out.println(ao.toXML());
+            System.out.println(".. records updated: " + count);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    // test update action object
+    public void TestUpdate(ActionObject ao, long[] id, String[] columns, Object[] values) {
         try {
             // update record for site id
             TestRefresh(ao, id);
@@ -276,11 +286,7 @@ public class ActionUnitTest {
     public static void main(String[] args) {
         ActionUnitTest aut = null;
 
-        if (args.length > 0) {
-            aut = new ActionUnitTest(args[0]);
-        } else {
-            aut = new ActionUnitTest();
-        }
+        aut = new ActionUnitTest();
 
         aut.TestSystemIdentification();
         aut.TestSite();
@@ -341,14 +347,6 @@ public class ActionUnitTest {
             try {
                 long siteId = 830L;
 
-                if (wrs != null) {
-                    wrs.beforeFirst();
-                    while (wrs.next()) {
-                        siteId = wrs.getLong("SITE_ID");
-                        break;
-                    }
-                }
-
                 long count = ActionObjectDirect.Execute(aut.af.getDbManager(),
                         "NCS3.SPD_SITE",
                         new DatabaseDataTypes[]{DatabaseDataTypes.dtlong}, new Object[]{siteId});
@@ -359,8 +357,12 @@ public class ActionUnitTest {
             }
         }
 
-        aut = new ActionUnitTest("config/app.config");
+        if (args.length > 0) {
+            aut = new ActionUnitTest(args[0]);
 
-        aut.TestSystemIdentification();
+            if (aut.af != null) {
+                aut.TestSystemIdentification();
+            }
+        }
     }
 }
