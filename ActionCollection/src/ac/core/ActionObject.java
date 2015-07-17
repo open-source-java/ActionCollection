@@ -11,7 +11,7 @@ import elsu.support.*;
 import java.util.*;
 import javax.sql.rowset.*;
 import java.sql.*;
-import javax.sql.rowset.spi.SyncFactory;
+import javax.sql.rowset.spi.*;
 
 /**
  *
@@ -212,11 +212,6 @@ public abstract class ActionObject implements IAction {
     }
 
     @Override
-    public WebRowSet Refresh() throws Exception {
-        return Refresh(null, null);
-    }
-
-    @Override
     public WebRowSet Append(WebRowSet wrs) throws Exception {
         WebRowSet result = getRowSet();
         boolean matchOk = false;
@@ -240,7 +235,7 @@ public abstract class ActionObject implements IAction {
                 throw new Exception("source and destination rowsets do not have same columns.");
             }
 
-            for (int i = 0; i < oRSMD.getColumnCount(); i++) {
+            for (int i = 1; i <= oRSMD.getColumnCount(); i++) {
                 // compare columnname, columnprecision, columnscale, columntype
                 if ((oRSMD.getColumnClassName(i).equals(pRSMD.getColumnClassName(i)))
                         && (oRSMD.getColumnName(i).equals(pRSMD.getColumnName(i)))
@@ -265,7 +260,7 @@ public abstract class ActionObject implements IAction {
                 result.afterLast();
                 result.moveToInsertRow();
 
-                for (int i = 0; i < wrs.size(); i++) {
+                for (int i = 1; i <= oRSMD.getColumnCount(); i++) {
                     result.updateObject(i, wrs.getObject(i));
                 }
 
@@ -281,6 +276,11 @@ public abstract class ActionObject implements IAction {
         }
 
         return result;
+    }
+
+    @Override
+    public WebRowSet Refresh() throws Exception {
+        return Refresh(null, null);
     }
 
     @Override
@@ -417,8 +417,9 @@ public abstract class ActionObject implements IAction {
                 sql += " WHERE " + whereClause;
 
                 // if where clause is specified, then values cannot be null
-                if ((valueDataTypes == null) || (values == null) || (valueDataTypes.length != values.length) || (values.length == 0)) {
-                    throw new Exception("dataTypes or values is null (or) array lengths do not match (or) array length is zero.");
+                if ((valueDataTypes != null)
+                        && ((valueDataTypes.length == 0) || (values == null) || (values.length == 0))) {
+                    throw new Exception("values array length is zero.");
                 }
             }
             if ((getOrderBy() != null) && (!getOrderBy().isEmpty())) {
@@ -528,8 +529,9 @@ public abstract class ActionObject implements IAction {
                 sql += " WHERE " + whereClause;
 
                 // if where clause is specified, then values cannot be null
-                if ((valueDataTypes == null) || (values == null) || (valueDataTypes.length != values.length) || (values.length == 0)) {
-                    throw new Exception("dataTypes or values is null (or) array lengths do not match (or) array length is zero.");
+                if ((valueDataTypes != null)
+                        && ((valueDataTypes.length == 0) || (values == null) || (values.length == 0))) {
+                    throw new Exception("values array length is zero.");
                 }
             }
             if ((getOrderBy() != null) && (!getOrderBy().isEmpty())) {

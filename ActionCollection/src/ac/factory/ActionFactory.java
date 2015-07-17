@@ -34,7 +34,7 @@ public class ActionFactory {
     }
 
     private void initialize() throws Exception {
-        String syncProvider = getConfig().getApplicationProperty("rowset.sync.provider");
+        String syncProvider = getSyncProvider();
         boolean installed = false;
 
         if ((syncProvider != null) && (!syncProvider.isEmpty())) {
@@ -156,5 +156,9 @@ public class ActionFactory {
 
         // return new class
         return result;
+    }
+    
+    public String getSyncProvider() {
+        return getConfig().getApplicationProperty("rowset.sync.provider");
     }
 }

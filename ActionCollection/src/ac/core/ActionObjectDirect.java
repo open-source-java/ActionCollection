@@ -20,11 +20,11 @@ import javax.sql.rowset.spi.*;
 public abstract class ActionObjectDirect {
 
     private static String _SYNCPROVIDER = "";
-    
+
     public static String getSyncProvider() {
         return ActionObjectDirect._SYNCPROVIDER;
     }
-    
+
     public static void setSyncProvider(String syncProvider) throws Exception {
         boolean installed = false;
 
@@ -44,7 +44,7 @@ public abstract class ActionObjectDirect {
             }
         }
     }
-    
+
     public static WebRowSet View(DatabaseManager dbManager, String SQLStmt, String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception {
         WebRowSet result = null;
 
@@ -64,10 +64,9 @@ public abstract class ActionObjectDirect {
                 sql += " WHERE " + whereClause;
             }
 
-            if (((valueDataTypes == null) && (values != null))
-                    || ((valueDataTypes != null) && (values == null))
-                    || ((valueDataTypes != null) && (values != null) && (valueDataTypes.length != values.length))) {
-                throw new Exception("dataTypes or values is null (or) array lengths do not match.");
+            if ((valueDataTypes != null)
+                    && ((valueDataTypes.length == 0) || (values == null) || (values.length == 0))) {
+                throw new Exception("values array length is zero.");
             }
 
             ArrayList<DatabaseParameter> dbParams;
@@ -85,7 +84,7 @@ public abstract class ActionObjectDirect {
             }
 
             result = dbManager.getDataXML(sql, dbParams);
-            
+
             // update syncprovide if defined
             if ((ActionObjectDirect.getSyncProvider() != null) && (!ActionObjectDirect.getSyncProvider().isEmpty())) {
                 result.setSyncProvider(ActionObjectDirect.getSyncProvider());
@@ -132,7 +131,7 @@ public abstract class ActionObjectDirect {
             }
 
             result = dbManager.getDataXMLViaCursor(sql, dbParams);
-            
+
             // update syncprovide if defined
             if ((ActionObjectDirect.getSyncProvider() != null) && (!ActionObjectDirect.getSyncProvider().isEmpty())) {
                 result.setSyncProvider(ActionObjectDirect.getSyncProvider());

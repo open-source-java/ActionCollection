@@ -9,6 +9,7 @@ import ac.core.*;
 import ac.factory.objects.*;
 import javax.sql.rowset.*;
 import ac.factory.*;
+import elsu.common.CollectionStack;
 import elsu.database.*;
 import javax.sql.rowset.spi.*;
 
@@ -80,6 +81,9 @@ public class ActionUnitTest {
 
             // filter site records for site_id with match
             TestRefresh(si, "SITE_ID = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtint}, new Object[]{909});
+
+            // append result from one to other
+            TestAppend(si, new long[]{838, 830}, new long[]{111, 843, 792});
 
             // test action object update for one site
             try {
@@ -183,6 +187,25 @@ public class ActionUnitTest {
             WebRowSet wrs = ao.getRowSet();
             System.out.println(ao.toXML());
             System.out.println(".. records selected: " + wrs.size());
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    // test append action object
+    public void TestAppend(ActionObject ao, long[] firstRS, long[] secondRS) {
+        try {
+            WebRowSet wrs = ActionObjectDirect.View(af.getDbManager(), 
+                    "SELECT ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP FROM NCS3.VWSITE", 
+                    "SITE_ID IN (SELECT * FROM TABLE (?))", new DatabaseDataTypes[]{DatabaseDataTypes.dtarray}, 
+                    new Object[]{secondRS});
+            System.out.println(ActionObjectDirect.toXML(wrs));
+
+            ao.Refresh(firstRS);
+            ao.Append(wrs);
+            
+            System.out.println(ao.toXML());
+            System.out.println(".. records selected: " + ao.getRowSet().size());
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -308,7 +331,15 @@ public class ActionUnitTest {
     public static void main(String[] args) {
         ActionUnitTest aut = null;
 
+        // create the factory class
         aut = new ActionUnitTest();
+
+        // update the action object direct syncprovider (if applicable)
+        try {
+            ActionObjectDirect.setSyncProvider(aut.af.getSyncProvider());
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
 
         aut.TestSystemIdentification();
         aut.TestSite();
