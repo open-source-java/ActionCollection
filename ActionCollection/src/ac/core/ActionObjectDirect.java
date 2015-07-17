@@ -41,6 +41,7 @@ public abstract class ActionObjectDirect {
 
             if (!installed) {
                 SyncFactory.registerProvider(syncProvider);
+                ActionObjectDirect._SYNCPROVIDER = syncProvider;
             }
         }
     }
