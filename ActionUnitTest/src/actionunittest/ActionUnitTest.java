@@ -83,9 +83,7 @@ public class ActionUnitTest {
 
             // test action object update for one site
             try {
-            SyncFactory.registerProvider("ac.support.syncprovider.DummyRowSetSyncProvider");
-            si.getRowSet().setSyncProvider("ac.support.syncprovider.DummyRowSetSyncProvider");
-            TestUpdate(si, new long[]{838L}, "SITE", "_RST");
+                TestUpdate(si, new long[]{838L}, "SITE", "_RST");
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
@@ -95,6 +93,9 @@ public class ActionUnitTest {
 
             // test action object update for multiple columns
             TestUpdate(si, 838, new String[]{"SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{4L, 2L});
+
+            // test action object update for multiple columns
+            TestUpdate(si, "NCS3.SPU_SITE", new long[]{111, 830}, new String[]{"SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{1L, 2L});
 
             // test action object delete for site
             TestDelete(si, 838);
@@ -224,6 +225,20 @@ public class ActionUnitTest {
         }
     }
 
+    // test update action object
+    public void TestUpdate(ActionObject ao, String procedure, long[] id, String[] columns, Object[] values) {
+        try {
+            // update record for site id
+            TestRefresh(ao, id);
+
+            long count = ao.Update(id, columns, values);
+            System.out.println(ao.toXML());
+            System.out.println(".. records updated: " + count);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
     // test delete action object for site
     public void TestDelete(ActionObject ao, long id) {
         try {
@@ -278,7 +293,7 @@ public class ActionUnitTest {
     public void TestInsert(ActionObject ao, long[] id, String[] columns, Object[] values) {
         try {
             // try to insert multiple records with minor changes
-            TestRefresh(ao, new long[]{830, 838});
+            TestRefresh(ao, id);
             long recordNumber = ao.Insert(columns, values);
             System.out.println(ao.toXML());
             System.out.println(".. record# inserted: " + recordNumber);

@@ -368,6 +368,14 @@ public class ConfigLoader {
             columnDataTypes = "";
         }
 
+        String orderBy = "";
+        try {
+            orderBy = _xmlr.getNodeValueByXPath(
+                    "/application/actions/action[@class='" + name + "']/SQL/orderBy");
+        } catch (Exception exi) {
+            orderBy = "";
+        }
+
         // there can be two items for select (view and cursor)
         String[] select = _xmlr.getNodeValueByXPath(
                 "/application/actions/action[@class='" + name + "']/SQL/select").split(";");
@@ -391,7 +399,7 @@ public class ConfigLoader {
                 + "']/SQL/primary/params[@name='primary']");
 
         config = new ActionConfig(classId, columns, columnDataTypes, SQLSelect,
-                SQLCursor, SQLUpdate, SQLDelete, SQLInsert, primaryId);
+                SQLCursor, SQLUpdate, SQLDelete, SQLInsert, primaryId, orderBy);
 
         return config;
     }

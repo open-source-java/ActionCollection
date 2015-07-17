@@ -3,10 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/M:/Github/ActionCollection/ActionCollection/src/ac/core/ActionObjectDirect.java</file>
-            <file>file:/M:/Github/ActionCollection/ActionCollection/src/ac/core/ActionObject.java</file>
-            <file>file:/M:/Github/ActionCollection/ActionCollection/src/ac/core/IAction.java</file>
-            <file>file:/M:/Github/ActionCollection/ActionCollection/src/ac/factory/ActionFactory.java</file>
+            <file>file:/M:/GitHub/ActionCollection/ActionCollection/src/ac/core/ActionObject.java</file>
+            <file>file:/M:/GitHub/ActionCollection/ActionCollection/src/ac/core/ActionObjectDirect.java</file>
+            <file>file:/M:/GitHub/ActionCollection/ActionCollection/src/ac/core/ConfigLoader.java</file>
+            <file>file:/M:/GitHub/ActionCollection/ActionCollection/src/ac/config/app.config</file>
+            <file>file:/M:/GitHub/ActionCollection/ActionCollection/src/ac/core/ActionConfig.java</file>
+            <file>file:/M:/GitHub/ActionCollection/ActionCollection/src/ac/core/IAction.java</file>
         </group>
     </open-files>
 </project-private>

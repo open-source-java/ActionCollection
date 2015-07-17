@@ -6,7 +6,6 @@ actionunittest.ActionUnitTest
 javax.sql.rowset.WebRowSet
 ac.factory.ActionFactory
 java.io.PrintStream
-javax.sql.rowset.spi.SyncFactory
 java.lang.Long
 [Ljava.lang.String;
 elsu.database.DatabaseDataTypes

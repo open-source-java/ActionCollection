@@ -11,6 +11,7 @@ import elsu.support.*;
 import java.util.*;
 import javax.sql.rowset.*;
 import java.sql.*;
+import javax.sql.rowset.spi.SyncFactory;
 
 /**
  *
@@ -28,6 +29,7 @@ public abstract class ActionObject implements IAction {
     private List<String> _dataTypes = new ArrayList<>();
     private List<String> _dataTypesClass = new ArrayList<>();
     private String _selectProcedure = "";
+    private String _orderBy = "";
 
     public ActionObject(ConfigLoader config, DatabaseManager dbManager) throws Exception {
         // load the initial values for the object from config
@@ -67,6 +69,11 @@ public abstract class ActionObject implements IAction {
 
                 wrs.release();
                 wrs.close();
+            }
+
+            // deregister sync proviert
+            if ((this._syncProvider != null) && (!this._syncProvider.isEmpty())) {
+                SyncFactory.unregisterProvider(this._syncProvider);
             }
         } catch (Exception exi) {
         } finally {
@@ -200,9 +207,53 @@ public abstract class ActionObject implements IAction {
         }
     }
 
+    public String getOrderBy() {
+        return this._orderBy;
+    }
+
     @Override
     public WebRowSet Refresh() throws Exception {
         return Refresh(null, null);
+    }
+
+    @Override
+    public WebRowSet Append(WebRowSet wrs) throws Exception {
+        WebRowSet result = getRowSet();
+        boolean matchOk = false;
+        
+        try {
+            // if current rowset is null, exit
+            if (result == null) {
+                throw new Exception("object rowset not initialized.");
+            }
+            
+            // if argument is null, then exit
+            if ((wrs == null) || (wrs.size() == 0)) {
+                throw new Exception("parameter rowset not initialized (or) no records in rowset.");
+            }
+            
+            // compare metadata from both, if they do not match, exit
+            ResultSetMetaData oRSMD = result.getMetaData();
+            ResultSetMetaData pRSMD = wrs.getMetaData();
+            
+            for(int i = 0; i < oRSMD.getColumnCount(); i++) {
+                // compare columnname, columnprecision, columnscale, columntype
+            }
+            
+            // if match is not ok, report error
+            if (!matchOk) {
+                throw new Exception("columns types (name, precision, scale, or type) do not match.");
+            }
+            
+            // copy data from wrs to object rowset
+        } catch (Exception ex) {
+            Log4JManager.error(getClass().toString() + ", Append(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+
+            throw new Exception(ex);
+        }
+
+        return result;
     }
 
     @Override
@@ -286,12 +337,15 @@ public abstract class ActionObject implements IAction {
             }
 
             String sql = getSQLSelect();
-            if (whereClause != null) {
+            if ((whereClause != null) && (!whereClause.isEmpty())) {
                 sql += " WHERE " + whereClause;
 
                 if ((values == null) || (values.length == 0)) {
                     throw new Exception("values is null (or) array length is zero.");
                 }
+            }
+            if ((getOrderBy() != null) && (!getOrderBy().isEmpty())) {
+                sql += " ORDER BY " + getOrderBy();
             }
 
             ArrayList<DatabaseParameter> dbParams;
@@ -332,12 +386,16 @@ public abstract class ActionObject implements IAction {
             }
 
             String sql = getSQLSelect();
-            if (whereClause != null) {
+            if ((whereClause != null) && (!whereClause.isEmpty())) {
                 sql += " WHERE " + whereClause;
 
+                // if where clause is specified, then values cannot be null
                 if ((valueDataTypes == null) || (values == null) || (valueDataTypes.length != values.length) || (values.length == 0)) {
                     throw new Exception("dataTypes or values is null (or) array lengths do not match (or) array length is zero.");
                 }
+            }
+            if ((getOrderBy() != null) && (!getOrderBy().isEmpty())) {
+                sql += " ORDER BY " + getOrderBy();
             }
 
             ArrayList<DatabaseParameter> dbParams;
@@ -384,13 +442,16 @@ public abstract class ActionObject implements IAction {
                 throw new Exception("No select procedure defined.");
             }
 
-            if (whereClause != null) {
+            if ((whereClause != null) && (!whereClause.isEmpty())) {
                 sql += " WHERE " + whereClause;
 
                 // if where clause is specified, then values cannot be null
                 if ((values == null) || (values.length == 0)) {
                     throw new Exception("values is null (or) array length is zero.");
                 }
+            }
+            if ((getOrderBy() != null) && (!getOrderBy().isEmpty())) {
+                sql += " ORDER BY " + getOrderBy();
             }
 
             ArrayList<DatabaseParameter> dbParams;
@@ -406,6 +467,61 @@ public abstract class ActionObject implements IAction {
                         getRowSet().updateNull(i + 1);
                     } else {
                         dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
+                                o));
+                    }
+                }
+            }
+
+            result = getDbManager().getDataXML(sql, dbParams);
+        } catch (Exception ex) {
+            Log4JManager.error(getClass().toString() + ", Refresh(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+
+            result = null;
+            throw new Exception(ex);
+        }
+
+        setRowSet(result);
+        return result;
+    }
+
+    @Override
+    public WebRowSet Refresh(String[] columns, String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception {
+        WebRowSet result = null;
+
+        try {
+            String sql = getSQLSelect(columns);
+
+            // if select procedure is not defined, exit
+            if ((sql == null) || (sql.isEmpty())) {
+                throw new Exception("No select procedure defined.");
+            }
+
+            if ((whereClause != null) && (!whereClause.isEmpty())) {
+                sql += " WHERE " + whereClause;
+
+                // if where clause is specified, then values cannot be null
+                if ((valueDataTypes == null) || (values == null) || (valueDataTypes.length != values.length) || (values.length == 0)) {
+                    throw new Exception("dataTypes or values is null (or) array lengths do not match (or) array length is zero.");
+                }
+            }
+            if ((getOrderBy() != null) && (!getOrderBy().isEmpty())) {
+                sql += " ORDER BY " + getOrderBy();
+            }
+
+            ArrayList<DatabaseParameter> dbParams;
+            dbParams = new ArrayList<>();
+
+            // store the siteId parameter value
+            Object o = null;
+            if (values != null) {
+                for (int i = 0; i < values.length; i++) {
+                    o = values[i];
+
+                    if (o == null) {
+                        getRowSet().updateNull(i + 1);
+                    } else {
+                        dbParams.add(new DatabaseParameter("param" + (i + 1), valueDataTypes[i],
                                 o));
                     }
                 }
@@ -455,9 +571,6 @@ public abstract class ActionObject implements IAction {
             getRowSet().beforeFirst();
             while (getRowSet().next()) {
                 if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
-                    // accept any pending changes for the row
-                    getRowSet().acceptChanges();
-
                     for (int i = 0; i < maxColumns; i++) {
                         o = getRowSet().getObject(i + 1);
 
@@ -495,6 +608,9 @@ public abstract class ActionObject implements IAction {
             }
 
             result = Integer.parseInt(spResult.get("count").toString());
+
+            // accept any pending changes for the row
+            getRowSet().acceptChanges();
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Update(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
@@ -560,9 +676,8 @@ public abstract class ActionObject implements IAction {
                         }
                     }
 
-                    // update the memory dataset and accept changes
+                    // update the memory dataset
                     getRowSet().updateRow();
-                    getRowSet().acceptChanges();
 
                     isRecordValid = true;
                     break;
@@ -678,7 +793,6 @@ public abstract class ActionObject implements IAction {
 
                     // update the memory dataset and accept changes
                     getRowSet().updateRow();
-                    getRowSet().acceptChanges();
 
                     // add the output parameters for status reporting
                     dbParams.add(new DatabaseParameter("count", DatabaseDataTypes.dtlong, true));
@@ -694,8 +808,42 @@ public abstract class ActionObject implements IAction {
                     }
 
                     result = Integer.parseInt(spResult.get("count").toString());
+                    getRowSet().acceptChanges();
                     break;
                 }
+            }
+        } catch (Exception ex) {
+            Log4JManager.error(getClass().toString() + ", Update(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            throw new Exception(ex);
+        }
+
+        return result;
+    }
+
+    @Override
+    public long Update(long id[], String procedure, String[] columns, Object[] values) throws Exception {
+        long result = 0;
+
+        try {
+            // if rowset is null, exit
+            if (getRowSet() == null) {
+                throw new Exception("RowSet is null.");
+            }
+
+            // if update procedure is not defined, exit
+            if ((procedure == null) || (procedure.isEmpty())) {
+                throw new Exception("No update procedure defined.");
+            }
+
+            // check if the number of columsn = number of values
+            if ((columns == null) || (values == null) || (columns.length != values.length)) {
+                throw new Exception("Update, columns or values is null (or) array lengths do not match.");
+            }
+
+            // loop and update all the records passed
+            for (long recId : id) {
+                result += Update(recId, procedure, columns, values);
             }
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Update(), "
@@ -743,7 +891,6 @@ public abstract class ActionObject implements IAction {
 
                     // delete the row from the record set
                     getRowSet().deleteRow();
-                    getRowSet().acceptChanges();
 
                     isRecordValid = true;
                     break;
@@ -769,6 +916,9 @@ public abstract class ActionObject implements IAction {
             }
 
             result = Integer.parseInt(spResult.get("count").toString());
+
+            // accept changes to rowset
+            getRowSet().acceptChanges();
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Delete(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
@@ -831,14 +981,21 @@ public abstract class ActionObject implements IAction {
                 while (getRowSet().next()) {
                     idList[index] = getRowSet().getLong(getActionConfig().getPrimaryId());
                     index++;
+
+                    // delete the row from the record set
+                    getRowSet().deleteRow();
                 }
 
+                // update the database
                 result = Delete(idList);
+
+                // accept changes to the rowset
+                getRowSet().acceptChanges();
             } else {
                 result = 0;
             }
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Refresh(), "
+            Log4JManager.error(getClass().toString() + ", Delete(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = 0;
@@ -901,7 +1058,6 @@ public abstract class ActionObject implements IAction {
             // update the rowset
             getRowSet().insertRow();
             getRowSet().moveToCurrentRow();
-            getRowSet().acceptChanges();
 
             // add the output parameters for status reporting
             dbParams.add(new DatabaseParameter("recid", DatabaseDataTypes.dtlong, true));
@@ -918,6 +1074,9 @@ public abstract class ActionObject implements IAction {
 
             // get the record id inserted
             result = Integer.parseInt(spResult.get("recid").toString());
+
+            // accept changes to the rowset
+            getRowSet().acceptChanges();
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Insert(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
@@ -964,13 +1123,12 @@ public abstract class ActionObject implements IAction {
                 }
 
                 // call the overloaded function
-                result = Insert(rowValues);
+                result += Insert(rowValues);
             }
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Insert(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
-            result = 0;
             throw new Exception(ex);
         }
 

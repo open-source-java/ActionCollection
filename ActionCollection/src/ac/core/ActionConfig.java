@@ -20,6 +20,7 @@ public class ActionConfig {
     private String _SQLUpdate = "";
     private String _SQLDelete = "";
     private String _SQLInsert = "";
+    private String _orderBy = "";
     
     private String _primaryId = "";
 
@@ -27,7 +28,7 @@ public class ActionConfig {
     }
     public ActionConfig(String classId, String columns, String columnDataTypes, 
             String SQLSelect, String SQLCursor, String SQLUpdate, String SQLDelete, 
-            String SQLInsert, String primaryId) {
+            String SQLInsert, String primaryId, String orderBy) {
         setClassId(classId);
         setColumns(columns);
         setColumnDataTypes(columnDataTypes);
@@ -37,6 +38,7 @@ public class ActionConfig {
         setSQLDelete(SQLDelete);
         setSQLInsert(SQLInsert);
         setPrimaryId(primaryId);
+        setOrderBy(orderBy);
     }
     
     public String getClassId() {
@@ -109,5 +111,13 @@ public class ActionConfig {
     
     protected void setPrimaryId(String primaryId) {
         this._primaryId = primaryId;
+    }
+    
+    public String getOrderBy() {
+        return this._orderBy;
+    }
+    
+    protected void setOrderBy(String orderBy) {
+        this._orderBy = orderBy;
     }
 }
