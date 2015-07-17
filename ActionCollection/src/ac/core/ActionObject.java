@@ -220,32 +220,59 @@ public abstract class ActionObject implements IAction {
     public WebRowSet Append(WebRowSet wrs) throws Exception {
         WebRowSet result = getRowSet();
         boolean matchOk = false;
-        
+
         try {
             // if current rowset is null, exit
             if (result == null) {
                 throw new Exception("object rowset not initialized.");
             }
-            
+
             // if argument is null, then exit
             if ((wrs == null) || (wrs.size() == 0)) {
                 throw new Exception("parameter rowset not initialized (or) no records in rowset.");
             }
-            
+
             // compare metadata from both, if they do not match, exit
             ResultSetMetaData oRSMD = result.getMetaData();
             ResultSetMetaData pRSMD = wrs.getMetaData();
-            
-            for(int i = 0; i < oRSMD.getColumnCount(); i++) {
-                // compare columnname, columnprecision, columnscale, columntype
+
+            if (oRSMD.getColumnCount() != pRSMD.getColumnCount()) {
+                throw new Exception("source and destination rowsets do not have same columns.");
             }
-            
+
+            for (int i = 0; i < oRSMD.getColumnCount(); i++) {
+                // compare columnname, columnprecision, columnscale, columntype
+                if ((oRSMD.getColumnClassName(i).equals(pRSMD.getColumnClassName(i)))
+                        && (oRSMD.getColumnName(i).equals(pRSMD.getColumnName(i)))
+                        && (oRSMD.getColumnType(i) == pRSMD.getColumnType(i))
+                        && (oRSMD.getPrecision(i) == pRSMD.getPrecision(i))
+                        && (oRSMD.getScale(i) == pRSMD.getScale(i))) {
+                    matchOk = true;
+                } else {
+                    matchOk = false;
+                    break;
+                }
+            }
+
             // if match is not ok, report error
             if (!matchOk) {
-                throw new Exception("columns types (name, precision, scale, or type) do not match.");
+                throw new Exception("columns types (class, name, precision, scale, or type) do not match.");
             }
-            
+
             // copy data from wrs to object rowset
+            wrs.beforeFirst();
+            while (wrs.next()) {
+                result.afterLast();
+                result.moveToInsertRow();
+
+                for (int i = 0; i < wrs.size(); i++) {
+                    result.updateObject(i, wrs.getObject(i));
+                }
+
+                result.insertRow();
+            }
+
+            result.acceptChanges();
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Append(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());

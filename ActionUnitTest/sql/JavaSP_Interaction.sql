@@ -543,8 +543,8 @@ SELECT *
  WHERE site_id IN (111, 830, 838) OR site IN ('MORICHES', 'DHALIWAL', 'DHALIWAL2') OR (site like 'DHALIWAL%');
 
 UPDATE ncs3.site
-   SET SITE_ANTENNA_ID = 2
- WHERE site_id = 1;
+   SET SITE_ANTENNA_ID = 2, SITE_CONFIG_ID = 1
+ WHERE site_id = 111;
 
 UPDATE ncs3.site
    SET site = 'DETROIT', SITE_ANTENNA_ID = 9, SITE_CONFIG_ID = 4
