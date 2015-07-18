@@ -50,7 +50,7 @@ public class ActionFactory {
 
             if (!installed) {
                 SyncFactory.registerProvider(syncProvider);
-
+                
                 // log error for tracking
                 getConfig().logInfo(getClass().toString() + ", initialize(), "
                         + "sync provider installed.");

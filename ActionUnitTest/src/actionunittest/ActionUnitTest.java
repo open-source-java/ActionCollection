@@ -316,8 +316,8 @@ public class ActionUnitTest {
     public void TestInsert(ActionObject ao, long[] id, String[] columns, Object[] values) {
         try {
             // try to insert multiple records with minor changes
-            TestRefresh(ao, id);
-            long recordNumber = ao.Insert(columns, values);
+            TestRefresh(ao, id[0]);
+            long recordNumber = ao.Insert(id[0], columns, values);
             System.out.println(ao.toXML());
             System.out.println(".. record# inserted: " + recordNumber);
         } catch (Exception ex) {

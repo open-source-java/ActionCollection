@@ -39,8 +39,8 @@ public interface IAction {
     long Delete(String whereClause, Object[] values) throws Exception;
     
     long Insert(Object[] values) throws Exception;
-    long Insert(String[] columns, Object[] values) throws Exception;
-    long Insert(HashMap<String, Object> row) throws Exception;
+    long Insert(long id, String[] columns, Object[] values) throws Exception;
+    long Insert(long id, HashMap<String, Object> row) throws Exception;
     
     HashMap<String, Object> toHaspMap() throws Exception;
     HashMap<String, Object> toHaspMap(String[] columns) throws Exception;

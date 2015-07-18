@@ -265,9 +265,9 @@ public abstract class ActionObject implements IAction {
                 }
 
                 result.insertRow();
+                result.moveToCurrentRow();
+                result.acceptChanges();
             }
-
-            result.acceptChanges();
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Append(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
@@ -998,7 +998,6 @@ public abstract class ActionObject implements IAction {
 
             // get the records to delete
             WebRowSet wrs = Refresh(whereClause, values);
-            setRowSet(wrs);
 
             // if there is no records then skip the process
             if (getRowSet().size() > 0) {
@@ -1010,16 +1009,10 @@ public abstract class ActionObject implements IAction {
                 while (getRowSet().next()) {
                     idList[index] = getRowSet().getLong(getActionConfig().getPrimaryId());
                     index++;
-
-                    // delete the row from the record set
-                    getRowSet().deleteRow();
                 }
 
                 // update the database
                 result = Delete(idList);
-
-                // accept changes to the rowset
-                getRowSet().acceptChanges();
             } else {
                 result = 0;
             }
@@ -1087,6 +1080,7 @@ public abstract class ActionObject implements IAction {
             // update the rowset
             getRowSet().insertRow();
             getRowSet().moveToCurrentRow();
+            getRowSet().acceptChanges();
 
             // add the output parameters for status reporting
             dbParams.add(new DatabaseParameter("recid", DatabaseDataTypes.dtlong, true));
@@ -1118,7 +1112,7 @@ public abstract class ActionObject implements IAction {
     }
 
     @Override
-    public long Insert(String[] columns, Object[] values) throws Exception {
+    public long Insert(long id, String[] columns, Object[] values) throws Exception {
         long result = 0;
         Object[] rowValues = null;
 
@@ -1132,27 +1126,30 @@ public abstract class ActionObject implements IAction {
             if ((columns == null) || (values == null) || (columns.length != values.length)) {
                 throw new Exception("Columns or values is null (or) array lengths do not match.");
             }
-            if ((getRowSet() == null) || (getRowSet().size() == 0)) {
-                throw new Exception("Rowset is empty.");
-            }
+            
+            // force a refresh on the dataset
+            Refresh(id);
 
             // update the memory record set with new values
             Object o = null;
 
             getRowSet().beforeFirst();
             while (getRowSet().next()) {
-                for (int i = 0; i < columns.length; i++) {
-                    getRowSet().updateObject(columns[i], values[i]);
-                }
+                if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
+                    for (int i = 0; i < columns.length; i++) {
+                        getRowSet().updateObject(columns[i], values[i]);
+                    }
 
-                // populate the row values to insert into data
-                rowValues = new Object[getColumnCount()];
-                for (int i = 0; i < getColumnCount(); i++) {
-                    rowValues[i] = getRowSet().getObject(i + 1);
-                }
+                    // populate the row values to insert into data
+                    rowValues = new Object[getColumnCount()];
+                    for (int i = 0; i < getColumnCount(); i++) {
+                        rowValues[i] = getRowSet().getObject(i + 1);
+                    }
 
-                // call the overloaded function
-                result += Insert(rowValues);
+                    // call the overloaded function
+                    result = Insert(rowValues);
+                    break;
+                }
             }
         } catch (Exception ex) {
             Log4JManager.error(getClass().toString() + ", Insert(), "
@@ -1165,8 +1162,8 @@ public abstract class ActionObject implements IAction {
     }
 
     @Override
-    public long Insert(HashMap<String, Object> row) throws Exception {
-        return Insert(row.keySet().toArray(new String[0]), row.values().toArray());
+    public long Insert(long id, HashMap<String, Object> row) throws Exception {
+        return Insert(id, row.keySet().toArray(new String[0]), row.values().toArray());
     }
 
     @Override
