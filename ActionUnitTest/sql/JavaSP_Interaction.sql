@@ -152,14 +152,14 @@ BEGIN
    -- update the event to close it
    oCOUNT := 0;
 
-   /*
     DELETE ncs3.site
     WHERE site_id = isite_id;
-   */
-   
+
+/*   
    UPDATE ncs3.site
       SET site = site || '_DEL'
     WHERE site_id = isite_id;
+*/
 
    oCOUNT := SQL%ROWCOUNT;
 
