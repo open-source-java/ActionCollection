@@ -42,7 +42,7 @@ public class ActionUnitTest {
 
         if (af != null) {
             try {
-                si = (SystemIdentification) af.getClassByName("ac.factory.objects.SystemIdentification");
+                si = (SystemIdentification) af.getClassByName("SystemIdentification.class");
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
@@ -59,7 +59,7 @@ public class ActionUnitTest {
 
         if (af != null) {
             try {
-                si = (Site) af.getClassByName("ac.factory.objects.Site");
+                si = (Site) af.getClassByName("Site.class");
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }

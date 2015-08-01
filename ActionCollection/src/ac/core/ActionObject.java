@@ -17,7 +17,7 @@ import javax.sql.rowset.spi.*;
  *
  * @author dhaliwal-admin
  */
-public abstract class ActionObject implements IAction {
+public abstract class ActionObject extends AbstractEventPublisher implements IAction, IEventPublisher, IEventSubscriber {
 
     private ConfigLoader _config = null;
     private DatabaseManager _dbManager = null;
@@ -34,7 +34,7 @@ public abstract class ActionObject implements IAction {
     public ActionObject(ConfigLoader config, DatabaseManager dbManager) throws Exception {
         // load the initial values for the object from config
         this._config = config;
-        this._actionConfig = getConfig().getActionProperty(this.getClass().toString().replaceFirst("class ", ""));
+        this._actionConfig = ActionConfig.LoadConfig(config, this.getClass().toString().replaceFirst("class ", ""));
 
         //if column definition is empty
         try {
@@ -57,7 +57,7 @@ public abstract class ActionObject implements IAction {
         this._dbManager = dbManager;
         discoverColumnsDataTypes();
 
-        this._syncProvider = getConfig().getApplicationProperty("rowset.sync.provider");
+        this._syncProvider = getConfig().getProperty("rowset.sync.provider");
     }
 
     @Override
@@ -168,7 +168,7 @@ public abstract class ActionObject implements IAction {
                 this._dataTypesClass.add(rsmd.getColumnClassName(i + 1));
             }
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", discoverColumnsDataTypes(), "
+            getConfig().logError(getClass().toString() + ", discoverColumnsDataTypes(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             throw new Exception(ex);
@@ -187,7 +187,7 @@ public abstract class ActionObject implements IAction {
             result += CollectionStack.ArrayToString(columns).toUpperCase();
             result += " FROM " + getActionConfig().getSQLSelect().toUpperCase();
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", getSQLSelect(), "
+            getConfig().logError(getClass().toString() + ", getSQLSelect(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = "";
@@ -202,7 +202,7 @@ public abstract class ActionObject implements IAction {
             this._selectProcedure += CollectionStack.ArrayToString((String[]) getColumns().toArray()).toUpperCase();
             this._selectProcedure += " FROM " + procedure.toUpperCase();
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", setSQLSelect(), "
+            getConfig().logError(getClass().toString() + ", setSQLSelect(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
         }
     }
@@ -269,7 +269,7 @@ public abstract class ActionObject implements IAction {
                 result.acceptChanges();
             }
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Append(), "
+            getConfig().logError(getClass().toString() + ", Append(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             throw new Exception(ex);
@@ -305,7 +305,7 @@ public abstract class ActionObject implements IAction {
 
             result = getDbManager().getDataXML(sql, dbParams);
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Refresh(), "
+            getConfig().logError(getClass().toString() + ", Refresh(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = null;
@@ -342,7 +342,7 @@ public abstract class ActionObject implements IAction {
 
             result = getDbManager().getDataXMLViaCursor(sql, dbParams);
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Refresh(), "
+            getConfig().logError(getClass().toString() + ", Refresh(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = null;
@@ -391,7 +391,7 @@ public abstract class ActionObject implements IAction {
 
             result = getDbManager().getDataXML(sql, dbParams);
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Refresh(), "
+            getConfig().logError(getClass().toString() + ", Refresh(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = null;
@@ -442,7 +442,7 @@ public abstract class ActionObject implements IAction {
 
             result = getDbManager().getDataXML(sql, dbParams);
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Refresh(), "
+            getConfig().logError(getClass().toString() + ", Refresh(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = null;
@@ -502,7 +502,7 @@ public abstract class ActionObject implements IAction {
 
             result = getDbManager().getDataXML(sql, dbParams);
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Refresh(), "
+            getConfig().logError(getClass().toString() + ", Refresh(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = null;
@@ -558,7 +558,7 @@ public abstract class ActionObject implements IAction {
 
             result = getDbManager().getDataXML(sql, dbParams);
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Refresh(), "
+            getConfig().logError(getClass().toString() + ", Refresh(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = null;
@@ -641,7 +641,7 @@ public abstract class ActionObject implements IAction {
             // accept any pending changes for the row
             getRowSet().acceptChanges();
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Update(), "
+            getConfig().logError(getClass().toString() + ", Update(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = 0;
@@ -721,7 +721,7 @@ public abstract class ActionObject implements IAction {
             // call the overloaded update
             result = Update(id);
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Update(), "
+            getConfig().logError(getClass().toString() + ", Update(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
             throw new Exception(ex);
         }
@@ -755,7 +755,7 @@ public abstract class ActionObject implements IAction {
                 result += Update(recId, columns, values);
             }
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Update(), "
+            getConfig().logError(getClass().toString() + ", Update(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
             throw new Exception(ex);
         }
@@ -842,7 +842,7 @@ public abstract class ActionObject implements IAction {
                 }
             }
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Update(), "
+            getConfig().logError(getClass().toString() + ", Update(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
             throw new Exception(ex);
         }
@@ -875,7 +875,7 @@ public abstract class ActionObject implements IAction {
                 result += Update(recId, procedure, columns, values);
             }
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Update(), "
+            getConfig().logError(getClass().toString() + ", Update(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
             throw new Exception(ex);
         }
@@ -949,7 +949,7 @@ public abstract class ActionObject implements IAction {
             // accept changes to rowset
             getRowSet().acceptChanges();
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Delete(), "
+            getConfig().logError(getClass().toString() + ", Delete(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = 0;
@@ -971,7 +971,7 @@ public abstract class ActionObject implements IAction {
 
         // if delete procedure is not defined, exit
         if ((getActionConfig().getSQLDelete() == null) || (getActionConfig().getSQLDelete().isEmpty())) {
-            Log4JManager.error(getClass().toString() + ", Delete(), "
+            getConfig().logError(getClass().toString() + ", Delete(), "
                     + GlobalStack.LINESEPARATOR + "No delete procedure defined.");
         }
 
@@ -992,7 +992,7 @@ public abstract class ActionObject implements IAction {
         try {
             // if delete procedure is not defined, exit
             if ((getActionConfig().getSQLDelete() == null) || (getActionConfig().getSQLDelete().isEmpty())) {
-                Log4JManager.error(getClass().toString() + ", Delete(), "
+                getConfig().logError(getClass().toString() + ", Delete(), "
                         + GlobalStack.LINESEPARATOR + "No delete procedure defined.");
             }
 
@@ -1017,7 +1017,7 @@ public abstract class ActionObject implements IAction {
                 result = 0;
             }
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Delete(), "
+            getConfig().logError(getClass().toString() + ", Delete(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = 0;
@@ -1101,7 +1101,7 @@ public abstract class ActionObject implements IAction {
             // accept changes to the rowset
             getRowSet().acceptChanges();
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Insert(), "
+            getConfig().logError(getClass().toString() + ", Insert(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             result = 0;
@@ -1152,7 +1152,7 @@ public abstract class ActionObject implements IAction {
                 }
             }
         } catch (Exception ex) {
-            Log4JManager.error(getClass().toString() + ", Insert(), "
+            getConfig().logError(getClass().toString() + ", Insert(), "
                     + GlobalStack.LINESEPARATOR + ex.getMessage());
 
             throw new Exception(ex);

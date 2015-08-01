@@ -6,7 +6,10 @@
 package ac.factory.objects;
 
 import ac.core.*;
+import elsu.common.StatusType;
 import elsu.database.*;
+import elsu.support.*;
+import java.util.EventObject;
 
 public class SystemIdentification extends ActionObject {
 
@@ -14,5 +17,10 @@ public class SystemIdentification extends ActionObject {
         // retrieve the action configuration from the actionobject config for
         // the class name
         super(config, dbManager);
+    }
+
+    @Override
+    public void EventHandler(EventObject e, StatusType s, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
