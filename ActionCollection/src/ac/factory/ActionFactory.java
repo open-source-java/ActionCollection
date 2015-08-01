@@ -6,16 +6,18 @@
 package ac.factory;
 
 import ac.core.*;
+import elsu.common.*;
 import elsu.database.*;
 import elsu.support.*;
 import java.lang.reflect.*;
+import java.util.*;
 import javax.sql.rowset.spi.*;
 
 /**
  *
  * @author ss.dhaliwal
  */
-public class ActionFactory {
+public class ActionFactory implements IEventSubscriber {
 
     private ConfigLoader _config = null;
     private DatabaseManager _dbManager = null;
@@ -124,6 +126,9 @@ public class ActionFactory {
                         dbConnectionString, maxPool,
                         dbUser,
                         dbPassword);
+                
+                // connect the event notifiers
+                this._dbManager.addEventListener(this);
             } catch (Exception ex) {
                 // log error for tracking
                 getConfig().logError(getClass().toString() + ", setDbManager(), "
@@ -140,21 +145,21 @@ public class ActionFactory {
             // using reflection, load the class for the service
             Class<?> actionClass = Class.forName(classPath);
 
-        // create service constructor discovery type parameter array
+            // create service constructor discovery type parameter array
             // populate it with the required class types
             Class<?>[] argTypes = {ConfigLoader.class, DatabaseManager.class};
 
-        // retrieve the matching constructor for the service using
+            // retrieve the matching constructor for the service using
             // reflection
             Constructor<?> cons = actionClass.getDeclaredConstructor(
                     argTypes);
 
-        // create parameter array and populate it with values to 
+            // create parameter array and populate it with values to 
             // pass to the service constructor
             Object[] arguments
                     = {getConfig(), getDbManager()};
 
-        // create new instance of the service using the discovered
+            // create new instance of the service using the discovered
             // constructor and parameters
             result = (IAction) cons.newInstance(arguments);
         }
@@ -165,5 +170,17 @@ public class ActionFactory {
 
     public String getSyncProvider() {
         return getConfig().getProperty("rowset.sync.provider");
+    }
+
+    @Override
+    public void EventHandler(EventObject e, StatusType s, String message, Object o) {
+        switch (s) {
+            case ERROR:
+                getConfig().logError(message);
+                break;
+            default:
+                getConfig().logInfo(message);
+                break;
+        }
     }
 }

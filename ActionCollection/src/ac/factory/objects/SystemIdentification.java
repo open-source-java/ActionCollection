@@ -20,7 +20,7 @@ public class SystemIdentification extends ActionObject {
     }
 
     @Override
-    public void EventHandler(EventObject e, StatusType s, Object o) {
+    public void EventHandler(EventObject e, StatusType s, String message, Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

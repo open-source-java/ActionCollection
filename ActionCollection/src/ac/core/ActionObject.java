@@ -61,7 +61,7 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    public void finalize() throws Throwable {
         try {
             if (this._rowSet != null) {
                 WebRowSet wrs = this._rowSet;
