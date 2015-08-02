@@ -46,7 +46,7 @@ public abstract class ActionObjectStack {
         }
     }
 
-    public static WebRowSet View(DatabaseManager dbManager, String SQLStmt, String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception {
+    public static WebRowSet View(DatabaseManager dbManager, String SQLStmt, String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
         WebRowSet result = null;
 
         try {
@@ -97,7 +97,7 @@ public abstract class ActionObjectStack {
         return result;
     }
 
-    public static WebRowSet Cursor(DatabaseManager dbManager, String procedure, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception {
+    public static WebRowSet Cursor(DatabaseManager dbManager, String procedure, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
         WebRowSet result = null;
         Map<String, Object> spResult = null;
 
@@ -144,7 +144,7 @@ public abstract class ActionObjectStack {
         return result;
     }
 
-    public static long Execute(DatabaseManager dbManager, String procedure, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception {
+    public static long Execute(DatabaseManager dbManager, String procedure, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
         long result = 0;
         Map<String, Object> spResult = null;
 
@@ -179,9 +179,9 @@ public abstract class ActionObjectStack {
             }
 
             // add the output parameters for status reporting
-            dbParams.add(new DatabaseParameter("count", DatabaseDataTypes.dtlong, true));
-            dbParams.add(new DatabaseParameter("errorId", DatabaseDataTypes.dtlong, true));
-            dbParams.add(new DatabaseParameter("status", DatabaseDataTypes.dtstring, true));
+            dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
+            dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
+            dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
 
             spResult = dbManager.executeProcedure(sql, dbParams);
 

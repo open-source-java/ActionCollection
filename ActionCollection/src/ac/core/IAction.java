@@ -20,10 +20,10 @@ public interface IAction {
     WebRowSet Refresh(long id) throws Exception;
     WebRowSet Refresh(long[] id) throws Exception;
     WebRowSet Refresh(String whereClause, Object[] values) throws Exception;
-    WebRowSet Refresh(String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception;
+    WebRowSet Refresh(String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception;
     WebRowSet Refresh(String[] columns) throws Exception;
     WebRowSet Refresh(String[] columns, String whereClause, Object[] values) throws Exception;
-    WebRowSet Refresh(String[] columns, String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception;
+    WebRowSet Refresh(String[] columns, String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception;
 
     long Update(long id) throws Exception;
     long Update(long[] id) throws Exception;

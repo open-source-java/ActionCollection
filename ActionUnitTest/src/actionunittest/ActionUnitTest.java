@@ -86,7 +86,7 @@ public class ActionUnitTest implements IEventSubscriber {
             TestRefresh(si, "SITE_ID LIKE ?", new Object[]{"9%"});
 
             // filter site records for site_id with match
-            TestRefresh(si, "SITE_ID = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtint}, new Object[]{909});
+            TestRefresh(si, "SITE_ID = ?", new DatabaseDataType[]{DatabaseDataType.dtint}, new Object[]{909});
 
             // append result from one to other
             TestAppend(si, new long[]{838, 830}, new long[]{111, 843, 792});
@@ -186,7 +186,7 @@ public class ActionUnitTest implements IEventSubscriber {
     }
 
     // test refresh action object with whereclause overriding value types
-    public void TestRefresh(ActionObject ao, String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) {
+    public void TestRefresh(ActionObject ao, String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) {
         try {
             ao.Refresh(whereClause, valueDataTypes, values);
 
@@ -203,7 +203,7 @@ public class ActionUnitTest implements IEventSubscriber {
         try {
             WebRowSet wrs = ActionObjectStack.View(af.getDbManager(), 
                     "SELECT ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP FROM NCS3.VWSITE", 
-                    "SITE_ID IN (SELECT * FROM TABLE (?))", new DatabaseDataTypes[]{DatabaseDataTypes.dtarray}, 
+                    "SITE_ID IN (SELECT * FROM TABLE (?))", new DatabaseDataType[]{DatabaseDataType.dtarray}, 
                     new Object[]{secondRS});
             System.out.println(ActionObjectStack.toXML(wrs));
 
@@ -365,7 +365,7 @@ public class ActionUnitTest implements IEventSubscriber {
             try {
                 WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
-                        "SITE_ID LIKE ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"8%"});
+                        "SITE_ID LIKE ?", new DatabaseDataType[]{DatabaseDataType.dtstring}, new Object[]{"8%"});
                 //System.out.println(ActionObject.toXML(wrs));
                 System.out.println(".. records selected: " + wrs.size());
             } catch (Exception ex) {
@@ -375,7 +375,7 @@ public class ActionUnitTest implements IEventSubscriber {
             try {
                 WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
-                        "SITE_ID LIKE ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"9%"});
+                        "SITE_ID LIKE ?", new DatabaseDataType[]{DatabaseDataType.dtstring}, new Object[]{"9%"});
                 //System.out.println(ActionObject.toXML(wrs));
                 System.out.println(".. records selected: " + wrs.size());
             } catch (Exception ex) {
@@ -385,7 +385,7 @@ public class ActionUnitTest implements IEventSubscriber {
             try {
                 WebRowSet wrs = ActionObjectStack.Cursor(aut.af.getDbManager(),
                         "NCS3.SPS_SITE",
-                        new DatabaseDataTypes[]{DatabaseDataTypes.dtarray}, new Object[]{new Long[]{830L, 838L}});
+                        new DatabaseDataType[]{DatabaseDataType.dtarray}, new Object[]{new Long[]{830L, 838L}});
                 //System.out.println(ActionObject.toXML(wrs));
                 System.out.println(".. records selected: " + wrs.size());
             } catch (Exception ex) {
@@ -395,7 +395,7 @@ public class ActionUnitTest implements IEventSubscriber {
             try {
                 WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
-                        "SITE = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"DHALIWAL2"});
+                        "SITE = ?", new DatabaseDataType[]{DatabaseDataType.dtstring}, new Object[]{"DHALIWAL2"});
                 //System.out.println(ActionObject.toXML(wrs));
                 System.out.println(".. records selected: " + wrs.size());
             } catch (Exception ex) {
@@ -407,7 +407,7 @@ public class ActionUnitTest implements IEventSubscriber {
 
                 long count = ActionObjectStack.Execute(aut.af.getDbManager(),
                         "NCS3.SPD_SITE",
-                        new DatabaseDataTypes[]{DatabaseDataTypes.dtlong}, new Object[]{siteId});
+                        new DatabaseDataType[]{DatabaseDataType.dtlong}, new Object[]{siteId});
                 //System.out.println(ActionObject.toXML(wrs));
                 System.out.println(".. records affected: " + count);
             } catch (Exception ex) {

@@ -25,7 +25,7 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
     private ActionConfig _actionConfig = null;
     private WebRowSet _rowSet = null;
     private List<String> _columns = new ArrayList<>();
-    private List<DatabaseDataTypes> _columnDataTypes = new ArrayList<>();
+    private List<DatabaseDataType> _columnDataTypes = new ArrayList<>();
     private List<String> _dataTypes = new ArrayList<>();
     private List<String> _dataTypesClass = new ArrayList<>();
     private String _selectProcedure = "";
@@ -46,7 +46,7 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             List<String> dt = Arrays.asList(getActionConfig().getColumnDataTypes().replaceAll(" ", "").split(","));
 
             for (String s : dt) {
-                this._columnDataTypes.add(DatabaseDataTypes.valueOf(("dt" + s).toLowerCase()));
+                this._columnDataTypes.add(DatabaseDataType.valueOf(("dt" + s).toLowerCase()));
             }
         } catch (Exception exi) {
             this._columnDataTypes.clear();
@@ -135,7 +135,7 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
         return this._columns;
     }
 
-    public List<DatabaseDataTypes> getColumnDataTypes() {
+    public List<DatabaseDataType> getColumnDataTypes() {
         return this._columnDataTypes;
     }
 
@@ -315,7 +315,7 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             dbParams = new ArrayList<>();
 
             // store the siteId parameter value
-            dbParams.add(new DatabaseParameter("param1", DatabaseDataTypes.dtlong,
+            dbParams.add(new DatabaseParameter("param1", DatabaseDataType.dtlong,
                     id));
 
             result = getDbManager().getDataXML(sql, dbParams);
@@ -357,7 +357,7 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             dbParams = new ArrayList<>();
 
             // store the siteId parameter value
-            dbParams.add(new DatabaseParameter("param1", DatabaseDataTypes.dtarray,
+            dbParams.add(new DatabaseParameter("param1", DatabaseDataType.dtarray,
                     id));
 
             result = getDbManager().getDataXMLViaCursor(sql, dbParams);
@@ -433,7 +433,7 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
     }
 
     @Override
-    public WebRowSet Refresh(String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception {
+    public WebRowSet Refresh(String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
         WebRowSet result = null;
 
         try {
@@ -554,7 +554,7 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
     }
 
     @Override
-    public WebRowSet Refresh(String[] columns, String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception {
+    public WebRowSet Refresh(String[] columns, String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
         WebRowSet result = null;
 
         try {
@@ -669,9 +669,9 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             }
 
             // add the output parameters for status reporting
-            dbParams.add(new DatabaseParameter("count", DatabaseDataTypes.dtlong, true));
-            dbParams.add(new DatabaseParameter("errorId", DatabaseDataTypes.dtlong, true));
-            dbParams.add(new DatabaseParameter("status", DatabaseDataTypes.dtstring, true));
+            dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
+            dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
+            dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
 
             spResult = getDbManager().executeProcedure(sql, dbParams);
 
@@ -890,9 +890,9 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
                     getRowSet().updateRow();
 
                     // add the output parameters for status reporting
-                    dbParams.add(new DatabaseParameter("count", DatabaseDataTypes.dtlong, true));
-                    dbParams.add(new DatabaseParameter("errorId", DatabaseDataTypes.dtlong, true));
-                    dbParams.add(new DatabaseParameter("status", DatabaseDataTypes.dtstring, true));
+                    dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
+                    dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
+                    dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
 
                     spResult = getDbManager().executeProcedure(sql, dbParams);
 
@@ -989,7 +989,7 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             while (getRowSet().next()) {
                 if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
                     // store the siteId parameter value
-                    dbParams.add(new DatabaseParameter("param1", DatabaseDataTypes.dtlong,
+                    dbParams.add(new DatabaseParameter("param1", DatabaseDataType.dtlong,
                             id));
 
                     // delete the row from the record set
@@ -1006,9 +1006,9 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             }
 
             // add the output parameters for status reporting
-            dbParams.add(new DatabaseParameter("count", DatabaseDataTypes.dtlong, true));
-            dbParams.add(new DatabaseParameter("errorId", DatabaseDataTypes.dtlong, true));
-            dbParams.add(new DatabaseParameter("status", DatabaseDataTypes.dtstring, true));
+            dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
+            dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
+            dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
 
             spResult = getDbManager().executeProcedure(sql, dbParams);
 
@@ -1176,9 +1176,9 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             getRowSet().acceptChanges();
 
             // add the output parameters for status reporting
-            dbParams.add(new DatabaseParameter("recid", DatabaseDataTypes.dtlong, true));
-            dbParams.add(new DatabaseParameter("errorId", DatabaseDataTypes.dtlong, true));
-            dbParams.add(new DatabaseParameter("status", DatabaseDataTypes.dtstring, true));
+            dbParams.add(new DatabaseParameter("recid", DatabaseDataType.dtlong, true));
+            dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
+            dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
 
             spResult = getDbManager().executeProcedure(sql, dbParams);
 
