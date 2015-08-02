@@ -162,6 +162,12 @@ public class ActionFactory implements IEventSubscriber {
             // create new instance of the service using the discovered
             // constructor and parameters
             result = (IAction) cons.newInstance(arguments);
+            
+            // check if the instance is typeof IEventPublisher
+            // - if yes, then subscribe to its events
+            if (result instanceof IEventPublisher) {
+                ((IEventPublisher)result).addEventListener(this);
+            }
         }
 
         // return new class
@@ -175,8 +181,14 @@ public class ActionFactory implements IEventSubscriber {
     @Override
     public void EventHandler(EventObject e, StatusType s, String message, Object o) {
         switch (s) {
+            case DEBUG:
+                getConfig().logDebug(message);
+                break;
             case ERROR:
                 getConfig().logError(message);
+                break;
+            case INFORMATION:
+                getConfig().logInfo(message);
                 break;
             default:
                 getConfig().logInfo(message);

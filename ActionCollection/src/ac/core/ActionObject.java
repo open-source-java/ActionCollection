@@ -168,11 +168,16 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
                 this._dataTypesClass.add(rsmd.getColumnClassName(i + 1));
             }
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", discoverColumnsDataTypes(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", discoverColumnsDataTypes(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             throw new Exception(ex);
         }
+
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", discoverColumnsDataTypes(), "
+                + "column discovery successful.", null);
     }
 
     public String getSQLSelect() {
@@ -1126,7 +1131,7 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             if ((columns == null) || (values == null) || (columns.length != values.length)) {
                 throw new Exception("Columns or values is null (or) array lengths do not match.");
             }
-            
+
             // force a refresh on the dataset
             Refresh(id);
 
