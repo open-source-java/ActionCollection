@@ -9,20 +9,24 @@ import ac.core.*;
 import ac.factory.objects.*;
 import javax.sql.rowset.*;
 import ac.factory.*;
+import elsu.common.*;
 import elsu.database.*;
+import elsu.support.*;
+import java.util.*;
 import javax.sql.rowset.spi.*;
 
 /**
  *
  * @author dhaliwal-admin
  */
-public class ActionUnitTest {
+public class ActionUnitTest implements IEventSubscriber {
 
     public ActionFactory af = null;
 
     public ActionUnitTest() {
         try {
             af = new ActionFactory();
+            af.addEventListener(this);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -31,6 +35,7 @@ public class ActionUnitTest {
     public ActionUnitTest(String config) {
         try {
             af = new ActionFactory(config);
+            af.addEventListener(this);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -43,6 +48,7 @@ public class ActionUnitTest {
         if (af != null) {
             try {
                 si = (SystemIdentification) af.getClassByName("SystemIdentification.class");
+                //si.addEventListener(this);
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
@@ -60,6 +66,7 @@ public class ActionUnitTest {
         if (af != null) {
             try {
                 si = (Site) af.getClassByName("Site.class");
+                //si.addEventListener(this);
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
@@ -194,11 +201,11 @@ public class ActionUnitTest {
     // test append action object
     public void TestAppend(ActionObject ao, long[] firstRS, long[] secondRS) {
         try {
-            WebRowSet wrs = ActionObjectDirect.View(af.getDbManager(), 
+            WebRowSet wrs = ActionObjectStack.View(af.getDbManager(), 
                     "SELECT ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP FROM NCS3.VWSITE", 
                     "SITE_ID IN (SELECT * FROM TABLE (?))", new DatabaseDataTypes[]{DatabaseDataTypes.dtarray}, 
                     new Object[]{secondRS});
-            System.out.println(ActionObjectDirect.toXML(wrs));
+            System.out.println(ActionObjectStack.toXML(wrs));
 
             ao.Refresh(firstRS);
             ao.Append(wrs);
@@ -335,7 +342,7 @@ public class ActionUnitTest {
 
         // update the action object direct syncprovider (if applicable)
         try {
-            ActionObjectDirect.setSyncProvider(aut.af.getSyncProvider());
+            ActionObjectStack.setSyncProvider(aut.af.getSyncProvider());
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -346,17 +353,17 @@ public class ActionUnitTest {
         // class object direct access test
         if (aut.af != null) {
             try {
-                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
+                WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE_STATUS",
                         null, null, null);
-                System.out.println(ActionObjectDirect.toXML(wrs));
+                System.out.println(ActionObjectStack.toXML(wrs));
                 System.out.println(".. records selected: " + wrs.size());
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
 
             try {
-                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
+                WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE_ID LIKE ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"8%"});
                 //System.out.println(ActionObject.toXML(wrs));
@@ -366,7 +373,7 @@ public class ActionUnitTest {
             }
 
             try {
-                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
+                WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE_ID LIKE ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"9%"});
                 //System.out.println(ActionObject.toXML(wrs));
@@ -376,7 +383,7 @@ public class ActionUnitTest {
             }
 
             try {
-                WebRowSet wrs = ActionObjectDirect.Cursor(aut.af.getDbManager(),
+                WebRowSet wrs = ActionObjectStack.Cursor(aut.af.getDbManager(),
                         "NCS3.SPS_SITE",
                         new DatabaseDataTypes[]{DatabaseDataTypes.dtarray}, new Object[]{new Long[]{830L, 838L}});
                 //System.out.println(ActionObject.toXML(wrs));
@@ -386,7 +393,7 @@ public class ActionUnitTest {
             }
 
             try {
-                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
+                WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"DHALIWAL2"});
                 //System.out.println(ActionObject.toXML(wrs));
@@ -398,7 +405,7 @@ public class ActionUnitTest {
             try {
                 long siteId = 830L;
 
-                long count = ActionObjectDirect.Execute(aut.af.getDbManager(),
+                long count = ActionObjectStack.Execute(aut.af.getDbManager(),
                         "NCS3.SPD_SITE",
                         new DatabaseDataTypes[]{DatabaseDataTypes.dtlong}, new Object[]{siteId});
                 //System.out.println(ActionObject.toXML(wrs));
@@ -414,6 +421,19 @@ public class ActionUnitTest {
             if (aut.af != null) {
                 aut.TestSystemIdentification();
             }
+        }
+    }
+
+    @Override
+    public void EventHandler(EventObject e, StatusType s, String message, Object o) {
+        switch (s) {
+            case DEBUG:
+            case ERROR:
+            case INFORMATION:
+                System.out.println(s.name() + ":" + message);
+                break;
+            default:             
+                break;
         }
     }
 }

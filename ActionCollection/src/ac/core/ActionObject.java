@@ -57,7 +57,11 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
         this._dbManager = dbManager;
         discoverColumnsDataTypes();
 
-        this._syncProvider = getConfig().getProperty("rowset.sync.provider");
+        this._syncProvider = getConfig().getProperty("rowset.sync.provider").toString();
+
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", ActionObject(), "
+                + "contructor completed.", null);
     }
 
     @Override
@@ -192,8 +196,9 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             result += CollectionStack.ArrayToString(columns).toUpperCase();
             result += " FROM " + getActionConfig().getSQLSelect().toUpperCase();
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", getSQLSelect(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", getSQLSelect(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             result = "";
         }
@@ -207,8 +212,9 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             this._selectProcedure += CollectionStack.ArrayToString((String[]) getColumns().toArray()).toUpperCase();
             this._selectProcedure += " FROM " + procedure.toUpperCase();
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", setSQLSelect(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", setSQLSelect(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
         }
     }
 
@@ -274,12 +280,16 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
                 result.acceptChanges();
             }
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Append(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Append(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             throw new Exception(ex);
         }
 
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Append(), "
+                + "WebRowSet result.", result);
         return result;
     }
 
@@ -310,14 +320,19 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
 
             result = getDbManager().getDataXML(sql, dbParams);
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Refresh(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Refresh(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             result = null;
             throw new Exception(ex);
         }
 
         setRowSet(result);
+
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Refresh(), "
+                + "WebRowSet result.", result);
         return result;
     }
 
@@ -347,14 +362,19 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
 
             result = getDbManager().getDataXMLViaCursor(sql, dbParams);
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Refresh(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Refresh(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             result = null;
             throw new Exception(ex);
         }
 
         setRowSet(result);
+
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Refresh(), "
+                + "WebRowSet result.", result);
         return result;
     }
 
@@ -396,14 +416,19 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
 
             result = getDbManager().getDataXML(sql, dbParams);
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Refresh(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Refresh(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             result = null;
             throw new Exception(ex);
         }
 
         setRowSet(result);
+
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Refresh(), "
+                + "WebRowSet result.", result);
         return result;
     }
 
@@ -447,14 +472,19 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
 
             result = getDbManager().getDataXML(sql, dbParams);
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Refresh(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Refresh(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             result = null;
             throw new Exception(ex);
         }
 
         setRowSet(result);
+
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Refresh(), "
+                + "WebRowSet result.", result);
         return result;
     }
 
@@ -507,14 +537,19 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
 
             result = getDbManager().getDataXML(sql, dbParams);
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Refresh(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Refresh(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             result = null;
             throw new Exception(ex);
         }
 
         setRowSet(result);
+
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Refresh(), "
+                + "WebRowSet result.", result);
         return result;
     }
 
@@ -563,14 +598,19 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
 
             result = getDbManager().getDataXML(sql, dbParams);
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Refresh(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Refresh(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             result = null;
             throw new Exception(ex);
         }
 
         setRowSet(result);
+
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Refresh(), "
+                + "WebRowSet result.", result);
         return result;
     }
 
@@ -646,14 +686,18 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             // accept any pending changes for the row
             getRowSet().acceptChanges();
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Update(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Update(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             result = 0;
             throw new Exception(ex);
         }
 
         // return the value of the count field
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Update(), "
+                + "hashmap result.", spResult);
         return result;
     }
 
@@ -662,17 +706,29 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
         long result = 0;
 
         // if update procedure is not defined, exit
-        if ((getActionConfig().getSQLUpdate() == null) || (getActionConfig().getSQLUpdate().isEmpty())) {
-            throw new Exception("No update procedure defined.");
-        }
+        try {
+            if ((getActionConfig().getSQLUpdate() == null) || (getActionConfig().getSQLUpdate().isEmpty())) {
+                throw new Exception("No update procedure defined.");
+            }
 
-        // call the overloaded method to complete the update; this is assuming
-        // the webrowset is multiple records
-        for (long value : id) {
-            result += Update(value);
+            // call the overloaded method to complete the update; this is assuming
+            // the webrowset is multiple records
+            for (long value : id) {
+                result += Update(value);
+            }
+        } catch (Exception ex) {
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Update(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
+
+            result = 0;
+            throw new Exception(ex);
         }
 
         // return total records updated
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Update(), "
+                + "multiple value result.", result);
         return result;
     }
 
@@ -726,11 +782,14 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             // call the overloaded update
             result = Update(id);
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Update(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Update(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
+
             throw new Exception(ex);
         }
 
+        // return total records updated
         return result;
     }
 
@@ -760,8 +819,10 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
                 result += Update(recId, columns, values);
             }
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Update(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Update(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
+
             throw new Exception(ex);
         }
 
@@ -847,11 +908,17 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
                 }
             }
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Update(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Update(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
+
             throw new Exception(ex);
         }
 
+        // return total records updated
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Update(), "
+                + "hashmap result.", spResult);
         return result;
     }
 
@@ -880,8 +947,10 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
                 result += Update(recId, procedure, columns, values);
             }
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Update(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Update(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
+
             throw new Exception(ex);
         }
 
@@ -954,14 +1023,18 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             // accept changes to rowset
             getRowSet().acceptChanges();
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Delete(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Delete(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             result = 0;
             throw new Exception(ex);
         }
 
         // return the value of the count field
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Delete(), "
+                + "hashmap result.", spResult);
         return result;
     }
 
@@ -969,24 +1042,35 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
     public long Delete(long[] id) throws Exception {
         long result = 0;
 
-        // if rowset is null, exit
-        if (getRowSet() == null) {
-            throw new Exception("RowSet is null.");
-        }
+        try {
+            // if rowset is null, exit
+            if (getRowSet() == null) {
+                throw new Exception("RowSet is null.");
+            }
 
-        // if delete procedure is not defined, exit
-        if ((getActionConfig().getSQLDelete() == null) || (getActionConfig().getSQLDelete().isEmpty())) {
-            getConfig().logError(getClass().toString() + ", Delete(), "
-                    + GlobalStack.LINESEPARATOR + "No delete procedure defined.");
-        }
+            // if delete procedure is not defined, exit
+            if ((getActionConfig().getSQLDelete() == null) || (getActionConfig().getSQLDelete().isEmpty())) {
+                throw new Exception("No delete procedure defined.");
+            }
 
         // call the overloaded method to complete the update; this is assuming
-        // the webrowset is multiple records
-        for (long value : id) {
-            result += Delete(value);
+            // the webrowset is multiple records
+            for (long value : id) {
+                result += Delete(value);
+            }
+        } catch (Exception ex) {
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Delete(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
+
+            result = 0;
+            throw new Exception(ex);
         }
 
         // return total records updated
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Delete(), "
+                + "multiple value result.", result);
         return result;
     }
 
@@ -997,8 +1081,7 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
         try {
             // if delete procedure is not defined, exit
             if ((getActionConfig().getSQLDelete() == null) || (getActionConfig().getSQLDelete().isEmpty())) {
-                getConfig().logError(getClass().toString() + ", Delete(), "
-                        + GlobalStack.LINESEPARATOR + "No delete procedure defined.");
+                throw new Exception("No delete procedure defined.");
             }
 
             // get the records to delete
@@ -1022,13 +1105,18 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
                 result = 0;
             }
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Delete(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Delete(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             result = 0;
             throw new Exception(ex);
         }
 
+        // return the value of the count field
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Delete(), "
+                + "value result.", result);
         return result;
     }
 
@@ -1106,13 +1194,18 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
             // accept changes to the rowset
             getRowSet().acceptChanges();
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Insert(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Insert(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             result = 0;
             throw new Exception(ex);
         }
 
+        // return the value of the count field
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Insert(), "
+                + "hashmap result.", spResult);
         return result;
     }
 
@@ -1157,12 +1250,17 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
                 }
             }
         } catch (Exception ex) {
-            getConfig().logError(getClass().toString() + ", Insert(), "
-                    + GlobalStack.LINESEPARATOR + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", Insert(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             throw new Exception(ex);
         }
 
+        // return the value of the count field
+        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+                getClass().toString() + ", Insert(), "
+                + "value result.", result);
         return result;
     }
 
@@ -1173,12 +1271,12 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
 
     @Override
     public HashMap<String, Object> toHaspMap() throws Exception {
-        return ActionObjectDirect.toHashMap(getRowSet());
+        return ActionObjectStack.toHashMap(getRowSet());
     }
 
     @Override
     public HashMap<String, Object> toHaspMap(String[] columns) throws Exception {
-        return ActionObjectDirect.toHashMap(getRowSet(), columns);
+        return ActionObjectStack.toHashMap(getRowSet(), columns);
     }
 
     @Override
@@ -1186,11 +1284,12 @@ public abstract class ActionObject extends AbstractEventPublisher implements IAc
         String result = "";
 
         try {
-            result = ActionObjectDirect.toXML(getRowSet());
+            result = ActionObjectStack.toXML(getRowSet());
         } catch (Exception ex) {
             // log error for tracking
-            getConfig().logError(getClass().toString() + ", toXML(), "
-                    + ex.getMessage());
+            notifyListeners(new EventObject(this), StatusType.ERROR,
+                    getClass().toString() + ", toXML(), "
+                    + GlobalStack.LINESEPARATOR + ex.getMessage(), null);
 
             throw new Exception(ex);
         }
