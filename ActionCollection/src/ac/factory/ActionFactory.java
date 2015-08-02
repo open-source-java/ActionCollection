@@ -172,7 +172,7 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
         }
     }
 
-    public IAction getClassByName(String className) throws Exception {
+    public IAction getActionObject(String className) throws Exception {
         IAction result = null;
         String classPath = getConfig().getProperty(className).toString();
 
@@ -222,7 +222,7 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
     }
 
     @Override
-    public void EventHandler(EventObject e, StatusType s, String message, Object o) {
+    public synchronized void EventHandler(EventObject e, StatusType s, String message, Object o) {
         switch (s) {
             case DEBUG:
                 getConfig().logDebug(message);

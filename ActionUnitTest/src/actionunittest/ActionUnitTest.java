@@ -47,7 +47,7 @@ public class ActionUnitTest implements IEventSubscriber {
 
         if (af != null) {
             try {
-                si = (SystemIdentification) af.getClassByName("SystemIdentification.class");
+                si = (SystemIdentification) af.getActionObject("SystemIdentification.class");
                 //si.addEventListener(this);
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
@@ -65,7 +65,7 @@ public class ActionUnitTest implements IEventSubscriber {
 
         if (af != null) {
             try {
-                si = (Site) af.getClassByName("Site.class");
+                si = (Site) af.getActionObject("Site.class");
                 //si.addEventListener(this);
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
