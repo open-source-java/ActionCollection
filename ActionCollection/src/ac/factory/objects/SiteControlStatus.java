@@ -24,7 +24,7 @@ public class SiteControlStatus extends ActionObject {
     }
 
     @Override
-    public void EventHandler(EventObject e, StatusType s, String message, Object o) {
+    public Object EventHandler(Object sender, StatusType status, String message, Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

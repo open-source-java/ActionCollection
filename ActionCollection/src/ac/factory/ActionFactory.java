@@ -222,8 +222,8 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
     }
 
     @Override
-    public synchronized void EventHandler(EventObject e, StatusType s, String message, Object o) {
-        switch (s) {
+    public synchronized Object EventHandler(Object sender, StatusType status, String message, Object o) {
+        switch (status) {
             case DEBUG:
                 getConfig().logDebug(message);
                 break;
@@ -236,5 +236,7 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
             default:
                 break;
         }
+        
+        return null;
     }
 }
