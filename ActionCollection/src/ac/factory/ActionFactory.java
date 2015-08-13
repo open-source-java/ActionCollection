@@ -5,8 +5,8 @@
  */
 package ac.factory;
 
+import elsu.events.*;
 import ac.core.*;
-import elsu.common.*;
 import elsu.database.*;
 import elsu.support.*;
 import java.lang.reflect.*;
@@ -17,7 +17,7 @@ import javax.sql.rowset.spi.*;
  *
  * @author ss.dhaliwal
  */
-public class ActionFactory extends AbstractEventPublisher implements IEventPublisher, IEventSubscriber {
+public class ActionFactory extends AbstractEventManager implements IEventPublisher, IEventSubscriber {
 
     private ConfigLoader _config = null;
     private DatabaseManager _dbManager = null;
@@ -28,7 +28,7 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
 
         initialize();
 
-        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", ActionFactory(), "
                 + "contructor completed.", null);
     }
@@ -39,7 +39,7 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
 
         initialize();
 
-        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", ActionFactory(), "
                 + "contructor completed.", null);
     }
@@ -50,7 +50,7 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
 
         initialize();
 
-        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", ActionFactory(), "
                 + "contructor completed.", null);
     }
@@ -83,7 +83,7 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
             }
         }
 
-        notifyListeners(new EventObject(this), StatusType.INFORMATION,
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", initialize(), "
                 + "initialization completed.", null);
     }
@@ -166,7 +166,7 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
                         + ex.getMessage());
             }
 
-            notifyListeners(new EventObject(this), StatusType.INFORMATION,
+            notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                     getClass().toString() + ", setDbManager(), "
                     + "dbManager initialized.", null);
         }
@@ -204,11 +204,11 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
                 ((IEventPublisher) result).addEventListener(this);
             }
 
-            notifyListeners(new EventObject(this), StatusType.INFORMATION,
+            notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                     getClass().toString() + ", getClassByName(), "
                     + "class (" + className + "/" + classPath + ") instantiated.", null);
         } else {
-            notifyListeners(new EventObject(this), StatusType.ERROR,
+            notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", getClassByName(), "
                     + "class (" + className + "/null) not found.", null);
         }
@@ -222,8 +222,8 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
     }
 
     @Override
-    public synchronized Object EventHandler(Object sender, IStatusType status, String message, Object o) {
-        switch (StatusType.valueOf(status.getName())) {
+    public synchronized Object EventHandler(Object sender, IEventStatusType status, String message, Object o) {
+        switch (EventStatusType.valueOf(status.getName())) {
             case DEBUG:
                 getConfig().logDebug(message);
                 break;

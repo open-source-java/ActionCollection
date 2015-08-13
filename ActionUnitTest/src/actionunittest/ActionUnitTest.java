@@ -5,15 +5,12 @@
  */
 package actionunittest;
 
+import elsu.events.*;
 import ac.core.*;
 import ac.factory.objects.*;
 import javax.sql.rowset.*;
 import ac.factory.*;
-import elsu.common.*;
 import elsu.database.*;
-import elsu.support.*;
-import java.util.*;
-import javax.sql.rowset.spi.*;
 
 /**
  *
@@ -425,8 +422,8 @@ public class ActionUnitTest implements IEventSubscriber {
     }
 
     @Override
-    public Object EventHandler(Object sender, IStatusType status, String message, Object o) {
-        switch (StatusType.valueOf(status.getName())) {
+    public Object EventHandler(Object sender, IEventStatusType status, String message, Object o) {
+        switch (EventStatusType.valueOf(status.getName())) {
             case DEBUG:
             case ERROR:
             case INFORMATION:
