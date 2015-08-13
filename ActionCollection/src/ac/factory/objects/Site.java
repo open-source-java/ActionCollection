@@ -6,10 +6,10 @@
 package ac.factory.objects;
 
 import ac.core.*;
-import elsu.common.StatusType;
+import elsu.common.*;
 import elsu.database.*;
 import elsu.support.*;
-import java.util.EventObject;
+import java.util.*;
 
 /**
  *
@@ -24,7 +24,7 @@ public class Site extends ActionObject {
     }
 
     @Override
-    public Object EventHandler(Object sender, StatusType status, String message, Object o) {
+    public Object EventHandler(Object sender, IStatusType status, String message, Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

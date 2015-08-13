@@ -425,12 +425,12 @@ public class ActionUnitTest implements IEventSubscriber {
     }
 
     @Override
-    public Object EventHandler(Object sender, StatusType status, String message, Object o) {
-        switch (status) {
+    public Object EventHandler(Object sender, IStatusType status, String message, Object o) {
+        switch (StatusType.valueOf(status.getName())) {
             case DEBUG:
             case ERROR:
             case INFORMATION:
-                System.out.println(status.name() + ":" + message);
+                System.out.println(status.getName() + ":" + message);
                 break;
             default:             
                 break;

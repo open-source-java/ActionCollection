@@ -95,7 +95,7 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
     private void setConfig() {
         try {
             this._config = new ConfigLoader("", new String[]{
-                "application.framework.attributes.key.", 
+                "application.framework.attributes.key.",
                 "application.actions.action.", "application.actionExtensions."});
         } catch (Exception ex) {
 
@@ -106,7 +106,7 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
         try {
             this._config = new ConfigLoader(config,
                     new String[]{
-                        "application.framework.attributes.key.", 
+                        "application.framework.attributes.key.",
                         "application.actions.action.", "application.actionExtensions."});
         } catch (Exception ex) {
 
@@ -222,8 +222,8 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
     }
 
     @Override
-    public synchronized Object EventHandler(Object sender, StatusType status, String message, Object o) {
-        switch (status) {
+    public synchronized Object EventHandler(Object sender, IStatusType status, String message, Object o) {
+        switch (StatusType.valueOf(status.getName())) {
             case DEBUG:
                 getConfig().logDebug(message);
                 break;
@@ -236,7 +236,7 @@ public class ActionFactory extends AbstractEventPublisher implements IEventPubli
             default:
                 break;
         }
-        
+
         return null;
     }
 }
