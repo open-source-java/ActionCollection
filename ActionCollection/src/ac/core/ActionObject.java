@@ -361,7 +361,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams.add(new DatabaseParameter("param1", DatabaseDataType.dtarray,
                     id));
 
-            result = getDbManager().getDataXMLViaCursor(sql, dbParams);
+            result = getDbManager().getDataXML(sql, dbParams);
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
