@@ -131,7 +131,7 @@ public abstract class ActionObjectStack {
                         o));
             }
 
-            result = dbManager.getDataXMLViaCursor(sql, dbParams);
+            result = dbManager.getDataXML(sql, dbParams);
 
             // update syncprovide if defined
             if ((ActionObjectStack.getSyncProvider() != null) && (!ActionObjectStack.getSyncProvider().isEmpty())) {
