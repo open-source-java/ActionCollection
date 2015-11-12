@@ -7,6 +7,7 @@ package ac.core;
 
 import elsu.common.*;
 import elsu.database.*;
+import elsu.database.rowset.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -19,35 +20,10 @@ import javax.sql.rowset.spi.*;
  */
 public abstract class ActionObjectStack {
 
-    private static String _SYNCPROVIDER = "";
-
-    public static String getSyncProvider() {
-        return ActionObjectStack._SYNCPROVIDER;
-    }
-
-    public static void setSyncProvider(String syncProvider) throws Exception {
-        boolean installed = false;
-
-        if ((syncProvider != null) && (!syncProvider.isEmpty())) {
-            java.util.Enumeration e = SyncFactory.getRegisteredProviders();
-            while (e.hasMoreElements()) {
-                e.nextElement();
-
-                if (e.getClass().toString().replaceAll("class ", "").equals(syncProvider)) {
-                    installed = true;
-                    break;
-                }
-            }
-
-            if (!installed) {
-                SyncFactory.registerProvider(syncProvider);
-                ActionObjectStack._SYNCPROVIDER = syncProvider;
-            }
-        }
-    }
-
-    public static WebRowSet View(DatabaseManager dbManager, String SQLStmt, String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
-        WebRowSet result = null;
+    public static EntityDescriptor View(DatabaseManager dbManager, String SQLStmt,
+            String whereClause, DatabaseDataType[] valueDataTypes,
+            Object[] values) throws Exception {
+        EntityDescriptor result = null;
 
         try {
             // if dbmanager is null, exit
@@ -84,12 +60,7 @@ public abstract class ActionObjectStack {
                 }
             }
 
-            result = dbManager.getDataXML(sql, dbParams);
-
-            // update syncprovide if defined
-            if ((ActionObjectStack.getSyncProvider() != null) && (!ActionObjectStack.getSyncProvider().isEmpty())) {
-                result.setSyncProvider(ActionObjectStack.getSyncProvider());
-            }
+            result = dbManager.getDataED(sql, dbParams);
         } catch (Exception ex) {
             throw new Exception("class ActionObjectDirect, View(), " + ex.getMessage());
         }
@@ -97,8 +68,10 @@ public abstract class ActionObjectStack {
         return result;
     }
 
-    public static WebRowSet Cursor(DatabaseManager dbManager, String procedure, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
-        WebRowSet result = null;
+    public static EntityDescriptor Cursor(DatabaseManager dbManager,
+            String procedure, DatabaseDataType[] valueDataTypes, Object[] values)
+            throws Exception {
+        EntityDescriptor result = null;
         Map<String, Object> spResult = null;
 
         try {
@@ -131,12 +104,7 @@ public abstract class ActionObjectStack {
                         o));
             }
 
-            result = dbManager.getDataXML(sql, dbParams);
-
-            // update syncprovide if defined
-            if ((ActionObjectStack.getSyncProvider() != null) && (!ActionObjectStack.getSyncProvider().isEmpty())) {
-                result.setSyncProvider(ActionObjectStack.getSyncProvider());
-            }
+            result = dbManager.getDataED(sql, dbParams);
         } catch (Exception ex) {
             throw new Exception("class ActionObjectDirect, Cursor(), " + ex.getMessage());
         }
@@ -144,7 +112,9 @@ public abstract class ActionObjectStack {
         return result;
     }
 
-    public static long Execute(DatabaseManager dbManager, String procedure, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
+    public static long Execute(DatabaseManager dbManager, String procedure,
+            DatabaseDataType[] valueDataTypes, Object[] values,
+            Map<String, DatabaseDataType> outputDataTypes) throws Exception {
         long result = 0;
         Map<String, Object> spResult = null;
 
@@ -164,7 +134,11 @@ public abstract class ActionObjectStack {
             }
 
             String sql = "{call " + procedure + "("
-                    + StringStack.padString("", valueDataTypes.length + 3, "?", ",") + ")}";
+                    + StringStack.padString("", valueDataTypes.length, "?", ",");
+            if (outputDataTypes.size() > 0) {
+                sql += StringStack.padString("", outputDataTypes.size(), "?", ",");
+            }
+            sql += StringStack.padString("", 3, "?", ",") + ")}";
 
             ArrayList<DatabaseParameter> dbParams;
             dbParams = new ArrayList<>();
@@ -179,9 +153,15 @@ public abstract class ActionObjectStack {
             }
 
             // add the output parameters for status reporting
-            dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
-            dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
-            dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
+            if (outputDataTypes.size() > 0) {
+                for (String param : outputDataTypes.keySet()) {
+                    dbParams.add(new DatabaseParameter(param, outputDataTypes.get(param), true));
+                }
+            } else {
+                dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
+                dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
+                dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
+            }
 
             spResult = dbManager.executeProcedure(sql, dbParams);
 
@@ -199,49 +179,53 @@ public abstract class ActionObjectStack {
         return result;
     }
 
-    public static HashMap<String, Object> toHashMap(WebRowSet rowSet) throws Exception {
+    public static HashMap<String, Object> toHashMap(ArrayList<RowDescriptor> rows)
+            throws Exception {
         HashMap<String, Object> map = new HashMap<>();
 
-        // loop through the rowset and return all columns/values
-        if ((rowSet != null) && (rowSet.size() == 1)) {
-            ResultSetMetaData rsmd = rowSet.getMetaData();
+        // loop through the entity and return all columns/values
+        if ((rows != null) && (rows.size() == 1)) {
+            RowDescriptor row = rows.get(0);
 
-            int maxColumns = rsmd.getColumnCount();
-            for (int i = 1; i <= maxColumns; i++) {
-                map.put(rsmd.getColumnName(i), rowSet.getObject(i));
+            for (int i = 1; i <= row.getColumnCount(); i++) {
+                map.put(row.getColumn(i).getName(), row.getValue(i));
             }
+        } else {
+            throw new Exception("rowSet count > 1");
         }
 
         return map;
     }
 
-    public static HashMap<String, Object> toHashMap(WebRowSet rowSet, String[] columns) throws Exception {
+    public static HashMap<String, Object> toHashMap(ArrayList<RowDescriptor> rows,
+            String[] columns) throws Exception {
         HashMap<String, Object> map = new HashMap<>();
 
-        // loop through the rowset and return all columns/values
-        if ((rowSet != null) && (rowSet.size() == 1)) {
-            ResultSetMetaData rsmd = rowSet.getMetaData();
-            List<String> cList = Arrays.asList(columns);
+        // loop through the entity and return all columns/values
+        if ((rows != null) && (rows.size() == 1)) {
+            RowDescriptor row = rows.get(0);
 
-            int maxColumns = rsmd.getColumnCount();
-            for (int i = 0; i < maxColumns; i++) {
-                if (cList.indexOf(rsmd.getColumnName(i + 1)) > -1) {
-                    map.put(rsmd.getColumnName(i + 1), rowSet.getObject(i + 1));
+            String fieldName = "";
+            ArrayList<String> columnList = new ArrayList<String>(Arrays.asList(columns));
+            for (int i = 1; i <= row.getColumnCount(); i++) {
+                fieldName = row.getColumn(i).getName();
+
+                if (columnList.contains(fieldName)) {
+                    map.put(row.getColumn(i).getName(), row.getValue(i));
                 }
             }
+        } else {
+            throw new Exception("rowSet count > 1");
         }
 
         return map;
     }
 
-    public static String toXML(WebRowSet rowSet) throws Exception {
+    public static String toXML(EntityDescriptor entity) throws Exception {
         String result = "";
 
-        if (rowSet != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            rowSet.writeXml(baos);
-            result = baos.toString();
+        if (entity != null) {
+            result = entity.toXML();
         } else {
             throw new Exception("ActionObject.toXML(), empty rowset provided.");
         }

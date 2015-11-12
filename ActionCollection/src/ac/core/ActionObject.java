@@ -8,6 +8,7 @@ package ac.core;
 import elsu.events.*;
 import elsu.common.*;
 import elsu.database.*;
+import elsu.database.rowset.*;
 import elsu.support.*;
 import java.util.*;
 import javax.sql.rowset.*;
@@ -24,7 +25,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
     private DatabaseManager _dbManager = null;
     private String _syncProvider = "";
     private ActionConfig _actionConfig = null;
-    private WebRowSet _rowSet = null;
+    private EntityDescriptor _entity = null;
     private List<String> _columns = new ArrayList<>();
     private List<DatabaseDataType> _columnDataTypes = new ArrayList<>();
     private List<String> _dataTypes = new ArrayList<>();
@@ -68,12 +69,9 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
     @Override
     public void finalize() throws Throwable {
         try {
-            if (this._rowSet != null) {
-                WebRowSet wrs = this._rowSet;
-                this._rowSet = null;
-
-                wrs.release();
-                wrs.close();
+            if (this._entity != null) {
+                EntityDescriptor wrs = this._entity;
+                this._entity = null;
             }
 
             // deregister sync proviert
@@ -86,34 +84,21 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
         }
     }
 
-    public WebRowSet getRowSet() {
-        return this._rowSet;
+    public EntityDescriptor getEntity() {
+        return this._entity;
     }
 
-    protected void setRowSet(WebRowSet rowSet) throws Exception {
+    protected void setEntity(EntityDescriptor entity) throws Exception {
         // clear old to allow GC to select on first run
-        if (getRowSet() != null) {
+        if (getEntity() != null) {
             try {
-                WebRowSet wrs = this._rowSet;
-                this._rowSet = null;
-
-                wrs.release();
-                wrs.close();
+                EntityDescriptor wrs = this._entity;
+                this._entity = null;
             } catch (Exception exi) {
             }
         }
 
-        // set the sync provider to custom provider if defined
-        if (rowSet != null) {
-            rowSet.setSyncProvider(getSyncProvider());
-        }
-
-        this._rowSet = rowSet;
-    }
-
-    protected void setRowSet() throws Exception {
-        RowSetFactory rowSetFactory = RowSetProvider.newFactory();
-        setRowSet(rowSetFactory.createWebRowSet());
+        this._entity = entity;
     }
 
     public ConfigLoader getConfig() {
@@ -160,17 +145,17 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             String sql = getSQLSelect()
                     + " WHERE 1 = 2";
 
-            WebRowSet result = getDbManager().getDataXML(sql, null);
+            EntityDescriptor result = getDbManager().getDataED(sql, null);
 
             // parse the webresult and populate the datatypes for each column
-            ResultSetMetaData rsmd = result.getMetaData();
-            int maxColumns = rsmd.getColumnCount();
+            Map<String, ColumnDescriptor> rsmd = result.getColumns();
+            int maxColumns = rsmd.size();
 
             this._dataTypes.clear();
             this._dataTypesClass.clear();
-            for (int i = 0; i < maxColumns; i++) {
-                this._dataTypes.add(rsmd.getColumnTypeName(i + 1));
-                this._dataTypesClass.add(rsmd.getColumnClassName(i + 1));
+            for (String field : rsmd.keySet()) {
+                this._dataTypes.add(rsmd.get(field).getTypeName());
+                this._dataTypesClass.add(rsmd.get(field).getClassName());
             }
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
@@ -224,8 +209,8 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
     }
 
     @Override
-    public WebRowSet Append(WebRowSet wrs) throws Exception {
-        WebRowSet result = getRowSet();
+    public EntityDescriptor Append(EntityDescriptor entity) throws Exception {
+        EntityDescriptor result = getEntity();
         boolean matchOk = false;
 
         try {
@@ -235,25 +220,26 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             }
 
             // if argument is null, then exit
-            if ((wrs == null) || (wrs.size() == 0)) {
+            if ((entity == null) || (entity.getRowCount() == 0)) {
                 throw new Exception("parameter rowset not initialized (or) no records in rowset.");
             }
 
             // compare metadata from both, if they do not match, exit
-            ResultSetMetaData oRSMD = result.getMetaData();
-            ResultSetMetaData pRSMD = wrs.getMetaData();
+            Map<String, ColumnDescriptor> oRSMD = result.getColumns();
+            Map<String, ColumnDescriptor> pRSMD = entity.getColumns();
 
-            if (oRSMD.getColumnCount() != pRSMD.getColumnCount()) {
-                throw new Exception("source and destination rowsets do not have same columns.");
+            if (oRSMD.size() != pRSMD.size()) {
+                throw new Exception("source and destination rowsets do not have same number of columns.");
             }
-
-            for (int i = 1; i <= oRSMD.getColumnCount(); i++) {
+            
+            for (String key : oRSMD.keySet()) {
                 // compare columnname, columnprecision, columnscale, columntype
-                if ((oRSMD.getColumnClassName(i).equals(pRSMD.getColumnClassName(i)))
-                        && (oRSMD.getColumnName(i).equals(pRSMD.getColumnName(i)))
-                        && (oRSMD.getColumnType(i) == pRSMD.getColumnType(i))
-                        && (oRSMD.getPrecision(i) == pRSMD.getPrecision(i))
-                        && (oRSMD.getScale(i) == pRSMD.getScale(i))) {
+                if ((oRSMD.get(key).getClassName().equals(pRSMD.get(key).getClassName()))
+                        && (oRSMD.get(key).getName().equals(pRSMD.get(key).getName()))
+                        && (oRSMD.get(key).getTypeName().equals(pRSMD.get(key).getTypeName()))
+                        && (oRSMD.get(key).getType() == pRSMD.get(key).getType())
+                        && (oRSMD.get(key).getPrecision() == pRSMD.get(key).getPrecision())
+                        && (oRSMD.get(key).getScale() == pRSMD.get(key).getScale())) {
                     matchOk = true;
                 } else {
                     matchOk = false;
@@ -266,19 +252,13 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 throw new Exception("columns types (class, name, precision, scale, or type) do not match.");
             }
 
-            // copy data from wrs to object rowset
-            wrs.beforeFirst();
-            while (wrs.next()) {
-                result.afterLast();
-                result.moveToInsertRow();
-
-                for (int i = 1; i <= oRSMD.getColumnCount(); i++) {
-                    result.updateObject(i, wrs.getObject(i));
-                }
-
-                result.insertRow();
-                result.moveToCurrentRow();
-                result.acceptChanges();
+            // copy data from entity to object rowset
+            RowDescriptor newRow = null;
+            for(RowDescriptor row : entity.getRows()) {
+                newRow = new RowDescriptor(entity.getColumns(), entity.getColumnsById());
+                newRow.cloneRow(row);
+                
+                result.getRows().add(row);
             }
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
@@ -290,18 +270,18 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
         notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", Append(), "
-                + "WebRowSet result.", result);
+                + "EntityDescriptor result.", result);
         return result;
     }
 
     @Override
-    public WebRowSet Refresh() throws Exception {
+    public EntityDescriptor Refresh() throws Exception {
         return Refresh(null, null);
     }
 
     @Override
-    public WebRowSet Refresh(long id) throws Exception {
-        WebRowSet result = null;
+    public EntityDescriptor Refresh(long id) throws Exception {
+        EntityDescriptor result = null;
 
         try {
             // if select procedure is not defined, exit
@@ -319,7 +299,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams.add(new DatabaseParameter("param1", DatabaseDataType.dtlong,
                     id));
 
-            result = getDbManager().getDataXML(sql, dbParams);
+            result = getDbManager().getDataED(sql, dbParams);
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
@@ -329,17 +309,18 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             throw new Exception(ex);
         }
 
-        setRowSet(result);
+        setEntity(result);
 
         notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", Refresh(), "
-                + "WebRowSet result.", result);
+                + "EntityDescriptor result.", result);
         return result;
     }
 
     @Override
-    public WebRowSet Refresh(long[] id) throws Exception {
-        WebRowSet result = null;
+    public EntityDescriptor Refresh(long[] id) throws Exception {
+        EntityDescriptor result = null;
+        Map<String, Object> spResult = null;
 
         try {
             // if select procedure is not defined, exit
@@ -360,8 +341,10 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             // store the siteId parameter value
             dbParams.add(new DatabaseParameter("param1", DatabaseDataType.dtarray,
                     id));
+            dbParams.add(new DatabaseParameter("paramOCursor", DatabaseDataType.dtcursor, true));
 
-            result = getDbManager().getDataXML(sql, dbParams);
+            spResult = getDbManager().executeProcedure(sql, dbParams);
+            result = (EntityDescriptor) spResult.get("paramOCursor");
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
@@ -371,17 +354,17 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             throw new Exception(ex);
         }
 
-        setRowSet(result);
+        setEntity(result);
 
         notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", Refresh(), "
-                + "WebRowSet result.", result);
+                + "EntityDescriptor result.", result);
         return result;
     }
 
     @Override
-    public WebRowSet Refresh(String whereClause, Object[] values) throws Exception {
-        WebRowSet result = null;
+    public EntityDescriptor Refresh(String whereClause, Object[] values) throws Exception {
+        EntityDescriptor result = null;
 
         try {
             // if select procedure is not defined, exit
@@ -415,7 +398,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 }
             }
 
-            result = getDbManager().getDataXML(sql, dbParams);
+            result = getDbManager().getDataED(sql, dbParams);
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
@@ -425,17 +408,17 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             throw new Exception(ex);
         }
 
-        setRowSet(result);
+        setEntity(result);
 
         notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", Refresh(), "
-                + "WebRowSet result.", result);
+                + "EntityDescriptor result.", result);
         return result;
     }
 
     @Override
-    public WebRowSet Refresh(String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
-        WebRowSet result = null;
+    public EntityDescriptor Refresh(String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
+        EntityDescriptor result = null;
 
         try {
             // if select procedure is not defined, exit
@@ -471,7 +454,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 }
             }
 
-            result = getDbManager().getDataXML(sql, dbParams);
+            result = getDbManager().getDataED(sql, dbParams);
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
@@ -481,22 +464,22 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             throw new Exception(ex);
         }
 
-        setRowSet(result);
+        setEntity(result);
 
         notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", Refresh(), "
-                + "WebRowSet result.", result);
+                + "EntityDescriptor result.", result);
         return result;
     }
 
     @Override
-    public WebRowSet Refresh(String[] columns) throws Exception {
+    public EntityDescriptor Refresh(String[] columns) throws Exception {
         return Refresh(columns, null, null);
     }
 
     @Override
-    public WebRowSet Refresh(String[] columns, String whereClause, Object[] values) throws Exception {
-        WebRowSet result = null;
+    public EntityDescriptor Refresh(String[] columns, String whereClause, Object[] values) throws Exception {
+        EntityDescriptor result = null;
 
         try {
             String sql = getSQLSelect(columns);
@@ -527,16 +510,12 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 for (int i = 0; i < values.length; i++) {
                     o = values[i];
 
-                    if (o == null) {
-                        getRowSet().updateNull(i + 1);
-                    } else {
-                        dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
-                                o));
-                    }
+                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
+                            o));
                 }
             }
 
-            result = getDbManager().getDataXML(sql, dbParams);
+            result = getDbManager().getDataED(sql, dbParams);
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
@@ -546,17 +525,17 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             throw new Exception(ex);
         }
 
-        setRowSet(result);
+        setEntity(result);
 
         notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", Refresh(), "
-                + "WebRowSet result.", result);
+                + "EntityDescriptor result.", result);
         return result;
     }
 
     @Override
-    public WebRowSet Refresh(String[] columns, String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
-        WebRowSet result = null;
+    public EntityDescriptor Refresh(String[] columns, String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
+        EntityDescriptor result = null;
 
         try {
             String sql = getSQLSelect(columns);
@@ -588,16 +567,12 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 for (int i = 0; i < values.length; i++) {
                     o = values[i];
 
-                    if (o == null) {
-                        getRowSet().updateNull(i + 1);
-                    } else {
-                        dbParams.add(new DatabaseParameter("param" + (i + 1), valueDataTypes[i],
-                                o));
-                    }
+                    dbParams.add(new DatabaseParameter("param" + (i + 1), valueDataTypes[i],
+                            o));
                 }
             }
 
-            result = getDbManager().getDataXML(sql, dbParams);
+            result = getDbManager().getDataED(sql, dbParams);
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
@@ -607,11 +582,11 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             throw new Exception(ex);
         }
 
-        setRowSet(result);
+        setEntity(result);
 
         notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", Refresh(), "
-                + "WebRowSet result.", result);
+                + "EntityDescriptor result.", result);
         return result;
     }
 
@@ -623,7 +598,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
         try {
             // if rowset is null, exit
-            if (getRowSet() == null) {
+            if ((getEntity() == null) || (getEntity().getRows() == null)) {
                 throw new Exception("RowSet is null.");
             }
 
@@ -639,22 +614,18 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams = new ArrayList<>();
 
             // store the siteId parameter value
-            ResultSetMetaData rsmd = getRowSet().getMetaData();
-            int maxColumns = rsmd.getColumnCount();
             Object o = null;
-
-            getRowSet().beforeFirst();
-            while (getRowSet().next()) {
-                if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
-                    for (int i = 0; i < maxColumns; i++) {
-                        o = getRowSet().getObject(i + 1);
+            for (RowDescriptor row : getEntity().getRows()) {
+                if (Long.valueOf(row.getValue(getActionConfig().getPrimaryId()).toString()) == id) {
+                    for (int i = 1; i <= getEntity().getColumnCount(); i++) {
+                        o = row.getValue(i);
 
                         // if custom datatypes are defined, use them
                         if (!getColumnDataTypes().isEmpty()) {
-                            dbParams.add(new DatabaseParameter("param" + (i + 1), getColumnDataTypes().get(i),
+                            dbParams.add(new DatabaseParameter("param" + (i), getColumnDataTypes().get(i - 1),
                                     o));
                         } else {
-                            dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
+                            dbParams.add(new DatabaseParameter("param" + (i), DatabaseStack.getDataType(o),
                                     o));
                         }
                     }
@@ -683,9 +654,6 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             }
 
             result = Integer.parseInt(spResult.get("count").toString());
-
-            // accept any pending changes for the row
-            getRowSet().acceptChanges();
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Update(), "
@@ -740,7 +708,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
         try {
             // if rowset is null, exit
-            if (getRowSet() == null) {
+            if ((getEntity() == null) || (getEntity().getRows() == null)) {
                 throw new Exception("RowSet is null.");
             }
 
@@ -755,27 +723,19 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             }
 
             // update the memory record set with new values
-            getRowSet().beforeFirst();
-            while (getRowSet().next()) {
-                if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
+            Object o = null;
+            for (RowDescriptor row : getEntity().getRows()) {
+                if (Long.valueOf(row.getValue(getActionConfig().getPrimaryId()).toString()) == id) {
                     for (int i = 0; i < columns.length; i++) {
-                        // store the data into the rowset
-                        if (values[i] == null) {
-                            getRowSet().updateNull(i + 1);
-                        } else {
-                            getRowSet().updateObject(columns[i], values[i]);
-                        }
+                        row.setValue(columns[i], values[i]);
                     }
-
-                    // update the memory dataset
-                    getRowSet().updateRow();
 
                     isRecordValid = true;
                     break;
                 }
             }
 
-            // check if record is valid
+            // check if not record is valid
             if (!isRecordValid) {
                 throw new Exception("record not is present in the selected rowset.");
             }
@@ -801,7 +761,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
         try {
             // if rowset is null, exit
-            if (getRowSet() == null) {
+            if ((getEntity() == null) || (getEntity().getRows() == null)) {
                 throw new Exception("RowSet is null.");
             }
 
@@ -843,7 +803,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
         try {
             // if rowset is null, exit
-            if (getRowSet() == null) {
+            if ((getEntity() == null) || (getEntity().getRows() == null)) {
                 throw new Exception("RowSet is null.");
             }
 
@@ -864,50 +824,49 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams = new ArrayList<>();
 
             // update the memory record set with new values
-            List<String> cList = Arrays.asList(columns);
+            Object o = null;
 
-            getRowSet().beforeFirst();
-            while (getRowSet().next()) {
-                if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
+            for (RowDescriptor row : getEntity().getRows()) {
+                if (Long.valueOf(row.getValue(getActionConfig().getPrimaryId()).toString()) == id) {
                     for (int i = 0; i < columns.length; i++) {
-                        // store the data into the rowset
-                        if (values[i] == null) {
-                            getRowSet().updateNull(columns[i]);
-                        } else {
-                            getRowSet().updateObject(columns[i], values[i]);
-                        }
+                        row.setValue(columns[i], values[i]);
 
-                        // update the dbparams with column values
+                        o = row.getValue(i);
+
+                        // if custom datatypes are defined, use them
                         if (!getColumnDataTypes().isEmpty()) {
-                            dbParams.add(new DatabaseParameter("param" + (i + 1), getColumnDataTypes().get(cList.indexOf(columns[i])),
-                                    values[i]));
+                            dbParams.add(new DatabaseParameter("param" + (i), getColumnDataTypes().get(getColumnDataTypes().indexOf(columns[i])),
+                                    o));
                         } else {
-                            dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(values[i]),
-                                    values[i]));
+                            dbParams.add(new DatabaseParameter("param" + (i), DatabaseStack.getDataType(o),
+                                    o));
                         }
+
+                        isRecordValid = true;
+                        break;
                     }
-
-                    // update the memory dataset and accept changes
-                    getRowSet().updateRow();
-
-                    // add the output parameters for status reporting
-                    dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
-                    dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
-                    dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
-
-                    spResult = getDbManager().executeProcedure(sql, dbParams);
-
-                    // check if error occured, report it
-                    Long errorCode = Long.parseLong(spResult.get("errorId").toString());
-                    if ((errorCode > 0) || (errorCode < 0)) {
-                        throw new Exception("SQL Exception, " + spResult.get("errorId").toString() + ", " + spResult.get("status").toString());
-                    }
-
-                    result = Integer.parseInt(spResult.get("count").toString());
-                    getRowSet().acceptChanges();
-                    break;
                 }
             }
+
+            // check if not record is valid
+            if (!isRecordValid) {
+                throw new Exception("record not is present in the selected rowset.");
+            }
+
+            // add the output parameters for status reporting
+            dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
+            dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
+            dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
+
+            spResult = getDbManager().executeProcedure(sql, dbParams);
+
+            // check if error occured, report it
+            Long errorCode = Long.parseLong(spResult.get("errorId").toString());
+            if ((errorCode > 0) || (errorCode < 0)) {
+                throw new Exception("SQL Exception, " + spResult.get("errorId").toString() + ", " + spResult.get("status").toString());
+            }
+
+            result = Integer.parseInt(spResult.get("count").toString());
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Update(), "
@@ -917,7 +876,8 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
         }
 
         // return total records updated
-        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+        notifyListeners(
+                new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", Update(), "
                 + "hashmap result.", spResult);
         return result;
@@ -929,7 +889,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
         try {
             // if rowset is null, exit
-            if (getRowSet() == null) {
+            if ((getEntity() == null) || (getEntity().getRows() == null)) {
                 throw new Exception("RowSet is null.");
             }
 
@@ -971,7 +931,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
         try {
             // if rowset is null, exit
-            if (getRowSet() == null) {
+            if ((getEntity() == null) || (getEntity().getRows() == null)) {
                 throw new Exception("RowSet is null.");
             }
 
@@ -986,15 +946,11 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams = new ArrayList<>();
 
             // make sure the id is part of the select, otherwise reject the call
-            getRowSet().beforeFirst();
-            while (getRowSet().next()) {
-                if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
+            for (RowDescriptor row : getEntity().getRows()) {
+                if (Long.valueOf(row.getValue(getActionConfig().getPrimaryId()).toString()) == id) {
                     // store the siteId parameter value
                     dbParams.add(new DatabaseParameter("param1", DatabaseDataType.dtlong,
                             id));
-
-                    // delete the row from the record set
-                    getRowSet().deleteRow();
 
                     isRecordValid = true;
                     break;
@@ -1020,9 +976,6 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             }
 
             result = Integer.parseInt(spResult.get("count").toString());
-
-            // accept changes to rowset
-            getRowSet().acceptChanges();
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Delete(), "
@@ -1045,7 +998,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
         try {
             // if rowset is null, exit
-            if (getRowSet() == null) {
+            if ((getEntity() == null) || (getEntity().getRows() == null)) {
                 throw new Exception("RowSet is null.");
             }
 
@@ -1054,7 +1007,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 throw new Exception("No delete procedure defined.");
             }
 
-        // call the overloaded method to complete the update; this is assuming
+            // call the overloaded method to complete the update; this is assuming
             // the webrowset is multiple records
             for (long value : id) {
                 result += Delete(value);
@@ -1086,18 +1039,16 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             }
 
             // get the records to delete
-            WebRowSet wrs = Refresh(whereClause, values);
+            EntityDescriptor wrs = Refresh(whereClause, values);
 
             // if there is no records then skip the process
-            if (getRowSet().size() > 0) {
+            if (getEntity().getRowCount() > 0) {
                 // collect the primary keys and delete the data
-                long[] idList = new long[getRowSet().size()];
+                long[] idList = new long[getEntity().getRowCount()];
 
                 int index = 0;
-                getRowSet().beforeFirst();
-                while (getRowSet().next()) {
-                    idList[index] = getRowSet().getLong(getActionConfig().getPrimaryId());
-                    index++;
+                for (RowDescriptor row : getEntity().getRows()) {
+                    idList[index++] = Long.valueOf(row.getValue(getActionConfig().getPrimaryId()).toString());
                 }
 
                 // update the database
@@ -1128,7 +1079,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
         try {
             // if rowset is null, exit
-            if (getRowSet() == null) {
+            if ((getEntity() == null) || (getEntity().getRows() == null)) {
                 throw new Exception("RowSet is null.");
             }
 
@@ -1148,18 +1099,9 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams = new ArrayList<>();
 
             // store the parameter value
-            getRowSet().moveToInsertRow();
-
             Object o = null;
             for (int i = 0; i < getColumnCount(); i++) {
                 o = values[i];
-
-                // store the data into the rowset
-                if (o == null) {
-                    getRowSet().updateNull(i + 1);
-                } else {
-                    getRowSet().updateObject(i + 1, values[i]);
-                }
 
                 // if custom datatypes are defined, use them
                 if (!getColumnDataTypes().isEmpty()) {
@@ -1170,11 +1112,6 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                             o));
                 }
             }
-
-            // update the rowset
-            getRowSet().insertRow();
-            getRowSet().moveToCurrentRow();
-            getRowSet().acceptChanges();
 
             // add the output parameters for status reporting
             dbParams.add(new DatabaseParameter("recid", DatabaseDataType.dtlong, true));
@@ -1191,9 +1128,6 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
             // get the record id inserted
             result = Integer.parseInt(spResult.get("recid").toString());
-
-            // accept changes to the rowset
-            getRowSet().acceptChanges();
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Insert(), "
@@ -1232,18 +1166,11 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             // update the memory record set with new values
             Object o = null;
 
-            getRowSet().beforeFirst();
-            while (getRowSet().next()) {
-                if (getRowSet().getLong(getActionConfig().getPrimaryId()) == id) {
-                    for (int i = 0; i < columns.length; i++) {
-                        getRowSet().updateObject(columns[i], values[i]);
-                    }
+            if (getEntity().getRowCount() > 0) {
+                RowDescriptor row = getEntity().getRows().get(0);
 
-                    // populate the row values to insert into data
-                    rowValues = new Object[getColumnCount()];
-                    for (int i = 0; i < getColumnCount(); i++) {
-                        rowValues[i] = getRowSet().getObject(i + 1);
-                    }
+                for (int i = 0; i < columns.length; i++) {
+                    row.setValue(columns[i], values[i]);
 
                     // call the overloaded function
                     result = Insert(rowValues);
@@ -1272,12 +1199,12 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
     @Override
     public HashMap<String, Object> toHaspMap() throws Exception {
-        return ActionObjectStack.toHashMap(getRowSet());
+        return ActionObjectStack.toHashMap(getEntity().getRows());
     }
 
     @Override
     public HashMap<String, Object> toHaspMap(String[] columns) throws Exception {
-        return ActionObjectStack.toHashMap(getRowSet(), columns);
+        return ActionObjectStack.toHashMap(getEntity().getRows(), columns);
     }
 
     @Override
@@ -1285,7 +1212,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
         String result = "";
 
         try {
-            result = ActionObjectStack.toXML(getRowSet());
+            result = ActionObjectStack.toXML(getEntity());
         } catch (Exception ex) {
             // log error for tracking
             notifyListeners(new EventObject(this), EventStatusType.ERROR,

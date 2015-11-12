@@ -8,6 +8,7 @@ package ac.factory.objects;
 import elsu.events.*;
 import ac.core.*;
 import elsu.database.*;
+import elsu.database.rowset.EntityDescriptor;
 import elsu.support.*;
 
 /**
