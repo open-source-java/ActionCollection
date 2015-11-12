@@ -6,7 +6,6 @@
 package ac.core;
 
 import elsu.support.*;
-import java.util.*;
 
 /**
  *
@@ -129,20 +128,20 @@ public class ActionConfig {
         ActionConfig ac = new ActionConfig();
 
         String classId = config.getKeyByValue(actionClass).replace(".class", "");
-        String[] select = config.getProperty(classId + ".SQL.select").split(";");
+        String[] select = config.getProperty(classId + ".SQL.select").toString().split(";");
 
         ac.setClassId(classId);
-        ac.setColumns(config.getProperty(classId + ".SQL.columns"));
-        ac.setColumnDataTypes(config.getProperty(classId + ".SQL.columnTypes"));
+        ac.setColumns(config.getProperty(classId + ".SQL.columns").toString());
+        ac.setColumnDataTypes(config.getProperty(classId + ".SQL.columnTypes").toString());
         if (select.length > 1) {
             ac.setSQLCursor(select[1]);
         }
-        ac.setSQLDelete(config.getProperty(classId + ".SQL.delete"));
-        ac.setSQLInsert(config.getProperty(classId + ".SQL.insert"));
+        ac.setSQLDelete(config.getProperty(classId + ".SQL.delete").toString());
+        ac.setSQLInsert(config.getProperty(classId + ".SQL.insert").toString());
         ac.setSQLSelect(select[0]);
-        ac.setSQLUpdate(config.getProperty(classId + ".SQL.update"));
-        ac.setPrimaryId(config.getProperty(classId + ".SQL.index.key.primary"));
-        ac.setOrderBy(config.getProperty(classId + ".SQL.orderBy"));
+        ac.setSQLUpdate(config.getProperty(classId + ".SQL.update").toString());
+        ac.setPrimaryId(config.getProperty(classId + ".SQL.index.key.primary").toString());
+        ac.setOrderBy(config.getProperty(classId + ".SQL.orderBy").toString());
 
         return ac;
     }

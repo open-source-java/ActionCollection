@@ -5,8 +5,8 @@
  */
 package ac.factory;
 
+import elsu.events.*;
 import ac.core.*;
-import elsu.common.*;
 import elsu.database.*;
 import elsu.support.*;
 import java.lang.reflect.*;
@@ -17,7 +17,7 @@ import javax.sql.rowset.spi.*;
  *
  * @author ss.dhaliwal
  */
-public class ActionFactory implements IEventSubscriber {
+public class ActionFactory extends AbstractEventManager implements IEventPublisher, IEventSubscriber {
 
     private ConfigLoader _config = null;
     private DatabaseManager _dbManager = null;
@@ -27,6 +27,10 @@ public class ActionFactory implements IEventSubscriber {
         setDbManager();
 
         initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
     }
 
     public ActionFactory(String config) throws Exception {
@@ -34,6 +38,21 @@ public class ActionFactory implements IEventSubscriber {
         setDbManager();
 
         initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
+    }
+
+    public ActionFactory(String config, String[] suppresspath) throws Exception {
+        setConfig(config, suppresspath);
+        setDbManager();
+
+        initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
     }
 
     private void initialize() throws Exception {
@@ -63,6 +82,10 @@ public class ActionFactory implements IEventSubscriber {
                         + "sync provider already installed.");
             }
         }
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", initialize(), "
+                + "initialization completed.", null);
     }
 
     public ConfigLoader getConfig() {
@@ -72,7 +95,7 @@ public class ActionFactory implements IEventSubscriber {
     private void setConfig() {
         try {
             this._config = new ConfigLoader("", new String[]{
-                "application.framework.attributes.key.", "application.elsuFramework.attributes.key.",
+                "application.framework.attributes.key.",
                 "application.actions.action.", "application.actionExtensions."});
         } catch (Exception ex) {
 
@@ -83,8 +106,16 @@ public class ActionFactory implements IEventSubscriber {
         try {
             this._config = new ConfigLoader(config,
                     new String[]{
-                        "application.framework.attributes.key.", "application.elsuFramework.attributes.key.",
+                        "application.framework.attributes.key.",
                         "application.actions.action.", "application.actionExtensions."});
+        } catch (Exception ex) {
+
+        }
+    }
+
+    private void setConfig(String config, String[] suppressPath) {
+        try {
+            this._config = new ConfigLoader(config, suppressPath);
         } catch (Exception ex) {
 
         }
@@ -126,7 +157,7 @@ public class ActionFactory implements IEventSubscriber {
                         dbConnectionString, maxPool,
                         dbUser,
                         dbPassword);
-                
+
                 // connect the event notifiers
                 this._dbManager.addEventListener(this);
             } catch (Exception ex) {
@@ -134,12 +165,16 @@ public class ActionFactory implements IEventSubscriber {
                 getConfig().logError(getClass().toString() + ", setDbManager(), "
                         + ex.getMessage());
             }
+
+            notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                    getClass().toString() + ", setDbManager(), "
+                    + "dbManager initialized.", null);
         }
     }
 
-    public IAction getClassByName(String className) throws Exception {
+    public IAction getActionObject(String className) throws Exception {
         IAction result = null;
-        String classPath = getConfig().getProperty(className);
+        String classPath = getConfig().getProperty(className).toString();
 
         if (classPath != null) {
             // using reflection, load the class for the service
@@ -162,6 +197,20 @@ public class ActionFactory implements IEventSubscriber {
             // create new instance of the service using the discovered
             // constructor and parameters
             result = (IAction) cons.newInstance(arguments);
+
+            // check if the instance is typeof IEventPublisher
+            // - if yes, then subscribe to its events
+            if (result instanceof IEventPublisher) {
+                ((IEventPublisher) result).addEventListener(this);
+            }
+
+            notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                    getClass().toString() + ", getClassByName(), "
+                    + "class (" + className + "/" + classPath + ") instantiated.", null);
+        } else {
+            notifyListeners(new EventObject(this), EventStatusType.ERROR,
+                    getClass().toString() + ", getClassByName(), "
+                    + "class (" + className + "/null) not found.", null);
         }
 
         // return new class
@@ -169,18 +218,25 @@ public class ActionFactory implements IEventSubscriber {
     }
 
     public String getSyncProvider() {
-        return getConfig().getProperty("rowset.sync.provider");
+        return getConfig().getProperty("rowset.sync.provider").toString();
     }
 
     @Override
-    public void EventHandler(EventObject e, StatusType s, String message, Object o) {
-        switch (s) {
+    public synchronized Object EventHandler(Object sender, IEventStatusType status, String message, Object o) {
+        switch (EventStatusType.valueOf(status.getName())) {
+            case DEBUG:
+                getConfig().logDebug(message);
+                break;
             case ERROR:
                 getConfig().logError(message);
                 break;
-            default:
+            case INFORMATION:
                 getConfig().logInfo(message);
                 break;
+            default:
+                break;
         }
+
+        return null;
     }
 }

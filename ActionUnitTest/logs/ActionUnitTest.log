@@ -1,0 +1,346 @@
+[aoLogger] [07 Nov 2015 - 06:14:33]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 06:14:34]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [07 Nov 2015 - 06:14:34]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), WebRowSet result. 
+[aoLogger] [07 Nov 2015 - 06:17:26] ERROR - class elsu.database.DatabaseManager, getDataXML(), 17041
+Missing IN or OUT parameter at index:: 2 
+[aoLogger] [07 Nov 2015 - 06:17:26] ERROR - class elsu.database.DatabaseManager, getDataXML(), 
+java.sql.SQLException: Missing IN or OUT parameter at index:: 2 
+[aoLogger] [07 Nov 2015 - 06:17:26] ERROR - class ac.factory.objects.Site, Refresh(), 
+java.sql.SQLException: java.sql.SQLException: Missing IN or OUT parameter at index:: 2 
+[aoLogger] [07 Nov 2015 - 06:18:42] ERROR - class elsu.database.DatabaseManager, getDataXML(), 17041
+Missing IN or OUT parameter at index:: 2 
+[aoLogger] [07 Nov 2015 - 06:18:42] ERROR - class elsu.database.DatabaseManager, getDataXML(), 
+java.sql.SQLException: Missing IN or OUT parameter at index:: 2 
+[aoLogger] [07 Nov 2015 - 06:18:42] ERROR - class ac.factory.objects.Site, Refresh(), 
+java.sql.SQLException: java.sql.SQLException: Missing IN or OUT parameter at index:: 2 
+[aoLogger] [07 Nov 2015 - 06:21:37]  INFO - class ac.factory.objects.Site, Refresh(), WebRowSet result. 
+[aoLogger] [07 Nov 2015 - 06:22:11]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 06:22:12]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [07 Nov 2015 - 06:23:00]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), WebRowSet result. 
+[aoLogger] [07 Nov 2015 - 06:26:42] ERROR - class elsu.database.DatabaseManager, getDataXML(), 17041
+Missing IN or OUT parameter at index:: 2 
+[aoLogger] [07 Nov 2015 - 06:42:09]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 06:42:09]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [07 Nov 2015 - 06:42:10]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), WebRowSet result. 
+[aoLogger] [07 Nov 2015 - 06:43:03] ERROR - class elsu.database.DatabaseManager, getDataXML(), 
+invalid datatype return (SYS_REFCURSOR)! 
+[aoLogger] [07 Nov 2015 - 06:44:36]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 06:44:36]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [07 Nov 2015 - 06:44:36]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), WebRowSet result. 
+[aoLogger] [07 Nov 2015 - 06:45:23] ERROR - class elsu.database.DatabaseManager, getDataXML(), 
+invalid datatype return (SYS_REFCURSOR)! 
+[aoLogger] [07 Nov 2015 - 06:45:25] ERROR - class ac.factory.objects.Site, Refresh(), 
+java.lang.Exception: invalid datatype return (SYS_REFCURSOR)! 
+[aoLogger] [07 Nov 2015 - 06:47:23]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 06:47:24]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [07 Nov 2015 - 06:47:24]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), WebRowSet result. 
+[aoLogger] [07 Nov 2015 - 06:49:07]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 06:49:08]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [07 Nov 2015 - 06:49:08]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), WebRowSet result. 
+[aoLogger] [07 Nov 2015 - 06:53:29]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 06:53:30]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [07 Nov 2015 - 06:53:30]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), WebRowSet result. 
+[aoLogger] [07 Nov 2015 - 06:55:06]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 06:55:07]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [07 Nov 2015 - 06:55:07]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), WebRowSet result. 
+[aoLogger] [07 Nov 2015 - 06:55:23] ERROR - class elsu.database.DatabaseManager, getDataXML(), 6550
+ORA-06550: line 1, column 7:
+PLS-00306: wrong number or types of arguments in call to 'SPS_SITE'
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+ 
+[aoLogger] [07 Nov 2015 - 06:55:23] ERROR - class elsu.database.DatabaseManager, getDataXML(), 
+java.sql.SQLException: ORA-06550: line 1, column 7:
+PLS-00306: wrong number or types of arguments in call to 'SPS_SITE'
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+ 
+[aoLogger] [07 Nov 2015 - 08:23:10]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 08:23:11]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [07 Nov 2015 - 08:24:49]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 08:24:50]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [07 Nov 2015 - 08:27:02]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 08:27:02]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [07 Nov 2015 - 08:29:14]  INFO - configuration loaded. 
+[aoLogger] [07 Nov 2015 - 08:29:15]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 09:48:48]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 09:48:48]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 09:49:12]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 09:51:28]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 09:51:29]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 09:51:32]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 09:55:42]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 09:55:42]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 09:56:07]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 09:59:36]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 09:59:37]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 09:59:42]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 10:03:47]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:03:48]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:03:52]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 10:04:49]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:04:50]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:04:52]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 10:06:40]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:06:41]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:06:43]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 10:13:52]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:13:53]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:13:58]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 10:33:59]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:34:00]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:34:03] ERROR - class elsu.database.DatabaseManager, getDataRowSet(), 
+-1 
+[aoLogger] [08 Nov 2015 - 10:34:03] ERROR - class ac.factory.objects.SystemIdentification, Refresh(), 
+java.lang.ArrayIndexOutOfBoundsException: -1 
+[aoLogger] [08 Nov 2015 - 10:35:22]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:35:22]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:35:30] ERROR - class elsu.database.DatabaseManager, getDataRowSet(), 
+-1 
+[aoLogger] [08 Nov 2015 - 10:35:30] ERROR - class ac.factory.objects.SystemIdentification, Refresh(), 
+java.lang.ArrayIndexOutOfBoundsException: -1 
+[aoLogger] [08 Nov 2015 - 10:35:39]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:35:40]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:35:52] ERROR - class elsu.database.DatabaseManager, getDataRowSet(), 
+-1 
+[aoLogger] [08 Nov 2015 - 10:35:52] ERROR - class ac.factory.objects.SystemIdentification, Refresh(), 
+java.lang.ArrayIndexOutOfBoundsException: -1 
+[aoLogger] [08 Nov 2015 - 10:36:29]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:36:29]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:36:36] ERROR - class elsu.database.DatabaseManager, getDataRowSet(), 
+-1 
+[aoLogger] [08 Nov 2015 - 10:36:36] ERROR - class ac.factory.objects.SystemIdentification, Refresh(), 
+java.lang.ArrayIndexOutOfBoundsException: -1 
+[aoLogger] [08 Nov 2015 - 10:36:44]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:36:45]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:37:51]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:37:52]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:37:54]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 10:38:57]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:38:57]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:39:02]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 10:41:30]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:41:31]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:41:35]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 10:45:19]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:45:20]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:45:25]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 10:51:03]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:51:04]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:51:07]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 10:54:27]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 10:54:27]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 10:54:28]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 02:01:18]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 02:01:18]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 02:01:19]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 02:01:35] ERROR - class ac.factory.objects.Site, Refresh(), 
+Closed Statement: getMetaData 
+[aoLogger] [08 Nov 2015 - 02:01:53] ERROR - class ac.factory.objects.Site, Refresh(), 
+Closed Statement: getMetaData 
+[aoLogger] [08 Nov 2015 - 02:02:09]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 02:02:10]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 02:02:10]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 02:02:19] ERROR - class ac.factory.objects.Site, Refresh(), 
+Closed Statement: getMetaData 
+[aoLogger] [08 Nov 2015 - 02:02:26]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 02:02:27]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 02:02:27]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 02:13:38]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 02:13:39]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 02:13:39]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 02:13:48]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 02:14:39]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 02:14:53]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 02:14:58]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 02:15:03]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 04:59:31]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 04:59:32]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 04:59:32]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 04:59:45]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 04:59:45]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 04:59:45]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 04:59:46]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 04:59:46]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:01:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:22:49] ERROR - class ac.factory.objects.Site, Update(), 
+java.math.BigDecimal cannot be cast to java.lang.Long 
+[aoLogger] [08 Nov 2015 - 05:22:49] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.ClassCastException: java.math.BigDecimal cannot be cast to java.lang.Long 
+[aoLogger] [08 Nov 2015 - 05:23:00]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 05:23:01]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 05:23:01]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:23:08]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:23:08]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:23:08]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:23:09]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:23:09]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:23:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:25:32]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 05:25:33]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 05:25:33]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:25:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:25:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:25:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:25:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:25:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 05:25:39]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:29:32]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 06:29:33]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 06:29:33]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:29:33]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:29:33]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:29:33]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:29:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:29:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:29:37]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:31:14]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 06:31:15]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 06:31:15]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:31:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:31:16]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:31:16]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:31:16]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:31:16]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:31:29]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:32:00]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 06:32:01]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 06:47:35]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 06:47:36]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 06:47:36]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:47:36]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:47:36]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:47:36]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:47:37]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:47:37]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:47:42]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:54:17]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 06:54:18]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 06:54:18]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:54:18]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:54:18]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:54:18]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:54:19]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:54:19]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:54:24]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:55:37]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 06:55:38]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 06:55:38]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:55:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:55:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:55:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:55:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:55:39]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:55:44]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:58:08]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 06:58:09]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 06:58:09]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:58:09]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:58:09]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:58:09]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:58:10]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:58:10]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:58:14]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:58:16] ERROR - class elsu.database.DatabaseManager, executeProcedure(), 
+null 
+[aoLogger] [08 Nov 2015 - 06:58:16] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.NullPointerException 
+[aoLogger] [08 Nov 2015 - 06:58:16] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.NullPointerException 
+[aoLogger] [08 Nov 2015 - 06:58:16] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: java.lang.NullPointerException 
+[aoLogger] [08 Nov 2015 - 06:59:52]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 06:59:53]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 06:59:53]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:59:53]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:59:53]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:59:53]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:59:54]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 06:59:54]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:00:03]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:04:33]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 07:04:33]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 07:04:34]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:04:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:04:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:04:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:04:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:04:34]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:04:40]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:04:59]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:06:25]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:06:25]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:06:25] ERROR - class ac.factory.objects.Site, Update(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:06:25] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:06:25] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:07:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:07:38]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:10:33]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 07:10:34]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 07:10:34]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:10:44]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:11:03]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:11:03]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:11:04]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:11:04]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:11:04]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:11:04]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:11:04]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:11:04]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:11:04] ERROR - class ac.factory.objects.Site, Update(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:11:04] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:11:04] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:11:20]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:11:20]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:14:52]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 07:14:52]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 07:14:53]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:14:53]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:14:53]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:14:53]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:14:53]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:14:53]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:14:53]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:14:53]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:14:53]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:14:53]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:14:53] ERROR - class ac.factory.objects.Site, Update(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:14:53] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:14:53] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:14:55]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:14:55]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:14:55]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:14:55]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:14:55]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:15:40]  INFO - configuration loaded. 
+[aoLogger] [08 Nov 2015 - 07:15:41]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [08 Nov 2015 - 07:15:41]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:15:41]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:15:41]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:15:41]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:15:42]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:15:42]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:15:42]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:15:42]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:15:42]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:15:42]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:15:42] ERROR - class ac.factory.objects.Site, Update(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:15:42] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:15:42] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [08 Nov 2015 - 07:15:51]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:15:52]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:16:57]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [08 Nov 2015 - 07:16:57]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [08 Nov 2015 - 07:16:57]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 

@@ -5,11 +5,10 @@
  */
 package ac.factory.objects;
 
+import elsu.events.*;
 import ac.core.*;
-import elsu.common.StatusType;
 import elsu.database.*;
 import elsu.support.*;
-import java.util.EventObject;
 
 public class SystemIdentification extends ActionObject {
 
@@ -20,7 +19,7 @@ public class SystemIdentification extends ActionObject {
     }
 
     @Override
-    public void EventHandler(EventObject e, StatusType s, String message, Object o) {
+    public Object EventHandler(Object sender, IEventStatusType status, String message, Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
