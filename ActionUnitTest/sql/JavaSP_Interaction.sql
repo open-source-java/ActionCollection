@@ -152,14 +152,14 @@ BEGIN
    -- update the event to close it
    oCOUNT := 0;
 
-   /*
     DELETE ncs3.site
     WHERE site_id = isite_id;
-   */
-   
+
+/*   
    UPDATE ncs3.site
       SET site = site || '_DEL'
     WHERE site_id = isite_id;
+*/
 
    oCOUNT := SQL%ROWCOUNT;
 
@@ -599,3 +599,30 @@ BEGIN
    CLOSE ocursor;
 END;
 /
+
+drop table ncs3.field_col_types;
+
+create table ncs3.field_col_types (
+  field10 NUMBER,     -- BIGINT
+  field11 raw(5),    -- BINARY   BYTE[]
+  field12 BLOB,
+  field13 NUMBER,    -- BOOLEAN   BIT
+  field14 CHAR(5),
+  field15 CLOB,
+  field16 DATE,
+  field17 DECIMAL(15,5),
+  field18 NUMBER(10,5), -- DOUBLE
+  field19 NUMBER(10,5), -- FLOAT
+  field20 INTEGER,
+  field21 LONG RAW,          -- LONGVARBINARY
+  --field22 LONG.VARCHAR);
+  --field23 NULL);
+  field24 NUMERIC(5, 2),
+  field25 NUMBER,   -- REAL
+  field26 SMALLINT,
+  --field27 SQLXML
+  --field28 TIME,
+  field29 TIMESTAMP,
+  field30 RAW(5),   -- VARBINARY(5),
+  field31 VARCHAR(5)
+);

@@ -5,25 +5,26 @@
  */
 package actionunittest;
 
+import elsu.events.*;
 import ac.core.*;
 import ac.factory.objects.*;
 import javax.sql.rowset.*;
 import ac.factory.*;
-import elsu.common.CollectionStack;
 import elsu.database.*;
-import javax.sql.rowset.spi.*;
+import elsu.database.rowset.*;
 
 /**
  *
  * @author dhaliwal-admin
  */
-public class ActionUnitTest {
+public class ActionUnitTest implements IEventSubscriber {
 
     public ActionFactory af = null;
 
     public ActionUnitTest() {
         try {
             af = new ActionFactory();
+            af.addEventListener(this);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -32,6 +33,7 @@ public class ActionUnitTest {
     public ActionUnitTest(String config) {
         try {
             af = new ActionFactory(config);
+            af.addEventListener(this);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -43,7 +45,8 @@ public class ActionUnitTest {
 
         if (af != null) {
             try {
-                si = (SystemIdentification) af.getClassByName("ac.factory.objects.SystemIdentification");
+                si = (SystemIdentification) af.getActionObject("SystemIdentification.class");
+                //si.addEventListener(this);
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
@@ -60,7 +63,8 @@ public class ActionUnitTest {
 
         if (af != null) {
             try {
-                si = (Site) af.getClassByName("ac.factory.objects.Site");
+                si = (Site) af.getActionObject("Site.class");
+                //si.addEventListener(this);
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
@@ -80,14 +84,14 @@ public class ActionUnitTest {
             TestRefresh(si, "SITE_ID LIKE ?", new Object[]{"9%"});
 
             // filter site records for site_id with match
-            TestRefresh(si, "SITE_ID = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtint}, new Object[]{909});
-
-            // append result from one to other
-            TestAppend(si, new long[]{838, 830}, new long[]{111, 843, 792});
-
+            TestRefresh(si, "SITE_ID = ?", new DatabaseDataType[]{DatabaseDataType.dtint}, new Object[]{909});
+            /*
+             // append result from one to other
+             TestAppend(si, new long[]{838, 830}, new long[]{111, 843, 792});
+             */
             // test action object update for one site
             try {
-                TestUpdate(si, new long[]{838L}, "SITE", "_RST");
+                TestUpdate(si, new long[]{838L}, "SITE", "DETROIT_RST");
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
@@ -100,24 +104,25 @@ public class ActionUnitTest {
 
             // test action object update for multiple columns
             TestUpdate(si, "NCS3.SPU_SITE", new long[]{111, 830}, new String[]{"SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{1L, 2L});
+            /*
+             // test action object delete for site
+             TestDelete(si, 838);
 
-            // test action object delete for site
-            TestDelete(si, 838);
+             // test action object delete for site
+             TestDelete(si, new long[]{830, 838});
 
-            // test action object delete for site
-            TestDelete(si, new long[]{830, 838});
+             // test action object delete with where clause
+             TestDelete(si, "SITE LIKE ?", new Object[]{"DHALIWAL%"});
 
-            // test action object delete with where clause
-            TestDelete(si, "SITE LIKE ?", new Object[]{"DHALIWAL%"});
+             // test action object for insert
+             TestInsert(si, new Object[]{505.0D, null, null, "SSD", "DHALIWAL", null, "ROHN", null, "V4", 0L, null, "PRIMARY", null, "ESD MORICHES", null, null, null, null, null, null});
 
-            // test action object for insert
-            TestInsert(si, new Object[]{505.0D, null, null, "SSD", "DHALIWAL", null, "ROHN", null, "V4", 0L, null, "PRIMARY", null, "ESD MORICHES", null, null, null, null, null, null});
+             // test action object for insert with multiple sites
+             TestInsert(si, new long[]{830, 838}, new String[]{"SITE_ID", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, 4L, 2L});
 
-            // test action object for insert with multiple sites
-            TestInsert(si, new long[]{830, 838}, new String[]{"SITE_ID", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, 4L, 2L});
-
-            // test action object for insert with single site column change
-            TestInsert(si, new long[]{111}, new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
+             // test action object for insert with single site column change
+             TestInsert(si, new long[]{111}, new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
+             */
         }
     }
 
@@ -126,9 +131,9 @@ public class ActionUnitTest {
         try {
             ao.Refresh(null, null);
 
-            WebRowSet wrs = ao.getRowSet();
+            EntityDescriptor wrs = ao.getEntity();
             System.out.println(ao.toXML());
-            System.out.println(".. records selected: " + wrs.size());
+            System.out.println(".. records selected: " + wrs.getRowCount());
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -140,9 +145,9 @@ public class ActionUnitTest {
             if (ao != null) {
                 ao.Refresh(id);
 
-                WebRowSet wrs = ao.getRowSet();
+                EntityDescriptor wrs = ao.getEntity();
                 System.out.println(ao.toXML());
-                System.out.println(".. records selected: " + wrs.size());
+                System.out.println(".. records selected: " + wrs.getRowCount());
             }
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -155,9 +160,9 @@ public class ActionUnitTest {
             if (ao != null) {
                 ao.Refresh(id);
 
-                WebRowSet wrs = ao.getRowSet();
+                EntityDescriptor wrs = ao.getEntity();
                 System.out.println(ao.toXML());
-                System.out.println(".. records selected: " + wrs.size());
+                System.out.println(".. records selected: " + wrs.getRowCount());
             }
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -169,9 +174,9 @@ public class ActionUnitTest {
         try {
             ao.Refresh(whereClause, values);
 
-            WebRowSet wrs = ao.getRowSet();
+            EntityDescriptor wrs = ao.getEntity();
             System.out.println(ao.toXML());
-            System.out.println(".. records selected: " + wrs.size());
+            System.out.println(".. records selected: " + wrs.getRowCount());
 
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -180,37 +185,38 @@ public class ActionUnitTest {
     }
 
     // test refresh action object with whereclause overriding value types
-    public void TestRefresh(ActionObject ao, String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) {
+    public void TestRefresh(ActionObject ao, String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) {
         try {
             ao.Refresh(whereClause, valueDataTypes, values);
 
-            WebRowSet wrs = ao.getRowSet();
+            EntityDescriptor wrs = ao.getEntity();
             System.out.println(ao.toXML());
-            System.out.println(".. records selected: " + wrs.size());
+            System.out.println(".. records selected: " + wrs.getRowCount());
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
 
+    /*
     // test append action object
     public void TestAppend(ActionObject ao, long[] firstRS, long[] secondRS) {
         try {
-            WebRowSet wrs = ActionObjectDirect.View(af.getDbManager(), 
-                    "SELECT ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP FROM NCS3.VWSITE", 
-                    "SITE_ID IN (SELECT * FROM TABLE (?))", new DatabaseDataTypes[]{DatabaseDataTypes.dtarray}, 
+            WebRowSet wrs = ActionObjectStack.View(af.getDbManager(),
+                    "SELECT ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP FROM NCS3.VWSITE",
+                    "SITE_ID IN (SELECT * FROM TABLE (?))", new DatabaseDataType[]{DatabaseDataType.dtarray},
                     new Object[]{secondRS});
-            System.out.println(ActionObjectDirect.toXML(wrs));
+            System.out.println(ActionObjectStack.toXML(wrs));
 
             ao.Refresh(firstRS);
             ao.Append(wrs);
-            
+
             System.out.println(ao.toXML());
-            System.out.println(".. records selected: " + ao.getRowSet().size());
+            System.out.println(".. records selected: " + ao.getRows().size());
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
-
+    */
     // test update action object
     public void TestUpdate(ActionObject ao, long[] id, String column, String value) {
         try {
@@ -300,7 +306,7 @@ public class ActionUnitTest {
     // test insert action object
     public void TestInsert(ActionObject ao, Object[] values) {
         try {
-            ao.getRowSet().release();
+            ao.getEntity().clear();
 
             // insert new record from scratch
             //ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP
@@ -317,6 +323,7 @@ public class ActionUnitTest {
         try {
             // try to insert multiple records with minor changes
             TestRefresh(ao, id[0]);
+
             long recordNumber = ao.Insert(id[0], columns, values);
             System.out.println(ao.toXML());
             System.out.println(".. record# inserted: " + recordNumber);
@@ -334,87 +341,96 @@ public class ActionUnitTest {
         // create the factory class
         aut = new ActionUnitTest();
 
-        // update the action object direct syncprovider (if applicable)
-        try {
-            ActionObjectDirect.setSyncProvider(aut.af.getSyncProvider());
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
         aut.TestSystemIdentification();
         aut.TestSite();
+        /*
+         // class object direct access test
+         if (aut.af != null) {
+         try {
+         WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
+         "SELECT * FROM NCS3.vwSITE_STATUS",
+         null, null, null);
+         System.out.println(ActionObjectStack.toXML(wrs));
+         System.out.println(".. records selected: " + wrs.size());
+         } catch (Exception ex) {
+         System.out.println(ex.getMessage());
+         }
 
-        // class object direct access test
-        if (aut.af != null) {
-            try {
-                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
-                        "SELECT * FROM NCS3.vwSITE_STATUS",
-                        null, null, null);
-                System.out.println(ActionObjectDirect.toXML(wrs));
-                System.out.println(".. records selected: " + wrs.size());
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+         try {
+         WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
+         "SELECT * FROM NCS3.vwSITE",
+         "SITE_ID LIKE ?", new DatabaseDataType[]{DatabaseDataType.dtstring}, new Object[]{"8%"});
+         //System.out.println(ActionObject.toXML(wrs));
+         System.out.println(".. records selected: " + wrs.size());
+         } catch (Exception ex) {
+         System.out.println(ex.getMessage());
+         }
 
-            try {
-                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
-                        "SELECT * FROM NCS3.vwSITE",
-                        "SITE_ID LIKE ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"8%"});
-                //System.out.println(ActionObject.toXML(wrs));
-                System.out.println(".. records selected: " + wrs.size());
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+         try {
+         WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
+         "SELECT * FROM NCS3.vwSITE",
+         "SITE_ID LIKE ?", new DatabaseDataType[]{DatabaseDataType.dtstring}, new Object[]{"9%"});
+         //System.out.println(ActionObject.toXML(wrs));
+         System.out.println(".. records selected: " + wrs.size());
+         } catch (Exception ex) {
+         System.out.println(ex.getMessage());
+         }
 
-            try {
-                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
-                        "SELECT * FROM NCS3.vwSITE",
-                        "SITE_ID LIKE ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"9%"});
-                //System.out.println(ActionObject.toXML(wrs));
-                System.out.println(".. records selected: " + wrs.size());
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+         try {
+         WebRowSet wrs = ActionObjectStack.Cursor(aut.af.getDbManager(),
+         "NCS3.SPS_SITE",
+         new DatabaseDataType[]{DatabaseDataType.dtarray}, new Object[]{new Long[]{830L, 838L}});
+         //System.out.println(ActionObject.toXML(wrs));
+         System.out.println(".. records selected: " + wrs.size());
+         } catch (Exception ex) {
+         System.out.println(ex.getMessage());
+         }
 
-            try {
-                WebRowSet wrs = ActionObjectDirect.Cursor(aut.af.getDbManager(),
-                        "NCS3.SPS_SITE",
-                        new DatabaseDataTypes[]{DatabaseDataTypes.dtarray}, new Object[]{new Long[]{830L, 838L}});
-                //System.out.println(ActionObject.toXML(wrs));
-                System.out.println(".. records selected: " + wrs.size());
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+         try {
+         WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
+         "SELECT * FROM NCS3.vwSITE",
+         "SITE = ?", new DatabaseDataType[]{DatabaseDataType.dtstring}, new Object[]{"DHALIWAL2"});
+         //System.out.println(ActionObject.toXML(wrs));
+         System.out.println(".. records selected: " + wrs.size());
+         } catch (Exception ex) {
+         System.out.println(ex.getMessage());
+         }
 
-            try {
-                WebRowSet wrs = ActionObjectDirect.View(aut.af.getDbManager(),
-                        "SELECT * FROM NCS3.vwSITE",
-                        "SITE = ?", new DatabaseDataTypes[]{DatabaseDataTypes.dtstring}, new Object[]{"DHALIWAL2"});
-                //System.out.println(ActionObject.toXML(wrs));
-                System.out.println(".. records selected: " + wrs.size());
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+         try {
+         long siteId = 830L;
 
-            try {
-                long siteId = 830L;
+         long count = ActionObjectStack.Execute(aut.af.getDbManager(),
+         "NCS3.SPD_SITE",
+         new DatabaseDataType[]{DatabaseDataType.dtlong}, new Object[]{siteId});
+         //System.out.println(ActionObject.toXML(wrs));
+         System.out.println(".. records affected: " + count);
+         } catch (Exception ex) {
+         System.out.println(ex.getMessage());
+         }
+         }
 
-                long count = ActionObjectDirect.Execute(aut.af.getDbManager(),
-                        "NCS3.SPD_SITE",
-                        new DatabaseDataTypes[]{DatabaseDataTypes.dtlong}, new Object[]{siteId});
-                //System.out.println(ActionObject.toXML(wrs));
-                System.out.println(".. records affected: " + count);
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+         if (args.length > 0) {
+         aut = new ActionUnitTest(args[0]);
+
+         if (aut.af != null) {
+         aut.TestSystemIdentification();
+         }
+         }
+         */
+    }
+
+    @Override
+    public Object EventHandler(Object sender, IEventStatusType status, String message, Object o) {
+        switch (EventStatusType.valueOf(status.getName())) {
+            case DEBUG:
+            case ERROR:
+            case INFORMATION:
+                System.out.println(status.getName() + ":" + message);
+                break;
+            default:
+                break;
         }
 
-        if (args.length > 0) {
-            aut = new ActionUnitTest(args[0]);
-
-            if (aut.af != null) {
-                aut.TestSystemIdentification();
-            }
-        }
+        return null;
     }
 }
