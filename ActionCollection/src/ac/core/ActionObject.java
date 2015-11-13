@@ -231,7 +231,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             if (oRSMD.size() != pRSMD.size()) {
                 throw new Exception("source and destination rowsets do not have same number of columns.");
             }
-            
+
             for (String key : oRSMD.keySet()) {
                 // compare columnname, columnprecision, columnscale, columntype
                 if ((oRSMD.get(key).getClassName().equals(pRSMD.get(key).getClassName()))
@@ -254,10 +254,10 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
             // copy data from entity to object rowset
             RowDescriptor newRow = null;
-            for(RowDescriptor row : entity.getRows()) {
+            for (RowDescriptor row : entity.getRows()) {
                 newRow = new RowDescriptor(entity.getColumns(), entity.getColumnsById());
                 newRow.cloneRow(row);
-                
+
                 result.getRows().add(row);
             }
         } catch (Exception ex) {
@@ -1168,14 +1168,23 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
             if (getEntity().getRowCount() > 0) {
                 RowDescriptor row = getEntity().getRows().get(0);
+                rowValues = new Object[getEntity().getColumnCount()];
 
-                for (int i = 0; i < columns.length; i++) {
-                    row.setValue(columns[i], values[i]);
-
-                    // call the overloaded function
-                    result = Insert(rowValues);
+                // store old values into object array for passing to overload
+                for (int i = 0; i < getEntity().getColumnCount(); i++) {
+                    rowValues[i] = row.getValue(i);
                     break;
                 }
+
+                //  take new values and replace them in the object array
+                int index = 0;
+                for (String column : columns) {
+                    index = getEntity().getColumn(column).getColumnPosition();
+                    rowValues[index - 1] = row.getValue(index - 1);
+                }
+
+                // call the overloaded function
+                result = Insert(rowValues);
             }
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
