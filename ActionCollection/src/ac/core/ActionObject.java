@@ -23,7 +23,6 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
     private ConfigLoader _config = null;
     private DatabaseManager _dbManager = null;
-    private String _syncProvider = "";
     private ActionConfig _actionConfig = null;
     private EntityDescriptor _entity = null;
     private List<String> _columns = new ArrayList<>();
@@ -59,8 +58,6 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
         this._dbManager = dbManager;
         discoverColumnsDataTypes();
 
-        this._syncProvider = getConfig().getProperty("rowset.sync.provider").toString();
-
         notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", ActionObject(), "
                 + "contructor completed.", null);
@@ -72,11 +69,6 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             if (this._entity != null) {
                 EntityDescriptor wrs = this._entity;
                 this._entity = null;
-            }
-
-            // deregister sync proviert
-            if ((this._syncProvider != null) && (!this._syncProvider.isEmpty())) {
-                SyncFactory.unregisterProvider(this._syncProvider);
             }
         } catch (Exception exi) {
         } finally {
@@ -101,32 +93,28 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
         this._entity = entity;
     }
 
-    public ConfigLoader getConfig() {
+    protected ConfigLoader getConfig() {
         return this._config;
     }
 
-    public DatabaseManager getDbManager() {
+    protected DatabaseManager getDbManager() {
         return this._dbManager;
     }
 
-    public ActionConfig getActionConfig() {
+    protected ActionConfig getActionConfig() {
         return this._actionConfig;
     }
 
-    public int getColumnCount() {
+    protected int getColumnCount() {
         return getColumns().size();
     }
 
-    public List<String> getColumns() {
+    protected List<String> getColumns() {
         return this._columns;
     }
 
-    public List<DatabaseDataType> getColumnDataTypes() {
+    protected List<DatabaseDataType> getColumnDataTypes() {
         return this._columnDataTypes;
-    }
-
-    public String getSyncProvider() {
-        return this._syncProvider;
     }
 
     private void discoverColumnsDataTypes() throws Exception {
@@ -204,7 +192,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
         }
     }
 
-    public String getOrderBy() {
+    protected String getOrderBy() {
         return this._orderBy;
     }
 
@@ -1010,7 +998,15 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             // call the overloaded method to complete the update; this is assuming
             // the webrowset is multiple records
             for (long value : id) {
-                result += Delete(value);
+                try {
+                    result += Delete(value);
+                } catch (Exception ex) {
+                    notifyListeners(new EventObject(this), EventStatusType.ERROR,
+                            getClass().toString() + ", Delete(), "
+                            + GlobalStack.LINESEPARATOR + ex.getMessage(), value);
+
+                    result = 0;
+                }
             }
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
@@ -1171,15 +1167,15 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 rowValues = new Object[getEntity().getColumnCount()];
 
                 // store old values into object array for passing to overload
-                for (int i = 0; i < getEntity().getColumnCount(); i++) {
-                    rowValues[i] = row.getValue(i + 1);
+                for (int i = 1; i <= getEntity().getColumnCount(); i++) {
+                    rowValues[i - 1] = row.getValue(i);
                 }
 
                 //  take new values and replace them in the object array
-                int index = 0;
+                int index = 0, j = 0;
                 for (String column : columns) {
                     index = getEntity().getColumn(column).getColumnPosition();
-                    rowValues[index - 1] = row.getValue(index);
+                    rowValues[index - 1] = values[j++];
                 }
 
                 // call the overloaded function

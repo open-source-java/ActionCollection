@@ -106,22 +106,23 @@ public class ActionUnitTest implements IEventSubscriber {
             TestUpdate(si, "NCS3.SPU_SITE", new long[]{111, 830}, new String[]{"SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{1L, 2L});
 
             // test action object delete for site
-             TestDelete(si, 838);
+            TestDelete(si, 838);
 
-             // test action object delete for site
-             TestDelete(si, new long[]{830, 838});
+            // test action object delete for site
+            TestDelete(si, new long[]{830, 838});
 
-             // test action object delete with where clause
-             TestDelete(si, "SITE LIKE ?", new Object[]{"DHALIWAL%"});
+            // test action object delete with where clause
+            TestDelete(si, "SITE LIKE ?", new Object[]{"DHALIWAL%"});
+            TestDelete(si, "SITE IN (?, ?)", new Object[]{"WISCONSIN_REN", "WISCONSIN POINT"});
 
-             // test action object for insert
-             TestInsert(si, new Object[]{505.0D, null, null, "SSD", "DHALIWAL", null, "ROHN", null, "V4", 0L, null, "PRIMARY", null, "ESD MORICHES", null, null, null, null, null, null});
+            // test action object for insert
+            TestInsert(si, new Object[]{505.0D, null, null, "SSD", "DHALIWAL", null, "ROHN", null, "V4", 0L, null, "PRIMARY", null, "ESD MORICHES", null, null, null, null, null, null});
 
-             // test action object for insert with multiple sites
-             TestInsert(si, new long[]{830, 838}, new String[]{"SITE_ID", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, 4L, 2L});
+            // test action object for insert with multiple sites
+            TestInsert(si, new long[]{830, 838}, new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "WISCONSIN_REN", 4L, 2L});
 
-             // test action object for insert with single site column change
-             TestInsert(si, new long[]{111}, new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
+            // test action object for insert with single site column change
+            TestInsert(si, new long[]{111}, new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
         }
     }
 
@@ -196,26 +197,6 @@ public class ActionUnitTest implements IEventSubscriber {
         }
     }
 
-    /*
-     // test append action object
-     public void TestAppend(ActionObject ao, long[] firstRS, long[] secondRS) {
-     try {
-     WebRowSet wrs = ActionObjectStack.View(af.getDbManager(),
-     "SELECT ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP FROM NCS3.VWSITE",
-     "SITE_ID IN (SELECT * FROM TABLE (?))", new DatabaseDataType[]{DatabaseDataType.dtarray},
-     new Object[]{secondRS});
-     System.out.println(ActionObjectStack.toXML(wrs));
-
-     ao.Refresh(firstRS);
-     ao.Append(wrs);
-
-     System.out.println(ao.toXML());
-     System.out.println(".. records selected: " + ao.getRows().size());
-     } catch (Exception ex) {
-     System.out.println(ex.getMessage());
-     }
-     }
-     */
     // test update action object
     public void TestUpdate(ActionObject ao, long[] id, String column, String value) {
         try {
@@ -335,6 +316,25 @@ public class ActionUnitTest implements IEventSubscriber {
         }
     }
 
+    // test append action object
+    public void TestAppend(ActionObject ao, long[] firstRS, long[] secondRS) {
+        try {
+            EntityDescriptor wrs = ActionObjectStack.View(af.getDbManager(),
+                    "SELECT ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP FROM NCS3.VWSITE",
+                    "SITE_ID IN (SELECT * FROM TABLE (?))", new DatabaseDataType[]{DatabaseDataType.dtarray},
+                    new Object[]{secondRS});
+            System.out.println(ActionObjectStack.toXML(wrs));
+
+            ao.Refresh(firstRS);
+            ao.Append(wrs);
+
+            System.out.println(ao.toXML());
+            System.out.println(".. records selected: " + ao.getEntity().getRowCount());
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -346,55 +346,55 @@ public class ActionUnitTest implements IEventSubscriber {
 
         aut.TestSystemIdentification();
         aut.TestSite();
-        /*
+
         // class object direct access test
         if (aut.af != null) {
             try {
-                WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
+                EntityDescriptor wrs = ActionObjectStack.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE_STATUS",
                         null, null, null);
                 System.out.println(ActionObjectStack.toXML(wrs));
-                System.out.println(".. records selected: " + wrs.size());
+                System.out.println(".. records selected: " + wrs.getRowCount());
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
 
             try {
-                WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
+                EntityDescriptor wrs = ActionObjectStack.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE_ID LIKE ?", new DatabaseDataType[]{DatabaseDataType.dtstring}, new Object[]{"8%"});
                 //System.out.println(ActionObject.toXML(wrs));
-                System.out.println(".. records selected: " + wrs.size());
+                System.out.println(".. records selected: " + wrs.getRowCount());
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
 
             try {
-                WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
+                EntityDescriptor wrs = ActionObjectStack.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE_ID LIKE ?", new DatabaseDataType[]{DatabaseDataType.dtstring}, new Object[]{"9%"});
                 //System.out.println(ActionObject.toXML(wrs));
-                System.out.println(".. records selected: " + wrs.size());
+                System.out.println(".. records selected: " + wrs.getRowCount());
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
 
             try {
-                WebRowSet wrs = ActionObjectStack.Cursor(aut.af.getDbManager(),
+                EntityDescriptor wrs = ActionObjectStack.Cursor(aut.af.getDbManager(),
                         "NCS3.SPS_SITE",
                         new DatabaseDataType[]{DatabaseDataType.dtarray}, new Object[]{new Long[]{830L, 838L}});
                 //System.out.println(ActionObject.toXML(wrs));
-                System.out.println(".. records selected: " + wrs.size());
+                System.out.println(".. records selected: " + wrs.getRowCount());
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
 
             try {
-                WebRowSet wrs = ActionObjectStack.View(aut.af.getDbManager(),
+                EntityDescriptor wrs = ActionObjectStack.View(aut.af.getDbManager(),
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE = ?", new DatabaseDataType[]{DatabaseDataType.dtstring}, new Object[]{"DHALIWAL2"});
                 //System.out.println(ActionObject.toXML(wrs));
-                System.out.println(".. records selected: " + wrs.size());
+                System.out.println(".. records selected: " + wrs.getRowCount());
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
@@ -404,7 +404,8 @@ public class ActionUnitTest implements IEventSubscriber {
 
                 long count = ActionObjectStack.Execute(aut.af.getDbManager(),
                         "NCS3.SPD_SITE",
-                        new DatabaseDataType[]{DatabaseDataType.dtlong}, new Object[]{siteId});
+                        new DatabaseDataType[]{DatabaseDataType.dtlong}, new Object[]{siteId},
+                        null);
                 //System.out.println(ActionObject.toXML(wrs));
                 System.out.println(".. records affected: " + count);
             } catch (Exception ex) {
@@ -419,7 +420,6 @@ public class ActionUnitTest implements IEventSubscriber {
                 aut.TestSystemIdentification();
             }
         }
-        */
     }
 
     @Override

@@ -876,3 +876,348 @@ java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3
 [aoLogger] [13 Nov 2015 - 10:16:22]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
 [aoLogger] [13 Nov 2015 - 10:16:47] ERROR - class ac.factory.objects.Site, Insert(), 
 SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:34:44]  INFO - configuration loaded. 
+[aoLogger] [14 Nov 2015 - 05:34:45]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [14 Nov 2015 - 05:34:46]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:46]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:46]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:46]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:46]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:46]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:46]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:46]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:34:46]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:46]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:34:46] ERROR - class ac.factory.objects.Site, Update(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:34:46] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:34:46] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:34:46]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:47]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:34:47]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:47]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:34:47]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:34:47]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:47] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:34:47]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:47] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:34:47] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:34:47]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:34:47]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:34:47]  INFO - class ac.factory.objects.Site, Delete(), multiple value result. 
+[aoLogger] [14 Nov 2015 - 05:34:47]  INFO - class ac.factory.objects.Site, Delete(), value result. 
+[aoLogger] [14 Nov 2015 - 05:35:10]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:35:26]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:35:31]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:35:31] ERROR - class ac.factory.objects.Site, Insert(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:35:31] ERROR - class ac.factory.objects.Site, Insert(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:36:10]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:19]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:19] ERROR - class ac.factory.objects.Site, Insert(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:36:19] ERROR - class ac.factory.objects.Site, Insert(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:36:56]  INFO - configuration loaded. 
+[aoLogger] [14 Nov 2015 - 05:36:57]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [14 Nov 2015 - 05:36:57]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:57]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:57]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:57]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:36:58] ERROR - class ac.factory.objects.Site, Update(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:36:58] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:36:58] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:58] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:58] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:36:58] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Delete(), multiple value result. 
+[aoLogger] [14 Nov 2015 - 05:36:58]  INFO - class ac.factory.objects.Site, Delete(), value result. 
+[aoLogger] [14 Nov 2015 - 05:37:27]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:37:32]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:37:32]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:10]  INFO - configuration loaded. 
+[aoLogger] [14 Nov 2015 - 05:40:11]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [14 Nov 2015 - 05:40:11]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:40:12] ERROR - class ac.factory.objects.Site, Update(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:40:12] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:40:12] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:40:12]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:13] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:40:13]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:13] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:40:13] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:40:13]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:40:13]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:40:13]  INFO - class ac.factory.objects.Site, Delete(), multiple value result. 
+[aoLogger] [14 Nov 2015 - 05:40:13]  INFO - class ac.factory.objects.Site, Delete(), value result. 
+[aoLogger] [14 Nov 2015 - 05:40:51]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:41:05]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:41:05]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:42:10]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:42:16]  INFO - class ac.factory.objects.Site, Insert(), value result. 
+[aoLogger] [14 Nov 2015 - 05:42:54]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:42:55]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:43:05]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:43:05]  INFO - class ac.factory.objects.Site, Insert(), value result. 
+[aoLogger] [14 Nov 2015 - 05:52:12]  INFO - configuration loaded. 
+[aoLogger] [14 Nov 2015 - 05:52:13]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:52:14] ERROR - class ac.factory.objects.Site, Update(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:52:14] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:52:14] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:14]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:52:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:15]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:52:15]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:52:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:15] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:52:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:15] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:52:15] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:52:24]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:24]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:52:24]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:52:24]  INFO - class ac.factory.objects.Site, Delete(), multiple value result. 
+[aoLogger] [14 Nov 2015 - 05:52:24]  INFO - class ac.factory.objects.Site, Delete(), value result. 
+[aoLogger] [14 Nov 2015 - 05:52:31]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:52:31]  INFO - class ac.factory.objects.Site, Delete(), value result. 
+[aoLogger] [14 Nov 2015 - 05:53:16]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:53:16]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:16]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:20] ERROR - class ac.factory.objects.Site, Insert(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:53:20] ERROR - class ac.factory.objects.Site, Insert(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:53:20]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:20]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:20]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:53:20]  INFO - class ac.factory.objects.Site, Insert(), value result. 
+[aoLogger] [14 Nov 2015 - 05:53:36]  INFO - configuration loaded. 
+[aoLogger] [14 Nov 2015 - 05:53:37]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [14 Nov 2015 - 05:53:37]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:37]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:37]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:37]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:53:38] ERROR - class ac.factory.objects.Site, Update(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:53:38] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:53:38] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:38] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:38] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:53:38] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Delete(), multiple value result. 
+[aoLogger] [14 Nov 2015 - 05:53:38]  INFO - class ac.factory.objects.Site, Delete(), value result. 
+[aoLogger] [14 Nov 2015 - 05:53:48]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:53:48] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:53:48] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:53:48] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:54:23]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:54:23]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:23]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:23] ERROR - class ac.factory.objects.Site, Insert(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:54:23] ERROR - class ac.factory.objects.Site, Insert(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:54:23]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:23]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:23]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:54:23]  INFO - class ac.factory.objects.Site, Insert(), value result. 
+[aoLogger] [14 Nov 2015 - 05:54:39]  INFO - configuration loaded. 
+[aoLogger] [14 Nov 2015 - 05:54:39]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:54:40] ERROR - class ac.factory.objects.Site, Update(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:54:40] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:54:40] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:54:40]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:41]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:54:41]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:54:41]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:41] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:54:41]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:41] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:54:41] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:54:41]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:54:41]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:54:41]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:54:41]  INFO - class ac.factory.objects.Site, Delete(), multiple value result. 
+[aoLogger] [14 Nov 2015 - 05:54:41]  INFO - class ac.factory.objects.Site, Delete(), value result. 
+[aoLogger] [14 Nov 2015 - 05:55:04]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:55:40] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:55:40] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:56:03] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:56:03]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:56:03]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:56:03]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:56:03] ERROR - class ac.factory.objects.Site, Insert(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:56:03] ERROR - class ac.factory.objects.Site, Insert(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:56:03]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:56:03]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:56:03]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:56:03]  INFO - class ac.factory.objects.Site, Insert(), value result. 
+[aoLogger] [14 Nov 2015 - 05:58:13]  INFO - configuration loaded. 
+[aoLogger] [14 Nov 2015 - 05:58:14]  INFO - class ac.factory.ActionFactory, initialize(), sync provider installed. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.SystemIdentification, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:58:15] ERROR - class ac.factory.objects.Site, Update(), 
+SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:58:15] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:58:15] ERROR - class ac.factory.objects.Site, Update(), 
+java.lang.Exception: java.lang.Exception: SQL Exception, -1, ORA-00001: unique constraint (NCS3.UQ_SITE) violated 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:58:15]  INFO - class ac.factory.objects.Site, Update(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:58:16]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:16] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:58:16]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:16] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:58:16] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:58:16] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:58:16] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:58:16]  INFO - class ac.factory.objects.Site, Delete(), multiple value result. 
+[aoLogger] [14 Nov 2015 - 05:58:16]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:24]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:58:24]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:58:24]  INFO - class ac.factory.objects.Site, Delete(), multiple value result. 
+[aoLogger] [14 Nov 2015 - 05:58:40]  INFO - class ac.factory.objects.Site, Delete(), value result. 
+[aoLogger] [14 Nov 2015 - 05:58:55]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:58:58] ERROR - class ac.factory.objects.Site, Delete(), 
+SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:58:58] ERROR - class ac.factory.objects.Site, Delete(), 
+java.lang.Exception: SQL Exception, -2292, ORA-02292: integrity constraint (NCS3.FK_SITECONTROLSTATUS_SITE) violated - child record found 
+[aoLogger] [14 Nov 2015 - 05:58:58]  INFO - class ac.factory.objects.Site, Delete(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:58:58]  INFO - class ac.factory.objects.Site, Delete(), multiple value result. 
+[aoLogger] [14 Nov 2015 - 05:59:33]  INFO - class ac.factory.objects.Site, Delete(), value result. 
+[aoLogger] [14 Nov 2015 - 05:59:33]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:59:33]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:59:33]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:59:33]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:59:33]  INFO - class ac.factory.objects.Site, Insert(), value result. 
+[aoLogger] [14 Nov 2015 - 05:59:33]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:59:33]  INFO - class ac.factory.objects.Site, Refresh(), EntityDescriptor result. 
+[aoLogger] [14 Nov 2015 - 05:59:33]  INFO - class ac.factory.objects.Site, Insert(), hashmap result. 
+[aoLogger] [14 Nov 2015 - 05:59:33]  INFO - class ac.factory.objects.Site, Insert(), value result. 
