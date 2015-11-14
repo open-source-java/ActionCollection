@@ -1172,15 +1172,14 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
                 // store old values into object array for passing to overload
                 for (int i = 0; i < getEntity().getColumnCount(); i++) {
-                    rowValues[i] = row.getValue(i);
-                    break;
+                    rowValues[i] = row.getValue(i + 1);
                 }
 
                 //  take new values and replace them in the object array
                 int index = 0;
                 for (String column : columns) {
                     index = getEntity().getColumn(column).getColumnPosition();
-                    rowValues[index - 1] = row.getValue(index - 1);
+                    rowValues[index - 1] = row.getValue(index);
                 }
 
                 // call the overloaded function
