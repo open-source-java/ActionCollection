@@ -85,10 +85,7 @@ public class ActionUnitTest implements IEventSubscriber {
 
             // filter site records for site_id with match
             TestRefresh(si, "SITE_ID = ?", new DatabaseDataType[]{DatabaseDataType.dtint}, new Object[]{909});
-            /*
-             // append result from one to other
-             TestAppend(si, new long[]{838, 830}, new long[]{111, 843, 792});
-             */
+
             // test action object update for one site
             try {
                 TestUpdate(si, new long[]{838L}, "SITE", "DETROIT_RST");
@@ -123,6 +120,9 @@ public class ActionUnitTest implements IEventSubscriber {
 
             // test action object for insert with single site column change
             TestInsert(si, new long[]{111}, new String[]{"SITE_ID", "SITE", "SITE_ANTENNA_ID", "SITE_CONFIG_ID"}, new Object[]{0L, "DHALIWAL2", 4L, 2L});
+
+            // append result from one to other
+            TestAppend(si, new long[]{838, 830}, new long[]{111, 843, 792});
         }
     }
 

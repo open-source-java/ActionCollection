@@ -103,8 +103,10 @@ public abstract class ActionObjectStack {
                 dbParams.add(new DatabaseParameter("param" + (i + 1), valueDataTypes[i],
                         o));
             }
+            dbParams.add(new DatabaseParameter("paramOCursor", DatabaseDataType.dtcursor, true));
 
-            result = dbManager.getDataED(sql, dbParams);
+            spResult = dbManager.executeProcedure(sql, dbParams);
+            result = (EntityDescriptor) spResult.get("paramOCursor");
         } catch (Exception ex) {
             throw new Exception("class ActionObjectDirect, Cursor(), " + ex.getMessage());
         }
@@ -135,10 +137,12 @@ public abstract class ActionObjectStack {
 
             String sql = "{call " + procedure + "("
                     + StringStack.padString("", valueDataTypes.length, "?", ",");
-            if (outputDataTypes.size() > 0) {
+            if ((outputDataTypes != null) && (outputDataTypes.size() > 0)) {
                 sql += StringStack.padString("", outputDataTypes.size(), "?", ",");
+            } else {
+                sql += "," + StringStack.padString("", 3, "?", ",");
             }
-            sql += StringStack.padString("", 3, "?", ",") + ")}";
+            sql +=  ")}";
 
             ArrayList<DatabaseParameter> dbParams;
             dbParams = new ArrayList<>();
@@ -153,7 +157,7 @@ public abstract class ActionObjectStack {
             }
 
             // add the output parameters for status reporting
-            if (outputDataTypes.size() > 0) {
+            if ((outputDataTypes != null) && (outputDataTypes.size() > 0)) {
                 for (String param : outputDataTypes.keySet()) {
                     dbParams.add(new DatabaseParameter(param, outputDataTypes.get(param), true));
                 }
