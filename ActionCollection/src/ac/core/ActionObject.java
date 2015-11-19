@@ -11,9 +11,8 @@ import elsu.database.*;
 import elsu.database.rowset.*;
 import elsu.support.*;
 import java.util.*;
-import javax.sql.rowset.*;
 import java.sql.*;
-import javax.sql.rowset.spi.*;
+import javax.sql.rowset.*;
 
 /**
  *
@@ -26,7 +25,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
     private ActionConfig _actionConfig = null;
     private EntityDescriptor _entity = null;
     private List<String> _columns = new ArrayList<>();
-    private List<DatabaseDataType> _columnDataTypes = new ArrayList<>();
+    private List<Integer> _columnDataTypes = new ArrayList<>();
     private List<String> _dataTypes = new ArrayList<>();
     private List<String> _dataTypesClass = new ArrayList<>();
     private String _selectProcedure = "";
@@ -47,7 +46,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             List<String> dt = Arrays.asList(getActionConfig().getColumnDataTypes().replaceAll(" ", "").split(","));
 
             for (String s : dt) {
-                this._columnDataTypes.add(DatabaseDataType.valueOf(("dt" + s).toLowerCase()));
+                this._columnDataTypes.add(DatabaseStack.getDbDataType(s));
             }
         } catch (Exception exi) {
             this._columnDataTypes.clear();
@@ -113,7 +112,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
         return this._columns;
     }
 
-    protected List<DatabaseDataType> getColumnDataTypes() {
+    protected List<Integer> getColumnDataTypes() {
         return this._columnDataTypes;
     }
 
@@ -284,8 +283,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams = new ArrayList<>();
 
             // store the siteId parameter value
-            dbParams.add(new DatabaseParameter("param1", DatabaseDataType.dtlong,
-                    id));
+            dbParams.add(new DatabaseParameter("param1", java.sql.Types.BIGINT, id));
 
             result = getDbManager().getDataED(sql, dbParams);
         } catch (Exception ex) {
@@ -327,9 +325,8 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams = new ArrayList<>();
 
             // store the siteId parameter value
-            dbParams.add(new DatabaseParameter("param1", DatabaseDataType.dtarray,
-                    id));
-            dbParams.add(new DatabaseParameter("paramOCursor", DatabaseDataType.dtcursor, true));
+            dbParams.add(new DatabaseParameter("param1", java.sql.Types.ARRAY, id));
+            dbParams.add(new DatabaseParameter("paramOCursor", java.sql.Types.REF_CURSOR, true));
 
             spResult = getDbManager().executeProcedure(sql, dbParams);
             result = (EntityDescriptor) spResult.get("paramOCursor");
@@ -381,7 +378,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 for (int i = 0; i < values.length; i++) {
                     o = values[i];
 
-                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
+                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDbDataType(o),
                             o));
                 }
             }
@@ -405,7 +402,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
     }
 
     @Override
-    public EntityDescriptor Refresh(String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
+    public EntityDescriptor Refresh(String whereClause, int[] valueDataTypes, Object[] values) throws Exception {
         EntityDescriptor result = null;
 
         try {
@@ -498,7 +495,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 for (int i = 0; i < values.length; i++) {
                     o = values[i];
 
-                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
+                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDbDataType(o),
                             o));
                 }
             }
@@ -522,7 +519,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
     }
 
     @Override
-    public EntityDescriptor Refresh(String[] columns, String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception {
+    public EntityDescriptor Refresh(String[] columns, String whereClause, int[] valueDataTypes, Object[] values) throws Exception {
         EntityDescriptor result = null;
 
         try {
@@ -613,7 +610,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                             dbParams.add(new DatabaseParameter("param" + (i), getColumnDataTypes().get(i - 1),
                                     o));
                         } else {
-                            dbParams.add(new DatabaseParameter("param" + (i), DatabaseStack.getDataType(o),
+                            dbParams.add(new DatabaseParameter("param" + (i), DatabaseStack.getDbDataType(o),
                                     o));
                         }
                     }
@@ -629,9 +626,9 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             }
 
             // add the output parameters for status reporting
-            dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
-            dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
-            dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
+            dbParams.add(new DatabaseParameter("count", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
+            dbParams.add(new DatabaseParameter("errorId", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
+            dbParams.add(new DatabaseParameter("status", java.sql.Types.VARCHAR, DatabaseParameterType.OUTPUT));
 
             spResult = getDbManager().executeProcedure(sql, dbParams);
 
@@ -826,7 +823,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                             dbParams.add(new DatabaseParameter("param" + (i), getColumnDataTypes().get(getColumnDataTypes().indexOf(columns[i])),
                                     o));
                         } else {
-                            dbParams.add(new DatabaseParameter("param" + (i), DatabaseStack.getDataType(o),
+                            dbParams.add(new DatabaseParameter("param" + (i), DatabaseStack.getDbDataType(o),
                                     o));
                         }
 
@@ -842,9 +839,9 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             }
 
             // add the output parameters for status reporting
-            dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
-            dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
-            dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
+            dbParams.add(new DatabaseParameter("count", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
+            dbParams.add(new DatabaseParameter("errorId", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
+            dbParams.add(new DatabaseParameter("status", java.sql.Types.VARCHAR, DatabaseParameterType.OUTPUT));
 
             spResult = getDbManager().executeProcedure(sql, dbParams);
 
@@ -937,8 +934,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             for (RowDescriptor row : getEntity().getRows()) {
                 if (Long.valueOf(row.getValue(getActionConfig().getPrimaryId()).toString()) == id) {
                     // store the siteId parameter value
-                    dbParams.add(new DatabaseParameter("param1", DatabaseDataType.dtlong,
-                            id));
+                    dbParams.add(new DatabaseParameter("param1", java.sql.Types.BIGINT, id));
 
                     isRecordValid = true;
                     break;
@@ -951,9 +947,9 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             }
 
             // add the output parameters for status reporting
-            dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
-            dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
-            dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
+            dbParams.add(new DatabaseParameter("count", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
+            dbParams.add(new DatabaseParameter("errorId", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
+            dbParams.add(new DatabaseParameter("status", java.sql.Types.VARCHAR, DatabaseParameterType.OUTPUT));
 
             spResult = getDbManager().executeProcedure(sql, dbParams);
 
@@ -1104,15 +1100,15 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                     dbParams.add(new DatabaseParameter("param" + (i + 1), getColumnDataTypes().get(i),
                             o));
                 } else {
-                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDataType(o),
+                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDbDataType(o),
                             o));
                 }
             }
 
             // add the output parameters for status reporting
-            dbParams.add(new DatabaseParameter("recid", DatabaseDataType.dtlong, true));
-            dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
-            dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
+            dbParams.add(new DatabaseParameter("recid", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
+            dbParams.add(new DatabaseParameter("errorId", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
+            dbParams.add(new DatabaseParameter("status", java.sql.Types.VARCHAR, DatabaseParameterType.OUTPUT));
 
             spResult = getDbManager().executeProcedure(sql, dbParams);
 

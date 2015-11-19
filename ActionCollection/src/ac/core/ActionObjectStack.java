@@ -8,11 +8,7 @@ package ac.core;
 import elsu.common.*;
 import elsu.database.*;
 import elsu.database.rowset.*;
-import java.io.*;
-import java.sql.*;
 import java.util.*;
-import javax.sql.rowset.*;
-import javax.sql.rowset.spi.*;
 
 /**
  *
@@ -21,7 +17,7 @@ import javax.sql.rowset.spi.*;
 public abstract class ActionObjectStack {
 
     public static EntityDescriptor View(DatabaseManager dbManager, String SQLStmt,
-            String whereClause, DatabaseDataType[] valueDataTypes,
+            String whereClause, int[] valueDataTypes,
             Object[] values) throws Exception {
         EntityDescriptor result = null;
 
@@ -69,7 +65,7 @@ public abstract class ActionObjectStack {
     }
 
     public static EntityDescriptor Cursor(DatabaseManager dbManager,
-            String procedure, DatabaseDataType[] valueDataTypes, Object[] values)
+            String procedure, int[] valueDataTypes, Object[] values)
             throws Exception {
         EntityDescriptor result = null;
         Map<String, Object> spResult = null;
@@ -103,7 +99,7 @@ public abstract class ActionObjectStack {
                 dbParams.add(new DatabaseParameter("param" + (i + 1), valueDataTypes[i],
                         o));
             }
-            dbParams.add(new DatabaseParameter("paramOCursor", DatabaseDataType.dtcursor, true));
+            dbParams.add(new DatabaseParameter("paramOCursor", java.sql.Types.REF_CURSOR, DatabaseParameterType.OUTPUT));
 
             spResult = dbManager.executeProcedure(sql, dbParams);
             result = (EntityDescriptor) spResult.get("paramOCursor");
@@ -115,8 +111,8 @@ public abstract class ActionObjectStack {
     }
 
     public static long Execute(DatabaseManager dbManager, String procedure,
-            DatabaseDataType[] valueDataTypes, Object[] values,
-            Map<String, DatabaseDataType> outputDataTypes) throws Exception {
+            int[] valueDataTypes, Object[] values,
+            Map<String, Integer> outputDataTypes) throws Exception {
         long result = 0;
         Map<String, Object> spResult = null;
 
@@ -159,12 +155,12 @@ public abstract class ActionObjectStack {
             // add the output parameters for status reporting
             if ((outputDataTypes != null) && (outputDataTypes.size() > 0)) {
                 for (String param : outputDataTypes.keySet()) {
-                    dbParams.add(new DatabaseParameter(param, outputDataTypes.get(param), true));
+                    dbParams.add(new DatabaseParameter(param, outputDataTypes.get(param), DatabaseParameterType.OUTPUT));
                 }
             } else {
-                dbParams.add(new DatabaseParameter("count", DatabaseDataType.dtlong, true));
-                dbParams.add(new DatabaseParameter("errorId", DatabaseDataType.dtlong, true));
-                dbParams.add(new DatabaseParameter("status", DatabaseDataType.dtstring, true));
+                dbParams.add(new DatabaseParameter("count", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
+                dbParams.add(new DatabaseParameter("errorId", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
+                dbParams.add(new DatabaseParameter("status", java.sql.Types.VARCHAR, DatabaseParameterType.OUTPUT));
             }
 
             spResult = dbManager.executeProcedure(sql, dbParams);

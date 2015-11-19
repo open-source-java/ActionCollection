@@ -21,10 +21,10 @@ public interface IAction {
     EntityDescriptor Refresh(long id) throws Exception;
     EntityDescriptor Refresh(long[] id) throws Exception;
     EntityDescriptor Refresh(String whereClause, Object[] values) throws Exception;
-    EntityDescriptor Refresh(String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception;
+    EntityDescriptor Refresh(String whereClause, int[] valueDataTypes, Object[] values) throws Exception;
     EntityDescriptor Refresh(String[] columns) throws Exception;
     EntityDescriptor Refresh(String[] columns, String whereClause, Object[] values) throws Exception;
-    EntityDescriptor Refresh(String[] columns, String whereClause, DatabaseDataType[] valueDataTypes, Object[] values) throws Exception;
+    EntityDescriptor Refresh(String[] columns, String whereClause, int[] valueDataTypes, Object[] values) throws Exception;
 
     long Update(long id) throws Exception;
     long Update(long[] id) throws Exception;
