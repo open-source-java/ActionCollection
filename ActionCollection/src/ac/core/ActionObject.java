@@ -38,12 +38,12 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
         //if column definition is empty
         try {
-            this._columns = Arrays.asList(getActionConfig().getColumns().replaceAll(" ", "").split(","));
+            this._columns = Arrays.asList(getActionConfig().getColumns().toUpperCase().replaceAll(" ", "").split(","));
         } catch (Exception ex) {
             throw new Exception(ex);
         }
         try {
-            List<String> dt = Arrays.asList(getActionConfig().getColumnDataTypes().replaceAll(" ", "").split(","));
+            List<String> dt = Arrays.asList(getActionConfig().getColumnDataTypes().toUpperCase().replaceAll(" ", "").split(","));
 
             for (String s : dt) {
                 this._columnDataTypes.add(DatabaseStack.getDbDataType(s));
@@ -326,7 +326,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
             // store the siteId parameter value
             dbParams.add(new DatabaseParameter("param1", java.sql.Types.ARRAY, id));
-            dbParams.add(new DatabaseParameter("paramOCursor", java.sql.Types.REF_CURSOR, true));
+            dbParams.add(new DatabaseParameter("paramOCursor", java.sql.Types.REF_CURSOR, DatabaseParameterType.OUTPUT));
 
             spResult = getDbManager().executeProcedure(sql, dbParams);
             result = (EntityDescriptor) spResult.get("paramOCursor");
