@@ -132,16 +132,34 @@ public class ActionConfig {
 
         ac.setClassId(classId);
         ac.setColumns(config.getProperty(classId + ".SQL.columns").toString());
-        ac.setColumnDataTypes(config.getProperty(classId + ".SQL.columnTypes").toString());
+        try {
+            ac.setColumnDataTypes(config.getProperty(classId + ".SQL.columnTypes").toString());
+        } catch (Exception exi) {
+        }
+        ac.setSQLSelect(select[0]);
         if (select.length > 1) {
             ac.setSQLCursor(select[1]);
         }
-        ac.setSQLDelete(config.getProperty(classId + ".SQL.delete").toString());
-        ac.setSQLInsert(config.getProperty(classId + ".SQL.insert").toString());
-        ac.setSQLSelect(select[0]);
-        ac.setSQLUpdate(config.getProperty(classId + ".SQL.update").toString());
-        ac.setPrimaryId(config.getProperty(classId + ".SQL.index.key.primary").toString());
-        ac.setOrderBy(config.getProperty(classId + ".SQL.orderBy").toString());
+        try {
+            ac.setSQLDelete(config.getProperty(classId + ".SQL.delete").toString());
+        } catch (Exception exi) {
+        }
+        try {
+            ac.setSQLInsert(config.getProperty(classId + ".SQL.insert").toString());
+        } catch (Exception exi) {
+        }
+        try {
+            ac.setSQLUpdate(config.getProperty(classId + ".SQL.update").toString());
+        } catch (Exception exi) {
+        }
+        try {
+            ac.setPrimaryId(config.getProperty(classId + ".SQL.index.key.primary").toString());
+        } catch (Exception exi) {
+        }
+        try {
+            ac.setOrderBy(config.getProperty(classId + ".SQL.orderBy").toString());
+        } catch (Exception exi) {
+        }
 
         return ac;
     }

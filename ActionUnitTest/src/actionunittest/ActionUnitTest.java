@@ -411,6 +411,16 @@ public class ActionUnitTest implements IEventSubscriber {
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
+            
+            try {
+                EntityDescriptor wrs = ActionObjectStack.View(aut.af.getDbManager(),
+                        "SELECT * FROM NCS3.WEBSET",
+                        null, null, null);
+                System.out.println(ActionObjectStack.toXML(wrs));
+                System.out.println(".. records selected: " + wrs.getRowCount());
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
         }
 
         if (args.length > 0) {

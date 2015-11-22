@@ -36,20 +36,25 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
         this._config = config;
         this._actionConfig = ActionConfig.LoadConfig(config, this.getClass().toString().replaceFirst("class ", ""));
 
-        //if column definition is empty
-        try {
-            this._columns = Arrays.asList(getActionConfig().getColumns().toUpperCase().replaceAll(" ", "").split(","));
-        } catch (Exception ex) {
-            throw new Exception(ex);
-        }
-        try {
-            List<String> dt = Arrays.asList(getActionConfig().getColumnDataTypes().toUpperCase().replaceAll(" ", "").split(","));
+        //if column definition is empty, throw exception
+        this._columns = Arrays.asList(getActionConfig().getColumns().toUpperCase().replaceAll(" ", "").split(","));
 
-            for (String s : dt) {
-                this._columnDataTypes.add(DatabaseStack.getDbDataType(s));
+        //if column datatypes is not empty and count does not meet columns, throw exception
+        try {
+            if (!getActionConfig().getColumnDataTypes().isEmpty()) {
+                List<String> dt = Arrays.asList(getActionConfig().getColumnDataTypes().toUpperCase().replaceAll(" ", "").split(","));
+
+                for (String s : dt) {
+                    this._columnDataTypes.add(DatabaseStack.getDbDataType(s));
+                }
+
+                if ((dt.size() > 0) && (this._columns.size() != this._columnDataTypes.size())) {
+                    throw new Exception("# of columnDataTypes do not match # of columns");
+                }
             }
-        } catch (Exception exi) {
+        } catch (Exception ex) {
             this._columnDataTypes.clear();
+            throw new Exception(ex);
         }
 
         setSQLSelect(getActionConfig().getSQLSelect());
