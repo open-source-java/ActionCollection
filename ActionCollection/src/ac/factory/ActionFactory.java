@@ -56,6 +56,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
     }
 
     private void initialize() throws Exception {
+        /*
         String syncProvider = getSyncProvider();
         boolean installed = false;
 
@@ -82,6 +83,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
                         + "sync provider already installed.");
             }
         }
+        */
 
         notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", initialize(), "
@@ -217,10 +219,11 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
         return result;
     }
 
+    /*
     public String getSyncProvider() {
         return getConfig().getProperty("rowset.sync.provider").toString();
     }
-
+    */
     @Override
     public synchronized Object EventHandler(Object sender, IEventStatusType status, String message, Object o) {
         switch (EventStatusType.valueOf(status.getName())) {
