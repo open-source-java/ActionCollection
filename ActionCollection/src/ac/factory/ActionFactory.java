@@ -130,26 +130,21 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
     private void setDbManager() {
         if (this._dbManager == null) {
             String dbDriver
-                    = getConfig().getProperties().get(
-                            "service.database.driver").toString();
+                    = getConfig().getProperty("service.database.driver").toString();
             String dbConnectionString
-                    = getConfig().getProperties().get(
-                            "service.database.connectionString").toString();
+                    = getConfig().getProperty("service.database.connectionString").toString();
             int maxPool = 5;
             try {
                 maxPool = Integer.parseInt(
-                        getConfig().getProperties().get(
-                                "service.database.max.pool").toString());
+                        getConfig().getProperty("service.database.max.pool").toString());
             } catch (Exception ex) {
                 maxPool = 5;
             }
 
             String dbUser
-                    = getConfig().getProperties().get(
-                            "service.database.user").toString();
+                    = getConfig().getProperty("service.database.user").toString();
             String dbPassword
-                    = getConfig().getProperties().get(
-                            "service.database.password").toString();
+                    = getConfig().getProperty("service.database.password").toString();
 
             // capture any exceptions to prevent resource leaks
             try {
