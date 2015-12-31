@@ -55,35 +55,69 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
                 + "contructor completed.", null);
     }
 
+    public ActionFactory(String config, String[] filterPath, String[] suppresspath) throws Exception {
+        setConfig(config, filterPath, suppresspath);
+        setDbManager();
+
+        initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
+    }
+
+    public ActionFactory(ConfigLoader config) throws Exception {
+        setConfig(config);
+        setDbManager();
+
+        initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
+    }
+
+    public ActionFactory(ConfigLoader config, DatabaseManager dbManager)
+            throws Exception {
+        setConfig(config);
+        setDbManager(dbManager);
+
+        initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
+    }
+
     private void initialize() throws Exception {
         /*
-        String syncProvider = getSyncProvider();
-        boolean installed = false;
+         String syncProvider = getSyncProvider();
+         boolean installed = false;
 
-        if ((syncProvider != null) && (!syncProvider.isEmpty())) {
-            java.util.Enumeration e = SyncFactory.getRegisteredProviders();
-            while (e.hasMoreElements()) {
-                e.nextElement();
+         if ((syncProvider != null) && (!syncProvider.isEmpty())) {
+         java.util.Enumeration e = SyncFactory.getRegisteredProviders();
+         while (e.hasMoreElements()) {
+         e.nextElement();
 
-                if (e.getClass().toString().replaceAll("class ", "").equals(syncProvider)) {
-                    installed = true;
-                    break;
-                }
-            }
+         if (e.getClass().toString().replaceAll("class ", "").equals(syncProvider)) {
+         installed = true;
+         break;
+         }
+         }
 
-            if (!installed) {
-                SyncFactory.registerProvider(syncProvider);
+         if (!installed) {
+         SyncFactory.registerProvider(syncProvider);
 
-                // log error for tracking
-                getConfig().logInfo(getClass().toString() + ", initialize(), "
-                        + "sync provider installed.");
-            } else {
-                // log error for tracking
-                getConfig().logError(getClass().toString() + ", initialize(), "
-                        + "sync provider already installed.");
-            }
-        }
-        */
+         // log error for tracking
+         getConfig().logInfo(getClass().toString() + ", initialize(), "
+         + "sync provider installed.");
+         } else {
+         // log error for tracking
+         getConfig().logError(getClass().toString() + ", initialize(), "
+         + "sync provider already installed.");
+         }
+         }
+         */
 
         notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                 getClass().toString() + ", initialize(), "
@@ -94,25 +128,23 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
         return this._config;
     }
 
-    private void setConfig() {
-        try {
-            this._config = new ConfigLoader("", new String[]{
-                "application.framework.attributes.key.",
-                "application.actions.action.", "application.actionExtensions."});
-        } catch (Exception ex) {
+    private void setConfig() throws Exception {
+        this._config = new ConfigLoader("", null, new String[]{
+            "application.framework.attributes.key.",
+            "application.actions.action.", "application.actionExtensions."});
 
-        }
     }
 
-    private void setConfig(String config) {
-        try {
-            this._config = new ConfigLoader(config,
-                    new String[]{
-                        "application.framework.attributes.key.",
-                        "application.actions.action.", "application.actionExtensions."});
-        } catch (Exception ex) {
+    private void setConfig(String config) throws Exception {
+        this._config = new ConfigLoader(config, null, 
+                new String[]{
+                    "application.framework.attributes.key.",
+                    "application.actions.action.", "application.actionExtensions."});
 
-        }
+    }
+
+    private void setConfig(ConfigLoader config) {
+        this._config = config;
     }
 
     private void setConfig(String config, String[] suppressPath) {
@@ -123,11 +155,19 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
         }
     }
 
+    private void setConfig(String config, String[] filterPath, String[] suppressPath) {
+        try {
+            this._config = new ConfigLoader(config, filterPath, suppressPath);
+        } catch (Exception ex) {
+
+        }
+    }
+
     public DatabaseManager getDbManager() {
         return this._dbManager;
     }
 
-    private void setDbManager() {
+    private void setDbManager() throws Exception {
         if (this._dbManager == null) {
             String dbDriver
                     = getConfig().getProperty("service.database.driver").toString();
@@ -147,26 +187,24 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
                     = getConfig().getProperty("service.database.password").toString();
 
             // capture any exceptions to prevent resource leaks
-            try {
-                // create the database manager
-                this._dbManager = new DatabaseManager(
-                        dbDriver,
-                        dbConnectionString, maxPool,
-                        dbUser,
-                        dbPassword);
+            // create the database manager
+            this._dbManager = new DatabaseManager(
+                    dbDriver,
+                    dbConnectionString, maxPool,
+                    dbUser,
+                    dbPassword);
 
-                // connect the event notifiers
-                this._dbManager.addEventListener(this);
-            } catch (Exception ex) {
-                // log error for tracking
-                getConfig().logError(getClass().toString() + ", setDbManager(), "
-                        + ex.getMessage());
-            }
+            // connect the event notifiers
+            this._dbManager.addEventListener(this);
 
             notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                     getClass().toString() + ", setDbManager(), "
                     + "dbManager initialized.", null);
         }
+    }
+
+    private void setDbManager(DatabaseManager dbManager) {
+        this._dbManager = dbManager;
     }
 
     public IAction getActionObject(String className) throws Exception {
@@ -215,10 +253,10 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
     }
 
     /*
-    public String getSyncProvider() {
-        return getConfig().getProperty("rowset.sync.provider").toString();
-    }
-    */
+     public String getSyncProvider() {
+     return getConfig().getProperty("rowset.sync.provider").toString();
+     }
+     */
     @Override
     public synchronized Object EventHandler(Object sender, IEventStatusType status, String message, Object o) {
         switch (EventStatusType.valueOf(status.getName())) {

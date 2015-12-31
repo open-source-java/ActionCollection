@@ -345,7 +345,7 @@ public class ActionUnitTest implements IEventSubscriber {
         aut = new ActionUnitTest();
 
         aut.TestSystemIdentification();
-        aut.TestSite();
+        //aut.TestSite();
 
         // class object direct access test
         if (aut.af != null) {
