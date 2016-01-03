@@ -11,7 +11,6 @@ import elsu.database.*;
 import elsu.support.*;
 import java.lang.reflect.*;
 import java.util.*;
-import javax.sql.rowset.spi.*;
 
 /**
  *
@@ -44,19 +43,8 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
                 + "contructor completed.", null);
     }
 
-    public ActionFactory(String config, String[] suppresspath) throws Exception {
-        setConfig(config, suppresspath);
-        setDbManager();
-
-        initialize();
-
-        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
-                getClass().toString() + ", ActionFactory(), "
-                + "contructor completed.", null);
-    }
-
-    public ActionFactory(String config, String[] filterPath, String[] suppresspath) throws Exception {
-        setConfig(config, filterPath, suppresspath);
+    public ActionFactory(String config, String[] filterPath) throws Exception {
+        setConfig(config, filterPath);
         setDbManager();
 
         initialize();
@@ -129,38 +117,31 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
     }
 
     private void setConfig() throws Exception {
-        this._config = new ConfigLoader("", null, new String[]{
-            "application.framework.attributes.key.",
-            "application.actions.action.", "application.actionExtensions."});
-
+        this._config = new ConfigLoader("", null);
     }
 
     private void setConfig(String config) throws Exception {
-        this._config = new ConfigLoader(config, null, 
-                new String[]{
-                    "application.framework.attributes.key.",
-                    "application.actions.action.", "application.actionExtensions."});
-
+        this._config = new ConfigLoader(config, null);
     }
 
     private void setConfig(ConfigLoader config) {
         this._config = config;
     }
 
-    private void setConfig(String config, String[] suppressPath) {
+    private void setConfig(String config, String[] filterPath) {
         try {
-            this._config = new ConfigLoader(config, suppressPath);
+            this._config = new ConfigLoader(config, filterPath);
         } catch (Exception ex) {
 
         }
     }
-
-    private void setConfig(String config, String[] filterPath, String[] suppressPath) {
-        try {
-            this._config = new ConfigLoader(config, filterPath, suppressPath);
-        } catch (Exception ex) {
-
-        }
+    
+    protected String getFrameworkProperty(String key) {
+        return getConfig().getProperty("application.framework.attributes.key." + key).toString();
+    }
+    
+    protected String getActionProperty(String key) {
+        return getConfig().getProperty("application.actions.action." + key).toString();
     }
 
     public DatabaseManager getDbManager() {
@@ -170,21 +151,21 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
     private void setDbManager() throws Exception {
         if (this._dbManager == null) {
             String dbDriver
-                    = getConfig().getProperty("service.database.driver").toString();
+                    = getFrameworkProperty("service.database.driver");
             String dbConnectionString
-                    = getConfig().getProperty("service.database.connectionString").toString();
+                    = getFrameworkProperty("service.database.connectionString");
             int maxPool = 5;
             try {
                 maxPool = Integer.parseInt(
-                        getConfig().getProperty("service.database.max.pool").toString());
+                        getFrameworkProperty("service.database.max.pool"));
             } catch (Exception ex) {
                 maxPool = 5;
             }
 
             String dbUser
-                    = getConfig().getProperty("service.database.user").toString();
+                    = getFrameworkProperty("service.database.user");
             String dbPassword
-                    = getConfig().getProperty("service.database.password").toString();
+                    = getFrameworkProperty("service.database.password");
 
             // capture any exceptions to prevent resource leaks
             // create the database manager
@@ -209,7 +190,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
 
     public IAction getActionObject(String className) throws Exception {
         IAction result = null;
-        String classPath = getConfig().getProperty(className).toString();
+        String classPath = getActionProperty(className);
 
         if (classPath != null) {
             // using reflection, load the class for the service
