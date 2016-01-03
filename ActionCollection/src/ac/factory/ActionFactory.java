@@ -19,7 +19,7 @@ import java.util.*;
 public class ActionFactory extends AbstractEventManager implements IEventPublisher, IEventSubscriber {
 
     private ConfigLoader _config = null;
-    private DatabaseManager _dbManager = null;
+    private Object _dbManager = null;
 
     public ActionFactory() throws Exception {
         setConfig();
@@ -65,7 +65,43 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
                 + "contructor completed.", null);
     }
 
-    public ActionFactory(ConfigLoader config, DatabaseManager dbManager)
+    public ActionFactory(Object dbManager)
+            throws Exception {
+        setConfig();
+        setDbManager(dbManager);
+
+        initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
+    }
+
+    public ActionFactory(String config, Object dbManager)
+            throws Exception {
+        setConfig(config);
+        setDbManager(dbManager);
+
+        initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
+    }
+
+    public ActionFactory(String config, String[] filterPath, Object dbManager)
+            throws Exception {
+        setConfig(config, filterPath);
+        setDbManager(dbManager);
+
+        initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
+    }
+
+    public ActionFactory(ConfigLoader config, Object dbManager)
             throws Exception {
         setConfig(config);
         setDbManager(dbManager);
@@ -144,7 +180,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
         return getConfig().getProperty("application.actions.action." + key).toString();
     }
 
-    public DatabaseManager getDbManager() {
+    public Object getDbManager() {
         return this._dbManager;
     }
 
@@ -176,7 +212,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
                     dbPassword);
 
             // connect the event notifiers
-            this._dbManager.addEventListener(this);
+            ((DatabaseManager)this._dbManager).addEventListener(this);
 
             notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
                     getClass().toString() + ", setDbManager(), "
@@ -184,7 +220,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
         }
     }
 
-    private void setDbManager(DatabaseManager dbManager) {
+    private void setDbManager(Object dbManager) {
         this._dbManager = dbManager;
     }
 

@@ -8,6 +8,7 @@ package ac.core;
 import elsu.common.*;
 import elsu.database.*;
 import elsu.database.rowset.*;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -16,14 +17,14 @@ import java.util.*;
  */
 public abstract class ActionObjectStack {
 
-    public static EntityDescriptor View(DatabaseManager dbManager, String SQLStmt,
+    public static EntityDescriptor View(Connection conn, String SQLStmt,
             String whereClause, int[] valueDataTypes,
             Object[] values) throws Exception {
         EntityDescriptor result = null;
 
         try {
-            // if dbmanager is null, exit
-            if (dbManager == null) {
+            // if conn is null, exit
+            if (conn == null) {
                 throw new Exception("dbManager cannot be null.");
             }
 
@@ -56,7 +57,7 @@ public abstract class ActionObjectStack {
                 }
             }
 
-            result = dbManager.getDataED(sql, dbParams);
+            result = DatabaseUtils.getEntityDescriptor(conn, sql, dbParams);
         } catch (Exception ex) {
             throw new Exception("class ActionObjectDirect, View(), " + ex.getMessage());
         }
@@ -64,15 +65,15 @@ public abstract class ActionObjectStack {
         return result;
     }
 
-    public static EntityDescriptor Cursor(DatabaseManager dbManager,
+    public static EntityDescriptor Cursor(Connection conn,
             String procedure, int[] valueDataTypes, Object[] values)
             throws Exception {
         EntityDescriptor result = null;
         Map<String, Object> spResult = null;
 
         try {
-            // if dbmanager is null, exit
-            if (dbManager == null) {
+            // if conn is null, exit
+            if (conn == null) {
                 throw new Exception("dbManager cannot be null.");
             }
 
@@ -86,7 +87,7 @@ public abstract class ActionObjectStack {
             }
 
             String sql = "{call " + procedure + "("
-                    + StringStack.padString("", valueDataTypes.length + 1, "?", ",") + ")}";
+                    + StringUtils.padString("", valueDataTypes.length + 1, "?", ",") + ")}";
 
             ArrayList<DatabaseParameter> dbParams;
             dbParams = new ArrayList<>();
@@ -101,7 +102,7 @@ public abstract class ActionObjectStack {
             }
             dbParams.add(new DatabaseParameter("paramOCursor", java.sql.Types.REF_CURSOR, DatabaseParameterType.OUTPUT));
 
-            spResult = dbManager.executeProcedure(sql, dbParams);
+            spResult = DatabaseUtils.executeProcedure(conn, sql, dbParams);
             result = (EntityDescriptor) spResult.get("paramOCursor");
         } catch (Exception ex) {
             throw new Exception("class ActionObjectDirect, Cursor(), " + ex.getMessage());
@@ -110,15 +111,15 @@ public abstract class ActionObjectStack {
         return result;
     }
 
-    public static long Execute(DatabaseManager dbManager, String procedure,
+    public static long Execute(Connection conn, String procedure,
             int[] valueDataTypes, Object[] values,
             Map<String, Integer> outputDataTypes) throws Exception {
         long result = 0;
         Map<String, Object> spResult = null;
 
         try {
-            // if dbmanager is null, exit
-            if (dbManager == null) {
+            // if conn is null, exit
+            if (conn == null) {
                 throw new Exception("dbManager cannot be null.");
             }
 
@@ -132,11 +133,11 @@ public abstract class ActionObjectStack {
             }
 
             String sql = "{call " + procedure + "("
-                    + StringStack.padString("", valueDataTypes.length, "?", ",");
+                    + StringUtils.padString("", valueDataTypes.length, "?", ",");
             if ((outputDataTypes != null) && (outputDataTypes.size() > 0)) {
-                sql += StringStack.padString("", outputDataTypes.size(), "?", ",");
+                sql += StringUtils.padString("", outputDataTypes.size(), "?", ",");
             } else {
-                sql += "," + StringStack.padString("", 3, "?", ",");
+                sql += "," + StringUtils.padString("", 3, "?", ",");
             }
             sql +=  ")}";
 
@@ -163,7 +164,7 @@ public abstract class ActionObjectStack {
                 dbParams.add(new DatabaseParameter("status", java.sql.Types.VARCHAR, DatabaseParameterType.OUTPUT));
             }
 
-            spResult = dbManager.executeProcedure(sql, dbParams);
+            spResult = DatabaseUtils.executeProcedure(conn, sql, dbParams);
 
             // check if error occured, report it
             Long errorCode = Long.parseLong(spResult.get("errorId").toString());

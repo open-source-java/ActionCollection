@@ -8,10 +8,10 @@ package actionunittest;
 import elsu.events.*;
 import ac.core.*;
 import ac.factory.objects.*;
-import javax.sql.rowset.*;
 import ac.factory.*;
 import elsu.database.*;
 import elsu.database.rowset.*;
+import java.sql.*;
 
 /**
  *
@@ -319,7 +319,8 @@ public class ActionUnitTest implements IEventSubscriber {
     // test append action object
     public void TestAppend(ActionObject ao, long[] firstRS, long[] secondRS) {
         try {
-            EntityDescriptor wrs = ActionObjectStack.View(af.getDbManager(),
+            EntityDescriptor wrs = ActionObjectStack.View(
+                    ((DatabaseManager) af.getDbManager()).getConnection(),
                     "SELECT ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP FROM NCS3.VWSITE",
                     "SITE_ID IN (SELECT * FROM TABLE (?))", new int[]{java.sql.Types.ARRAY},
                     new Object[]{secondRS});
@@ -349,8 +350,15 @@ public class ActionUnitTest implements IEventSubscriber {
 
         // class object direct access test
         if (aut.af != null) {
+            DatabaseManager dbManager = (DatabaseManager) aut.af.getDbManager();
+            Connection conn = null;
             try {
-                EntityDescriptor wrs = ActionObjectStack.View(aut.af.getDbManager(),
+                conn = dbManager.getConnection();
+            } catch (Exception exi) {
+            }
+
+            try {
+                EntityDescriptor wrs = ActionObjectStack.View(conn,
                         "SELECT * FROM NCS3.vwSITE_STATUS",
                         null, null, null);
                 System.out.println(ActionObjectStack.toXML(wrs));
@@ -360,7 +368,7 @@ public class ActionUnitTest implements IEventSubscriber {
             }
 
             try {
-                EntityDescriptor wrs = ActionObjectStack.View(aut.af.getDbManager(),
+                EntityDescriptor wrs = ActionObjectStack.View(conn,
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE_ID LIKE ?", new int[]{java.sql.Types.VARCHAR}, new Object[]{"8%"});
                 System.out.println(ActionObjectStack.toXML(wrs));
@@ -370,7 +378,7 @@ public class ActionUnitTest implements IEventSubscriber {
             }
 
             try {
-                EntityDescriptor wrs = ActionObjectStack.View(aut.af.getDbManager(),
+                EntityDescriptor wrs = ActionObjectStack.View(conn,
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE_ID LIKE ?", new int[]{java.sql.Types.VARCHAR}, new Object[]{"9%"});
                 System.out.println(ActionObjectStack.toXML(wrs));
@@ -380,7 +388,7 @@ public class ActionUnitTest implements IEventSubscriber {
             }
 
             try {
-                EntityDescriptor wrs = ActionObjectStack.Cursor(aut.af.getDbManager(),
+                EntityDescriptor wrs = ActionObjectStack.Cursor(conn,
                         "NCS3.SPS_SITE",
                         new int[]{java.sql.Types.ARRAY}, new Object[]{new Long[]{830L, 838L}});
                 System.out.println(ActionObjectStack.toXML(wrs));
@@ -390,7 +398,7 @@ public class ActionUnitTest implements IEventSubscriber {
             }
 
             try {
-                EntityDescriptor wrs = ActionObjectStack.View(aut.af.getDbManager(),
+                EntityDescriptor wrs = ActionObjectStack.View(conn,
                         "SELECT * FROM NCS3.vwSITE",
                         "SITE = ?", new int[]{java.sql.Types.VARCHAR}, new Object[]{"DHALIWAL2"});
                 System.out.println(ActionObjectStack.toXML(wrs));
@@ -402,7 +410,7 @@ public class ActionUnitTest implements IEventSubscriber {
             try {
                 long siteId = 830L;
 
-                long count = ActionObjectStack.Execute(aut.af.getDbManager(),
+                long count = ActionObjectStack.Execute(conn,
                         "NCS3.SPD_SITE",
                         new int[]{java.sql.Types.BIGINT}, new Object[]{siteId},
                         null);
@@ -411,9 +419,9 @@ public class ActionUnitTest implements IEventSubscriber {
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
-            
+
             try {
-                EntityDescriptor wrs = ActionObjectStack.View(aut.af.getDbManager(),
+                EntityDescriptor wrs = ActionObjectStack.View(conn,
                         "SELECT * FROM NCS3.WEBSET",
                         null, null, null);
                 System.out.println(ActionObjectStack.toXML(wrs));

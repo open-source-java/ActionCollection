@@ -10,9 +10,9 @@ import elsu.common.*;
 import elsu.database.*;
 import elsu.database.rowset.*;
 import elsu.support.*;
+import java.sql.Connection;
 import java.util.*;
-import java.sql.*;
-import javax.sql.rowset.*;
+import javax.sql.*;
 
 /**
  *
@@ -21,7 +21,7 @@ import javax.sql.rowset.*;
 public abstract class ActionObject extends AbstractEventManager implements IAction, IEventPublisher, IEventSubscriber {
 
     private ConfigLoader _config = null;
-    private DatabaseManager _dbManager = null;
+    private Object _dbManager = null;
     private ActionConfig _actionConfig = null;
     private EntityDescriptor _entity = null;
     private List<String> _columns = new ArrayList<>();
@@ -31,7 +31,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
     private String _selectProcedure = "";
     private String _orderBy = "";
 
-    public ActionObject(ConfigLoader config, DatabaseManager dbManager) throws Exception {
+    public ActionObject(ConfigLoader config, Object dbManager) throws Exception {
         // load the initial values for the object from config
         this._config = config;
         this._actionConfig = ActionConfig.LoadConfig(config, this.getClass().toString().replaceFirst("class ", ""));
@@ -45,7 +45,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 List<String> dt = Arrays.asList(getActionConfig().getColumnDataTypes().toUpperCase().replaceAll(" ", "").split(","));
 
                 for (String s : dt) {
-                    this._columnDataTypes.add(DatabaseStack.getDbDataType(s));
+                    this._columnDataTypes.add(DatabaseUtils.getDbDataType(s));
                 }
 
                 if ((dt.size() > 0) && (this._columns.size() != this._columnDataTypes.size())) {
@@ -101,8 +101,18 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
         return this._config;
     }
 
-    protected DatabaseManager getDbManager() {
-        return this._dbManager;
+    protected Connection getConnection() throws Exception {
+        Connection result = null;
+        
+        if (this._dbManager != null) {
+            if (this._dbManager instanceof DatabaseManager) {
+                result = ((DatabaseManager)this._dbManager).getConnection();
+            } else if (this._dbManager instanceof javax.sql.DataSource) {
+                result = ((javax.sql.DataSource)this._dbManager).getConnection();
+            }
+        }
+        
+        return result;
     }
 
     protected ActionConfig getActionConfig() {
@@ -137,7 +147,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             String sql = getSQLSelect()
                     + " WHERE 1 = 2";
 
-            EntityDescriptor result = getDbManager().getDataED(sql, null);
+            EntityDescriptor result = DatabaseUtils.getEntityDescriptor(getConnection(), sql, null);
 
             // parse the webresult and populate the datatypes for each column
             Map<String, ColumnDescriptor> rsmd = result.getColumns();
@@ -171,7 +181,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
         try {
             result = "SELECT ";
-            result += CollectionStack.ArrayToString(columns).toUpperCase();
+            result += CollectionUtils.ArrayToString(columns).toUpperCase();
             result += " FROM " + getActionConfig().getSQLSelect().toUpperCase();
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
@@ -187,7 +197,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
     protected void setSQLSelect(String procedure) {
         try {
             this._selectProcedure = "SELECT ";
-            this._selectProcedure += CollectionStack.ArrayToString((String[]) getColumns().toArray()).toUpperCase();
+            this._selectProcedure += CollectionUtils.ArrayToString((String[]) getColumns().toArray()).toUpperCase();
             this._selectProcedure += " FROM " + procedure.toUpperCase();
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
@@ -290,7 +300,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             // store the siteId parameter value
             dbParams.add(new DatabaseParameter("param1", java.sql.Types.BIGINT, id));
 
-            result = getDbManager().getDataED(sql, dbParams);
+            result = DatabaseUtils.getEntityDescriptor(getConnection(), sql, dbParams);
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
@@ -333,7 +343,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams.add(new DatabaseParameter("param1", java.sql.Types.ARRAY, id));
             dbParams.add(new DatabaseParameter("paramOCursor", java.sql.Types.REF_CURSOR, DatabaseParameterType.OUTPUT));
 
-            spResult = getDbManager().executeProcedure(sql, dbParams);
+            spResult = DatabaseUtils.executeProcedure(getConnection(), sql, dbParams);
             result = (EntityDescriptor) spResult.get("paramOCursor");
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
@@ -383,12 +393,12 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 for (int i = 0; i < values.length; i++) {
                     o = values[i];
 
-                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDbDataType(o),
+                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseUtils.getDbDataType(o),
                             o));
                 }
             }
 
-            result = getDbManager().getDataED(sql, dbParams);
+            result = DatabaseUtils.getEntityDescriptor(getConnection(), sql, dbParams);
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
@@ -444,7 +454,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 }
             }
 
-            result = getDbManager().getDataED(sql, dbParams);
+            result = DatabaseUtils.getEntityDescriptor(getConnection(), sql, dbParams);
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
@@ -500,12 +510,12 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 for (int i = 0; i < values.length; i++) {
                     o = values[i];
 
-                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDbDataType(o),
+                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseUtils.getDbDataType(o),
                             o));
                 }
             }
 
-            result = getDbManager().getDataED(sql, dbParams);
+            result = DatabaseUtils.getEntityDescriptor(getConnection(), sql, dbParams);
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
@@ -562,7 +572,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 }
             }
 
-            result = getDbManager().getDataED(sql, dbParams);
+            result = DatabaseUtils.getEntityDescriptor(getConnection(), sql, dbParams);
         } catch (Exception ex) {
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
                     getClass().toString() + ", Refresh(), "
@@ -598,7 +608,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             }
 
             String sql = "{call " + getActionConfig().getSQLUpdate() + "("
-                    + StringStack.padString("", getColumns().size() + 3, "?", ",") + ")}";
+                    + StringUtils.padString("", getColumns().size() + 3, "?", ",") + ")}";
 
             ArrayList<DatabaseParameter> dbParams;
             dbParams = new ArrayList<>();
@@ -615,7 +625,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                             dbParams.add(new DatabaseParameter("param" + (i), getColumnDataTypes().get(i - 1),
                                     o));
                         } else {
-                            dbParams.add(new DatabaseParameter("param" + (i), DatabaseStack.getDbDataType(o),
+                            dbParams.add(new DatabaseParameter("param" + (i), DatabaseUtils.getDbDataType(o),
                                     o));
                         }
                     }
@@ -635,7 +645,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams.add(new DatabaseParameter("errorId", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
             dbParams.add(new DatabaseParameter("status", java.sql.Types.VARCHAR, DatabaseParameterType.OUTPUT));
 
-            spResult = getDbManager().executeProcedure(sql, dbParams);
+            spResult = DatabaseUtils.executeProcedure(getConnection(), sql, dbParams);
 
             // check if error occured, report it
             Long errorCode = Long.parseLong(spResult.get("errorId").toString());
@@ -808,7 +818,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             }
 
             String sql = "{call " + getActionConfig().getSQLUpdate() + "("
-                    + StringStack.padString("", getColumns().size() + 3, "?", ",") + ")}";
+                    + StringUtils.padString("", getColumns().size() + 3, "?", ",") + ")}";
 
             ArrayList<DatabaseParameter> dbParams;
             dbParams = new ArrayList<>();
@@ -828,7 +838,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                             dbParams.add(new DatabaseParameter("param" + (i), getColumnDataTypes().get(getColumnDataTypes().indexOf(columns[i])),
                                     o));
                         } else {
-                            dbParams.add(new DatabaseParameter("param" + (i), DatabaseStack.getDbDataType(o),
+                            dbParams.add(new DatabaseParameter("param" + (i), DatabaseUtils.getDbDataType(o),
                                     o));
                         }
 
@@ -848,7 +858,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams.add(new DatabaseParameter("errorId", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
             dbParams.add(new DatabaseParameter("status", java.sql.Types.VARCHAR, DatabaseParameterType.OUTPUT));
 
-            spResult = getDbManager().executeProcedure(sql, dbParams);
+            spResult = DatabaseUtils.executeProcedure(getConnection(), sql, dbParams);
 
             // check if error occured, report it
             Long errorCode = Long.parseLong(spResult.get("errorId").toString());
@@ -956,7 +966,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams.add(new DatabaseParameter("errorId", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
             dbParams.add(new DatabaseParameter("status", java.sql.Types.VARCHAR, DatabaseParameterType.OUTPUT));
 
-            spResult = getDbManager().executeProcedure(sql, dbParams);
+            spResult = DatabaseUtils.executeProcedure(getConnection(), sql, dbParams);
 
             // check if error occured, report it
             Long errorCode = Long.parseLong(spResult.get("errorId").toString());
@@ -1090,7 +1100,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             }
 
             String sql = "{call " + getActionConfig().getSQLInsert() + "("
-                    + StringStack.padString("", getColumns().size() + 3, "?", ",") + ")}";
+                    + StringUtils.padString("", getColumns().size() + 3, "?", ",") + ")}";
 
             ArrayList<DatabaseParameter> dbParams;
             dbParams = new ArrayList<>();
@@ -1105,7 +1115,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                     dbParams.add(new DatabaseParameter("param" + (i + 1), getColumnDataTypes().get(i),
                             o));
                 } else {
-                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseStack.getDbDataType(o),
+                    dbParams.add(new DatabaseParameter("param" + (i + 1), DatabaseUtils.getDbDataType(o),
                             o));
                 }
             }
@@ -1115,7 +1125,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
             dbParams.add(new DatabaseParameter("errorId", java.sql.Types.BIGINT, DatabaseParameterType.OUTPUT));
             dbParams.add(new DatabaseParameter("status", java.sql.Types.VARCHAR, DatabaseParameterType.OUTPUT));
 
-            spResult = getDbManager().executeProcedure(sql, dbParams);
+            spResult = DatabaseUtils.executeProcedure(getConnection(), sql, dbParams);
 
             // check if error occured, report it
             Long errorCode = Long.parseLong(spResult.get("errorId").toString());
