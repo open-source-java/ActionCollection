@@ -54,6 +54,12 @@ public class ActionUnitTest implements IEventSubscriber {
 
         if (si != null) {
             TestRefresh(si, 1);
+
+            try {
+                si.releaseConnection();
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
         }
     }
 
@@ -123,6 +129,12 @@ public class ActionUnitTest implements IEventSubscriber {
 
             // append result from one to other
             TestAppend(si, new long[]{838, 830}, new long[]{111, 843, 792});
+
+            try {
+                si.releaseConnection();
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
         }
     }
 
@@ -320,7 +332,7 @@ public class ActionUnitTest implements IEventSubscriber {
     public void TestAppend(ActionObject ao, long[] firstRS, long[] secondRS) {
         try {
             EntityDescriptor wrs = ActionObjectStack.View(
-                    ((DatabaseManager) af.getDbManager()).getConnection(),
+                    ((DatabaseManager) af.getDbManager("NCS")).getConnection(),
                     "SELECT ANTENNA_HEIGHT,DT_CRTD,DT_UPDT,ICON_NAME,SITE,SITE_ANTENNA_ID,SITE_ANTENNA,SITE_CONFIG_ID,SITE_CONFIG,SITE_ID,SITE_TYPE_ID,SITE_TYPE,UNIT_ID,UNIT,CONTACT_ID,CONTACT,CITYSTATE_ID,CITY,STATE,ZIP FROM NCS3.VWSITE",
                     "SITE_ID IN (SELECT * FROM TABLE (?))", new int[]{java.sql.Types.ARRAY},
                     new Object[]{secondRS});
@@ -346,11 +358,11 @@ public class ActionUnitTest implements IEventSubscriber {
         aut = new ActionUnitTest();
 
         aut.TestSystemIdentification();
-        //aut.TestSite();
+        aut.TestSite();
 
         // class object direct access test
         if (aut.af != null) {
-            DatabaseManager dbManager = (DatabaseManager) aut.af.getDbManager();
+            DatabaseManager dbManager = (DatabaseManager) aut.af.getDbManager("NCS");
             Connection conn = null;
             try {
                 conn = dbManager.getConnection();

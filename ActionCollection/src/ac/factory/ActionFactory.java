@@ -19,7 +19,7 @@ import java.util.*;
 public class ActionFactory extends AbstractEventManager implements IEventPublisher, IEventSubscriber {
 
     private ConfigLoader _config = null;
-    private Object _dbManager = null;
+    private Map<String, Object> _dbManager = new HashMap<>();
 
     public ActionFactory() throws Exception {
         setConfig();
@@ -68,7 +68,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
     public ActionFactory(Object dbManager)
             throws Exception {
         setConfig();
-        setDbManager(dbManager);
+        setDbManager("default", dbManager);
 
         initialize();
 
@@ -80,7 +80,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
     public ActionFactory(String config, Object dbManager)
             throws Exception {
         setConfig(config);
-        setDbManager(dbManager);
+        setDbManager("default", dbManager);
 
         initialize();
 
@@ -92,7 +92,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
     public ActionFactory(String config, String[] filterPath, Object dbManager)
             throws Exception {
         setConfig(config, filterPath);
-        setDbManager(dbManager);
+        setDbManager("default", dbManager);
 
         initialize();
 
@@ -104,7 +104,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
     public ActionFactory(ConfigLoader config, Object dbManager)
             throws Exception {
         setConfig(config);
-        setDbManager(dbManager);
+        setDbManager("default", dbManager);
 
         initialize();
 
@@ -171,57 +171,79 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
 
         }
     }
-    
+
     protected String getFrameworkProperty(String key) {
         return getConfig().getProperty("application.framework.attributes.key." + key).toString();
     }
-    
+
     protected String getActionProperty(String key) {
         return getConfig().getProperty("application.actions.action." + key).toString();
     }
 
-    public Object getDbManager() {
-        return this._dbManager;
+    //public Object getDbManager() {
+    //    return getDbManager("default");
+    //}
+    public Object getDbManager(String key) {
+        Object result = null;
+
+        // if key is null, then set it to default
+        if (key == null) {
+            key = "default";
+        }
+        
+        if (this._dbManager.containsKey(key)) {
+            result = this._dbManager.get(key);
+        }
+
+        return result;
     }
 
     private void setDbManager() throws Exception {
-        if (this._dbManager == null) {
-            String dbDriver
-                    = getFrameworkProperty("service.database.driver");
-            String dbConnectionString
-                    = getFrameworkProperty("service.database.connectionString");
-            int maxPool = 5;
-            try {
-                maxPool = Integer.parseInt(
-                        getFrameworkProperty("service.database.max.pool"));
-            } catch (Exception ex) {
-                maxPool = 5;
+        if (this._dbManager.size() == 0) {
+            String[] connectionList = getFrameworkProperty("dbmanager.activeList").split(",");
+
+            for (String connection : connectionList) {
+                String dbDriver
+                        = getFrameworkProperty("dbmanager.connection." + connection + ".driver");
+                String dbConnectionString
+                        = getFrameworkProperty("dbmanager.connection." + connection + ".uri");
+                int maxPool = 5;
+                try {
+                    maxPool = Integer.parseInt(
+                            getFrameworkProperty("dbmanager.connection." + connection + ".poolSize"));
+                } catch (Exception ex) {
+                    maxPool = 5;
+                }
+
+                String dbUser
+                        = getFrameworkProperty("dbmanager.connection." + connection + ".user");
+                String dbPassword
+                        = getFrameworkProperty("dbmanager.connection." + connection + ".password");
+
+                // capture any exceptions to prevent resource leaks
+                // create the database manager
+                setDbManager(connection, new DatabaseManager(
+                        dbDriver,
+                        dbConnectionString, maxPool,
+                        dbUser,
+                        dbPassword));
+
+                // connect the event notifiers
+                ((DatabaseManager) getDbManager(connection)).addEventListener(this);
+
+                notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                        getClass().toString() + ", setDbManager(), "
+                        + "dbManager initialized.", null);
             }
-
-            String dbUser
-                    = getFrameworkProperty("service.database.user");
-            String dbPassword
-                    = getFrameworkProperty("service.database.password");
-
-            // capture any exceptions to prevent resource leaks
-            // create the database manager
-            this._dbManager = new DatabaseManager(
-                    dbDriver,
-                    dbConnectionString, maxPool,
-                    dbUser,
-                    dbPassword);
-
-            // connect the event notifiers
-            ((DatabaseManager)this._dbManager).addEventListener(this);
-
-            notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
-                    getClass().toString() + ", setDbManager(), "
-                    + "dbManager initialized.", null);
         }
     }
 
-    private void setDbManager(Object dbManager) {
-        this._dbManager = dbManager;
+    private void setDbManager(String key, Object dbManager) {
+        if (this._dbManager.containsKey(key)) {
+            this._dbManager.remove(key);
+        }
+
+        this._dbManager.put(key, dbManager);
     }
 
     public IAction getActionObject(String className) throws Exception {
@@ -241,10 +263,18 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
             Constructor<?> cons = actionClass.getDeclaredConstructor(
                     argTypes);
 
+            // retrieve database manager for the class (else try default)
+            String dbName = null;
+            try {
+                dbName = getConfig().getProperty(getConfig().getKeyByValue(classPath).replace(".class", "") + ".connection").toString();
+            } catch (Exception exi) { }
+            
+            Object dbManager = this.getDbManager(dbName);
+
             // create parameter array and populate it with values to 
             // pass to the service constructor
             Object[] arguments
-                    = {getConfig(), getDbManager()};
+                    = {getConfig(), dbManager};
 
             // create new instance of the service using the discovered
             // constructor and parameters

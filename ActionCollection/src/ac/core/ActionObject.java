@@ -30,6 +30,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
     private List<String> _dataTypesClass = new ArrayList<>();
     private String _selectProcedure = "";
     private String _orderBy = "";
+    private Connection _connection = null;
 
     public ActionObject(ConfigLoader config, Object dbManager) throws Exception {
         // load the initial values for the object from config
@@ -70,6 +71,14 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
     @Override
     public void finalize() throws Throwable {
         try {
+            if (this._connection != null) {
+                if (this._dbManager instanceof DatabaseManager) {
+                    ((DatabaseManager) this._dbManager).releaseConnection(this._connection);
+                } else if (this._dbManager instanceof javax.sql.DataSource) {
+                    this._connection.close();
+                }
+            }
+
             if (this._entity != null) {
                 EntityDescriptor wrs = this._entity;
                 this._entity = null;
@@ -102,17 +111,28 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
     }
 
     protected Connection getConnection() throws Exception {
-        Connection result = null;
-        
-        if (this._dbManager != null) {
-            if (this._dbManager instanceof DatabaseManager) {
-                result = ((DatabaseManager)this._dbManager).getConnection();
-            } else if (this._dbManager instanceof javax.sql.DataSource) {
-                result = ((javax.sql.DataSource)this._dbManager).getConnection();
+        // if no connection has been made, then initiate, else return last
+        if (this._connection == null) {
+            if (this._dbManager != null) {
+                if (this._dbManager instanceof DatabaseManager) {
+                    this._connection = ((DatabaseManager) this._dbManager).getConnection();
+                } else if (this._dbManager instanceof javax.sql.DataSource) {
+                    this._connection = ((javax.sql.DataSource) this._dbManager).getConnection();
+                }
             }
         }
-        
-        return result;
+
+        return this._connection;
+    }
+
+    public void releaseConnection() throws Exception {
+        if (this._connection != null) {
+            if (this._dbManager instanceof DatabaseManager) {
+                ((DatabaseManager) this._dbManager).releaseConnection(this._connection);
+            } else if (this._dbManager instanceof javax.sql.DataSource) {
+                this._connection.close();
+            }
+        }
     }
 
     protected ActionConfig getActionConfig() {
