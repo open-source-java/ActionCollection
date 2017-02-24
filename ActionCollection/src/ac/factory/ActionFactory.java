@@ -5,160 +5,251 @@
  */
 package ac.factory;
 
+import elsu.events.*;
 import ac.core.*;
 import elsu.database.*;
+import elsu.support.*;
 import java.lang.reflect.*;
-import javax.sql.rowset.spi.*;
+import java.util.*;
 
 /**
  *
  * @author ss.dhaliwal
  */
-public class ActionFactory {
+public class ActionFactory extends AbstractEventManager implements IEventPublisher, IEventSubscriber {
 
     private ConfigLoader _config = null;
-    private DatabaseManager _dbManager = null;
+    private Map<String, Object> _dbManager = new HashMap<>();
 
-    public ActionFactory() throws Exception {
-        setConfig();
-        setDbManager();
-
-        initialize();
-    }
-
-    public ActionFactory(String config) throws Exception {
+    public ActionFactory(ConfigLoader config) throws Exception {
         setConfig(config);
         setDbManager();
 
         initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
+    }
+
+    public ActionFactory(ConfigLoader config, Object dbManager) throws Exception {
+        setConfig(config);
+        setDbManager("default", dbManager);
+
+        initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
     }
 
     private void initialize() throws Exception {
-        String syncProvider = getSyncProvider();
-        boolean installed = false;
+        /*
+         String syncProvider = getSyncProvider();
+         boolean installed = false;
 
-        if ((syncProvider != null) && (!syncProvider.isEmpty())) {
-            java.util.Enumeration e = SyncFactory.getRegisteredProviders();
-            while (e.hasMoreElements()) {
-                e.nextElement();
+         if ((syncProvider != null) && (!syncProvider.isEmpty())) {
+         java.util.Enumeration e = SyncFactory.getRegisteredProviders();
+         while (e.hasMoreElements()) {
+         e.nextElement();
 
-                if (e.getClass().toString().replaceAll("class ", "").equals(syncProvider)) {
-                    installed = true;
-                    break;
-                }
-            }
+         if (e.getClass().toString().replaceAll("class ", "").equals(syncProvider)) {
+         installed = true;
+         break;
+         }
+         }
 
-            if (!installed) {
-                SyncFactory.registerProvider(syncProvider);
-                
-                // log error for tracking
-                getConfig().logInfo(getClass().toString() + ", initialize(), "
-                        + "sync provider installed.");
-            } else {
-                // log error for tracking
-                getConfig().logError(getClass().toString() + ", initialize(), "
-                        + "sync provider already installed.");
-            }
-        }
+         if (!installed) {
+         SyncFactory.registerProvider(syncProvider);
+
+         // log error for tracking
+         getConfig().logInfo(getClass().toString() + ", initialize(), "
+         + "sync provider installed.");
+         } else {
+         // log error for tracking
+         getConfig().logError(getClass().toString() + ", initialize(), "
+         + "sync provider already installed.");
+         }
+         }
+         */
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", initialize(), "
+                + "initialization completed.", null);
     }
 
     public ConfigLoader getConfig() {
         return this._config;
     }
 
-    private void setConfig() {
+    private void setConfig() throws Exception {
+        this._config = new ConfigLoader("", null);
+    }
+
+    private void setConfig(String config) throws Exception {
+        this._config = new ConfigLoader(config, null);
+    }
+
+    private void setConfig(ConfigLoader config) {
+        this._config = config;
+    }
+
+    private void setConfig(String config, String[] filterPath) {
         try {
-            this._config = new ConfigLoader();
+            this._config = new ConfigLoader(config, filterPath);
         } catch (Exception ex) {
 
         }
     }
 
-    private void setConfig(String config) {
-        try {
-            this._config = new ConfigLoader(config);
-        } catch (Exception ex) {
+    public String getFrameworkProperty(String key) {
+        return getConfig().getProperty("application.framework.attributes.key." + key).toString();
+    }
 
+    public String getActionProperty(String key) {
+        return getConfig().getProperty("application.actions.action." + key).toString();
+    }
+
+    //public Object getDbManager() {
+    //    return getDbManager("default");
+    //}
+    public Object getDbManager(String key) {
+        Object result = null;
+
+        // if key is null, then set it to default
+        if (key == null) {
+            key = "default";
         }
+        
+        if (this._dbManager.containsKey(key)) {
+            result = this._dbManager.get(key);
+        }
+
+        return result;
     }
 
-    public DatabaseManager getDbManager() {
-        return this._dbManager;
-    }
+    private void setDbManager() throws Exception {
+        if (this._dbManager.size() == 0) {
+            String[] connectionList = getFrameworkProperty("dbmanager.activeList").split(",");
 
-    private void setDbManager() {
-        if (this._dbManager == null) {
-            String dbDriver
-                    = getConfig().getApplicationProperties().get(
-                            "service.database.driver").toString();
-            String dbConnectionString
-                    = getConfig().getApplicationProperties().get(
-                            "service.database.connectionString").toString();
-            int maxPool = 5;
-            try {
-                maxPool = Integer.parseInt(
-                        getConfig().getApplicationProperties().get(
-                                "service.database.max.pool").toString());
-            } catch (Exception ex) {
-                maxPool = 5;
-            }
+            for (String connection : connectionList) {
+                String dbDriver
+                        = getFrameworkProperty("dbmanager.connection." + connection + ".driver");
+                String dbConnectionString
+                        = getFrameworkProperty("dbmanager.connection." + connection + ".uri");
+                int maxPool = 5;
+                try {
+                    maxPool = Integer.parseInt(
+                            getFrameworkProperty("dbmanager.connection." + connection + ".poolSize"));
+                } catch (Exception ex) {
+                    maxPool = 5;
+                }
 
-            String dbUser
-                    = getConfig().getApplicationProperties().get(
-                            "service.database.user").toString();
-            String dbPassword
-                    = getConfig().getApplicationProperties().get(
-                            "service.database.password").toString();
+                String dbUser
+                        = getFrameworkProperty("dbmanager.connection." + connection + ".user");
+                String dbPassword
+                        = getFrameworkProperty("dbmanager.connection." + connection + ".password");
 
-            // capture any exceptions to prevent resource leaks
-            try {
+                // capture any exceptions to prevent resource leaks
                 // create the database manager
-                this._dbManager = new DatabaseManager(
+                setDbManager(connection, new DatabaseManager(
                         dbDriver,
                         dbConnectionString, maxPool,
                         dbUser,
-                        dbPassword);
-            } catch (Exception ex) {
-                // log error for tracking
-                getConfig().logError(getClass().toString() + ", setDbManager(), "
-                        + ex.getMessage());
+                        dbPassword));
+
+                // connect the event notifiers
+                ((DatabaseManager) getDbManager(connection)).addEventListener(this);
+
+                notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                        getClass().toString() + ", setDbManager(), "
+                        + "dbManager initialized.", null);
             }
         }
     }
 
-    public IAction getClassByName(String className) throws Exception {
+    private void setDbManager(String key, Object dbManager) {
+        if (this._dbManager.containsKey(key)) {
+            this._dbManager.remove(key);
+        }
+
+        this._dbManager.put(key, dbManager);
+    }
+
+    public IAction getActionObject(String className) throws Exception {
         IAction result = null;
+        String classPath = getActionProperty(className);
 
-        for (String key : getConfig().getActionProperties().keySet()) {
-            if (key.equals(className)) {
-                // using reflection, load the class for the service
-                Class<?> actionClass = Class.forName(className);
+        if (classPath != null) {
+            // using reflection, load the class for the service
+            Class<?> actionClass = Class.forName(classPath);
 
-                // create service constructor discovery type parameter array
-                // populate it with the required class types
-                Class<?>[] argTypes = {ConfigLoader.class, DatabaseManager.class};
+            // create service constructor discovery type parameter array
+            // populate it with the required class types
+            Class<?>[] argTypes = {ConfigLoader.class, DatabaseManager.class};
 
-                // retrieve the matching constructor for the service using
-                // reflection
-                Constructor<?> cons = actionClass.getDeclaredConstructor(
-                        argTypes);
+            // retrieve the matching constructor for the service using
+            // reflection
+            Constructor<?> cons = actionClass.getDeclaredConstructor(
+                    argTypes);
 
-                // create parameter array and populate it with values to 
-                // pass to the service constructor
-                Object[] arguments
-                        = {getConfig(), getDbManager()};
+            // retrieve database manager for the class (else try default)
+            String dbName = null;
+            try {
+                dbName = getConfig().getProperty(getConfig().getKeyByValue(classPath).replace(".class", "") + ".connection").toString();
+            } catch (Exception exi) { }
+            
+            Object dbManager = this.getDbManager(dbName);
 
-                // create new instance of the service using the discovered
-                // constructor and parameters
-                result = (IAction) cons.newInstance(arguments);
+            // create parameter array and populate it with values to 
+            // pass to the service constructor
+            Object[] arguments
+                    = {getConfig(), dbManager};
+
+            // create new instance of the service using the discovered
+            // constructor and parameters
+            result = (IAction) cons.newInstance(arguments);
+
+            // check if the instance is typeof IEventPublisher
+            // - if yes, then subscribe to its events
+            if (result instanceof IEventPublisher) {
+                ((IEventPublisher) result).addEventListener(this);
             }
+
+            notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                    getClass().toString() + ", getClassByName(), "
+                    + "class (" + className + "/" + classPath + ") instantiated.", null);
+        } else {
+            notifyListeners(new EventObject(this), EventStatusType.ERROR,
+                    getClass().toString() + ", getClassByName(), "
+                    + "class (" + className + "/null) not found.", null);
         }
 
         // return new class
         return result;
     }
-    
-    public String getSyncProvider() {
-        return getConfig().getApplicationProperty("rowset.sync.provider");
+
+    /*
+     public String getSyncProvider() {
+     return getConfig().getProperty("rowset.sync.provider").toString();
+     }
+     */
+    @Override
+    public synchronized Object EventHandler(Object sender, IEventStatusType status, String message, Object o) {
+        switch (EventStatusType.valueOf(status.getName())) {
+            case DEBUG:
+                getConfig().logDebug(message);
+                break;
+            case ERROR:
+                getConfig().logError(message);
+                break;
+            case INFORMATION:
+                getConfig().logInfo(message);
+                break;
+            default:
+                break;
+        }
+
+        return null;
     }
 }

@@ -6,6 +6,7 @@
 package ac.core;
 
 import elsu.database.*;
+import elsu.database.rowset.*;
 import java.util.*;
 import javax.sql.rowset.*;
 
@@ -14,16 +15,16 @@ import javax.sql.rowset.*;
  * @author dhaliwal-admin
  */
 public interface IAction {
-    WebRowSet Append(WebRowSet wrs) throws Exception;
+    EntityDescriptor Append(EntityDescriptor wrs) throws Exception;
     
-    WebRowSet Refresh() throws Exception;
-    WebRowSet Refresh(long id) throws Exception;
-    WebRowSet Refresh(long[] id) throws Exception;
-    WebRowSet Refresh(String whereClause, Object[] values) throws Exception;
-    WebRowSet Refresh(String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception;
-    WebRowSet Refresh(String[] columns) throws Exception;
-    WebRowSet Refresh(String[] columns, String whereClause, Object[] values) throws Exception;
-    WebRowSet Refresh(String[] columns, String whereClause, DatabaseDataTypes[] valueDataTypes, Object[] values) throws Exception;
+    EntityDescriptor Refresh() throws Exception;
+    EntityDescriptor Refresh(long id) throws Exception;
+    EntityDescriptor Refresh(long[] id) throws Exception;
+    EntityDescriptor Refresh(String whereClause, Object[] values) throws Exception;
+    EntityDescriptor Refresh(String whereClause, int[] valueDataTypes, Object[] values) throws Exception;
+    EntityDescriptor Refresh(String[] columns) throws Exception;
+    EntityDescriptor Refresh(String[] columns, String whereClause, Object[] values) throws Exception;
+    EntityDescriptor Refresh(String[] columns, String whereClause, int[] valueDataTypes, Object[] values) throws Exception;
 
     long Update(long id) throws Exception;
     long Update(long[] id) throws Exception;
@@ -44,6 +45,6 @@ public interface IAction {
     
     HashMap<String, Object> toHaspMap() throws Exception;
     HashMap<String, Object> toHaspMap(String[] columns) throws Exception;
-    
+
     String toXML() throws Exception;
 }
