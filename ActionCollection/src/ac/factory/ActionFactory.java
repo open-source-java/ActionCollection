@@ -21,39 +21,6 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
     private ConfigLoader _config = null;
     private Map<String, Object> _dbManager = new HashMap<>();
 
-    public ActionFactory() throws Exception {
-        setConfig();
-        setDbManager();
-
-        initialize();
-
-        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
-                getClass().toString() + ", ActionFactory(), "
-                + "contructor completed.", null);
-    }
-
-    public ActionFactory(String config) throws Exception {
-        setConfig(config);
-        setDbManager();
-
-        initialize();
-
-        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
-                getClass().toString() + ", ActionFactory(), "
-                + "contructor completed.", null);
-    }
-
-    public ActionFactory(String config, String[] filterPath) throws Exception {
-        setConfig(config, filterPath);
-        setDbManager();
-
-        initialize();
-
-        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
-                getClass().toString() + ", ActionFactory(), "
-                + "contructor completed.", null);
-    }
-
     public ActionFactory(ConfigLoader config) throws Exception {
         setConfig(config);
         setDbManager();
@@ -65,44 +32,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
                 + "contructor completed.", null);
     }
 
-    public ActionFactory(Object dbManager)
-            throws Exception {
-        setConfig();
-        setDbManager("default", dbManager);
-
-        initialize();
-
-        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
-                getClass().toString() + ", ActionFactory(), "
-                + "contructor completed.", null);
-    }
-
-    public ActionFactory(String config, Object dbManager)
-            throws Exception {
-        setConfig(config);
-        setDbManager("default", dbManager);
-
-        initialize();
-
-        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
-                getClass().toString() + ", ActionFactory(), "
-                + "contructor completed.", null);
-    }
-
-    public ActionFactory(String config, String[] filterPath, Object dbManager)
-            throws Exception {
-        setConfig(config, filterPath);
-        setDbManager("default", dbManager);
-
-        initialize();
-
-        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
-                getClass().toString() + ", ActionFactory(), "
-                + "contructor completed.", null);
-    }
-
-    public ActionFactory(ConfigLoader config, Object dbManager)
-            throws Exception {
+    public ActionFactory(ConfigLoader config, Object dbManager) throws Exception {
         setConfig(config);
         setDbManager("default", dbManager);
 
@@ -172,11 +102,11 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
         }
     }
 
-    protected String getFrameworkProperty(String key) {
+    public String getFrameworkProperty(String key) {
         return getConfig().getProperty("application.framework.attributes.key." + key).toString();
     }
 
-    protected String getActionProperty(String key) {
+    public String getActionProperty(String key) {
         return getConfig().getProperty("application.actions.action." + key).toString();
     }
 

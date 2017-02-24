@@ -1234,12 +1234,12 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
 
     @Override
     public HashMap<String, Object> toHaspMap() throws Exception {
-        return ActionObjectStack.toHashMap(getEntity().getRows());
+        return ActionObjectUtils.toHashMap(getEntity().getRows());
     }
 
     @Override
     public HashMap<String, Object> toHaspMap(String[] columns) throws Exception {
-        return ActionObjectStack.toHashMap(getEntity().getRows(), columns);
+        return ActionObjectUtils.toHashMap(getEntity().getRows(), columns);
     }
 
     @Override
@@ -1247,7 +1247,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
         String result = "";
 
         try {
-            result = ActionObjectStack.toXML(getEntity());
+            result = ActionObjectUtils.toXML(getEntity());
         } catch (Exception ex) {
             // log error for tracking
             notifyListeners(new EventObject(this), EventStatusType.ERROR,
