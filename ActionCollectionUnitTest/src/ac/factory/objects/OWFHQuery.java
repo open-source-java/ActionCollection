@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package ac.factory.objects;
 
 import core.ac.ActionObject;
@@ -5,9 +10,9 @@ import elsu.events.*;
 import elsu.database.*;
 import elsu.support.*;
 
-public class TestTable extends ActionObject {
+public class OWFHQuery extends ActionObject {
 
-    public TestTable(ConfigLoader config, DatabaseManager dbManager) throws Exception {
+    public OWFHQuery(ConfigLoader config, DatabaseManager dbManager) throws Exception {
         // retrieve the action configuration from the actionobject config for
         // the class name
         super(config, dbManager);
