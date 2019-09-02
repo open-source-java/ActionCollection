@@ -404,7 +404,7 @@ public class ActionUnitTest implements IEventSubscriber {
 			System.out.println(ex.getMessage());
 			System.exit(1);
 		}
-
+		/*
 		// create the factory class
 		aut = new ActionUnitTest(cl);
 
@@ -429,7 +429,7 @@ public class ActionUnitTest implements IEventSubscriber {
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 		}
-
+		*/
 		// aut.TestDerbyTable();
 
 		/*

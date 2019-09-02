@@ -32,7 +32,33 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
                 + "contructor completed.", null);
     }
 
+    public ActionFactory(ConfigLoader config, IEventSubscriber owner) throws Exception {
+    	addEventListener(owner);
+    	
+        setConfig(config);
+        setDbManager();
+
+        initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
+    }
+
     public ActionFactory(ConfigLoader config, Object dbManager) throws Exception {
+        setConfig(config);
+        setDbManager("default", dbManager);
+
+        initialize();
+
+        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
+                getClass().toString() + ", ActionFactory(), "
+                + "contructor completed.", null);
+    }
+
+    public ActionFactory(ConfigLoader config, Object dbManager, IEventSubscriber owner) throws Exception {
+    	addEventListener(owner);
+    	
         setConfig(config);
         setDbManager("default", dbManager);
 
@@ -131,7 +157,8 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
     private void setDbManager() throws Exception {
         if (this._dbManager.size() == 0) {
             String[] connectionList = getFrameworkProperty("dbmanager.activeList").split(",");
-
+            String[] propsList;
+            
             for (String connection : connectionList) {
                 String dbDriver
                         = getFrameworkProperty("dbmanager.connection." + connection + ".driver");
@@ -145,18 +172,19 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
                     maxPool = 5;
                 }
 
-                String dbUser
-                        = getFrameworkProperty("dbmanager.connection." + connection + ".user");
-                String dbPassword
-                        = getFrameworkProperty("dbmanager.connection." + connection + ".password");
+                // check if properties are defined
+                HashMap properties = new HashMap<String, String>();                
+                propsList = getFrameworkProperty("dbmanager.connection." + connection + ".params.list").split(",");
+                for (String prop : propsList) {
+                	properties.put(prop, getFrameworkProperty("dbmanager.connection." + connection + ".params." + prop));
+                }
 
                 // capture any exceptions to prevent resource leaks
                 // create the database manager
                 setDbManager(connection, new DatabaseManager(
                         dbDriver,
                         dbConnectionString, maxPool,
-                        dbUser,
-                        dbPassword));
+                        properties));
 
                 // connect the event notifiers
                 ((DatabaseManager) getDbManager(connection)).addEventListener(this);
