@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package factory.ac;
+package ac.factory;
 
-import core.ac.IAction;
 import elsu.events.*;
+import ac.core.*;
 import elsu.database.*;
 import elsu.support.*;
 import java.lang.reflect.*;
@@ -32,33 +32,7 @@ public class ActionFactory extends AbstractEventManager implements IEventPublish
                 + "contructor completed.", null);
     }
 
-    public ActionFactory(ConfigLoader config, IEventSubscriber owner) throws Exception {
-    	addEventListener(owner);
-    	
-        setConfig(config);
-        setDbManager();
-
-        initialize();
-
-        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
-                getClass().toString() + ", ActionFactory(), "
-                + "contructor completed.", null);
-    }
-
     public ActionFactory(ConfigLoader config, Object dbManager) throws Exception {
-        setConfig(config);
-        setDbManager("default", dbManager);
-
-        initialize();
-
-        notifyListeners(new EventObject(this), EventStatusType.INFORMATION,
-                getClass().toString() + ", ActionFactory(), "
-                + "contructor completed.", null);
-    }
-
-    public ActionFactory(ConfigLoader config, Object dbManager, IEventSubscriber owner) throws Exception {
-    	addEventListener(owner);
-    	
         setConfig(config);
         setDbManager("default", dbManager);
 

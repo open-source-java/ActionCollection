@@ -430,7 +430,7 @@ public class ElsuActionCollectionTest implements IEventSubscriber {
 			System.out.println(ex.getMessage());
 			System.exit(1);
 		}
-		/*
+
 		// create the factory class
 		aut = new ElsuActionCollectionTest(cl);
 
@@ -455,17 +455,10 @@ public class ElsuActionCollectionTest implements IEventSubscriber {
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 		}
-<<<<<<< HEAD:ActionCollectionUnitTest/src/actionunittest/ActionUnitTest.java
-		*/
-		// aut.TestDerbyTable();
-
-		/*
-=======
          */
         // aut.TestDerbyTable();
 
         /*
->>>>>>> master:ActionCollectionTest/src/test/ElsuActionCollectionTest.java
 		 * aut.TestSystemIdentification(); aut.TestSite();
 		 * 
 		 * // class object direct access test if (aut.af != null) {

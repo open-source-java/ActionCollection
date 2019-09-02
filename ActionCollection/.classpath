@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
-<<<<<<< HEAD
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ElsuFoundation"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ElsuDatabase"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
@@ -10,10 +8,5 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-=======
-	<classpathentry combineaccessrules="false" kind="src" path="/ElsuDatabase"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ElsuFoundation"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/MyLibrary"/>
->>>>>>> master
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Wed Jan 25 07:48:06 EST 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-0159-d5ab-3d96-00001bd160a8 
+on database directory /programs/opt/jee-neon/workspace/ActionCollectionUnitTest/derbyDB with class loader null 
+Loaded from null
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_92-b14
+user.dir=/programs/opt/jee-neon/workspace/ActionCollectionUnitTest
+os.name=Linux
+os.arch=amd64
+os.version=3.16.0-4-amd64
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
