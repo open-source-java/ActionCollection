@@ -64,7 +64,7 @@ public abstract class ActionObjectUtils {
 
         return result;
     }
-
+    /*
     public static EntityDescriptor Cursor(Connection conn,
             String procedure, int[] valueDataTypes, Object[] values)
             throws Exception {
@@ -110,7 +110,7 @@ public abstract class ActionObjectUtils {
 
         return result;
     }
-
+	*/
     public static long Execute(Connection conn, String procedure,
             int[] valueDataTypes, Object[] values,
             Map<String, Integer> outputDataTypes) throws Exception {

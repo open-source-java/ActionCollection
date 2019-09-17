@@ -337,7 +337,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 + "EntityDescriptor result.", result);
         return result;
     }
-
+    /* 
     @Override
     public EntityDescriptor Refresh(long[] id) throws Exception {
         EntityDescriptor result = null;
@@ -381,7 +381,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                 + "EntityDescriptor result.", result);
         return result;
     }
-
+	*/
     @Override
     public EntityDescriptor Refresh(String whereClause, Object[] values) throws Exception {
         EntityDescriptor result = null;
@@ -863,7 +863,7 @@ public abstract class ActionObject extends AbstractEventManager implements IActi
                         }
 
                         isRecordValid = true;
-                        break;
+                        //break;
                     }
                 }
             }
