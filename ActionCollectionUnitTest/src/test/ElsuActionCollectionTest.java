@@ -5,9 +5,9 @@
  */
 package test;
 
-import factory.ac.ActionFactory;
-import core.ac.ActionObjectUtils;
-import core.ac.ActionObject;
+import ac.factory.ActionFactory;
+import ac.core.ActionObjectUtils;
+import ac.core.ActionObject;
 import elsu.events.*;
 import elsu.support.*;
 import ac.factory.objects.*;

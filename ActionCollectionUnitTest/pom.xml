@@ -4,6 +4,15 @@
 	<groupId>elsu.actioncollection</groupId>
 	<artifactId>ElsuActionCollectionUnitTest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
+	<repositories>
+		<repository>
+			<id>project.local</id>
+			<name>oracle.jdbc7</name>
+			<url>file:${project.basedir}/../local-mvn-repo/repo</url>
+		</repository>
+	</repositories>
+
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
@@ -30,16 +39,19 @@
 			<groupId>elsu.foundation</groupId>
 			<artifactId>ElsuFoundation</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>elsu.database</groupId>
 			<artifactId>ElsuDatabase</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>elsu.actioncollection</groupId>
 			<artifactId>ElsuActionCollection</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>
