@@ -5,10 +5,9 @@
  */
 package ac.factory.objects;
 
-import ac.core.ActionObject;
+import core.ac.ActionObject;
 import elsu.events.*;
 import elsu.database.*;
-import elsu.database.rowset.EntityDescriptor;
 import elsu.support.*;
 
 public class OWFHQuery extends ActionObject {
@@ -23,10 +22,5 @@ public class OWFHQuery extends ActionObject {
     public Object EventHandler(Object sender, IEventStatusType status, String message, Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-	@Override
-	public EntityDescriptor Refresh(long[] id) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
 
 }
